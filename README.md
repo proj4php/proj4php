@@ -18,7 +18,7 @@ echo "Source : ".$pointSrc->toShortString()." in L93 <br>";
 echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
 ```
 
-There's is also way to define inline projections.
+There's is also ways to define inline projections.
 
 ## Developping
 

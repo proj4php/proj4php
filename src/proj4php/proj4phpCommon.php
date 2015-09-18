@@ -1,4 +1,5 @@
 <?php
+namespace proj4php;
 
 /**
  * Author : Julien Moquet

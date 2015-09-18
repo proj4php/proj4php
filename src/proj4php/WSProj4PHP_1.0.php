@@ -1,4 +1,5 @@
 <?php
+namespace proj4php;
 
 include_once("proj4php.php");
 

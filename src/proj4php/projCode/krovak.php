@@ -1,4 +1,5 @@
 <?php
+namespace proj4php;
 
 /**
   NOTES: According to EPSG the full Krovak projection method should have

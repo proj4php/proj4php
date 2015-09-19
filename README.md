@@ -7,9 +7,9 @@ This is a PHP-Class for geographic coordinates transformation using proj4 defini
 ```php
 include("proj4php");
 
-use \proj4php\Proj4php;
-use \proj4php\Proj4phpProj;
-use \proj4php\Proj4phpPoint;
+use proj4php\Proj4php;
+use proj4php\Proj4phpProj;
+use proj4php\Proj4phpPoint;
 
 $proj4 = new Proj4php();
 $projL93 = new Proj4phpProj('EPSG:2154',$proj4);
@@ -24,6 +24,8 @@ echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
 
 There's is also ways to define inline projections.
 
-## Developping
+A PSR-4 autoloader will be introduced shortly, and that will change much of the usage details above.
+
+## Developing
 
 Feel free to fork us and submit your changes!

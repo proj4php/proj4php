@@ -31,8 +31,6 @@
         "phpunit/phpunit": "4.0.*"
     },
     "autoload": {
-        "psr-4": {
-            "Proj4Php": "src/"
-        }
+        "classmap": ["src/"]
     }
 }

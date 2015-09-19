@@ -15,8 +15,8 @@ namespace proj4php;
  * Other point classes may be used as long as they have
  * x and y properties, which will get modified in the transform method.
 */
-class proj4phpPoint {
-
+class proj4phpPoint
+{
     public $x;
     public $y;
     public $z;
@@ -30,17 +30,17 @@ class proj4phpPoint {
      * - y {float} the second component
      * - z {float} the third component, optional.
      */
-    public function __construct( $x = null, $y = null, $z = null ) {
-        
-        if( is_array( $x ) ) {
+    public function __construct($x = null, $y = null, $z = null)
+    {
+        if (is_array($x)) {
             $this->x = $x[0];
             $this->y = $x[1];
             $this->z = isset($x[2]) ? $x[2] : 0.0;#(count( $x ) > 2) ? $x[2] : 0.0;
-        } else if( is_string( $x ) && !is_numeric( $y ) ) {
-            $coord = explode( ' ', $x );
-            $this->x = floatval( $coord[0] );
-            $this->y = floatval( $coord[1] );
-            $this->z = (count( $coord ) > 2) ? floatval( $coord[2] ) : 0.0;
+        } elseif (is_string($x) && !is_numeric($y)) {
+            $coord = explode(' ', $x);
+            $this->x = floatval($coord[0]);
+            $this->y = floatval($coord[1]);
+            $this->z = (count($coord) > 2) ? floatval($coord[2]) : 0.0;
         } else {
             $this->x = $x !== null ? $x : 0.0;
             $this->y = $y !== null ? $y : 0.0;
@@ -57,8 +57,9 @@ class proj4phpPoint {
      * Return:
      * {Proj4js}.Point the cloned point.
      */
-    public function __clone() {
-        return new Proj4phpPoint( $this->x, $this->y, $this->z );
+    public function __clone()
+    {
+        return new Proj4phpPoint($this->x, $this->y, $this->z);
     }
 
     /**
@@ -69,7 +70,8 @@ class proj4phpPoint {
      * {String} String representation of Proj4js.Point object. 
      *           (ex. <i>"x=5,y=42"</i>)
      */
-    public function toString() {
+    public function toString()
+    {
         return "x=" . $this->x . ",y=" . $this->y;
     }
 
@@ -81,7 +83,8 @@ class proj4phpPoint {
      * {String} Shortened String representation of Proj4js.Point object. 
      *         (ex. <i>"5, 42"</i>)
      */
-    public function toShortString() {
+    public function toShortString()
+    {
         return $this->x . " " . $this->y;
     }
 

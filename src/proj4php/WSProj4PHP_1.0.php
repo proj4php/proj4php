@@ -8,56 +8,57 @@ $error = false;
 /**
  * Geometry-Points 
  */
-if( isset( $_GET['GEOM'] ) ) {
+if (isset($_GET['GEOM'])) {
     list($x, $y) = explode( ' ', $_GET['GEOM'] );
 } else {
-    if( isset( $_GET['x'] ) ) {
+    if ( isset( $_GET['x'] ) ) {
         $x = $_GET['x'];
-    }
-    else
+    } else {
         $error = true;
+    }
 
-    if( isset( $_GET['y'] ) ) {
+    if (isset( $_GET['y'] ) ) {
         $y = $_GET['y'];
-    }
-    else
+    } else {
         $error = true;
+    }
 }
 
 /**
  * Source-CRS 
  */
-if( isset( $_GET['SOURCECRS'] ) ) {
+if (isset($_GET['SOURCECRS'])) {
     $srcProjection = str_replace( '::', ':', $_GET['SOURCECRS'] );
-} else if( isset( $_GET['projectionxy'] ) ) {
+} elseif (isset( $_GET['projectionxy'])) {
     $srcProjection = $_GET['projectionxy'];
     $srcProjection = str_replace( '::', ':', $srcProjection );
-}
-else
+} else {
     $srcProjection = 'EPSG:2154';
+}
 
 /**
  * Target-CRS 
  */
-if( isset( $_GET['TARGETCRS'] ) ) {
+if (isset( $_GET['TARGETCRS'])) {
     $tgtProjection = str_replace( '::', ':', $_GET['TARGETCRS'] );
-} else if( isset( $_GET['projection'] ) ) {
+} elseif (isset( $_GET['projection'])) {
     $tgtProjection = $_GET['projection'];
     $tgtProjection = str_replace( '::', ':', $tgtProjection );
-}
-else
+} else {
     $tgtProjection = 'EPSG:4326';
+}
 
 /**
  * Format
  */
-if( isset( $_GET['format'] ) ) {
+if (isset( $_GET['format'] ) ) {
     $format = $_GET['format'];
-    if( !($format == 'xml' || $format == 'json') )
+    if (  !($format == 'xml' || $format == 'json')) {
         $error = true;
-}
-else
+    }
+} else {
     $format = 'xml';
+}
 
 
 $proj4 = new Proj4php();
@@ -65,13 +66,16 @@ $projsource = new Proj4phpProj( $srcProjection, $proj4 );
 $projdest = new Proj4phpProj( $tgtProjection, $proj4 );
 
 // check the projections
-if( Proj4php::$defs[$srcProjection] == Proj4php::$defs['WGS84'] && $srcProjection != 'EPSG:4326' )
+if (Proj4php::$defs[$srcProjection] == Proj4php::$defs['WGS84'] && $srcProjection != 'EPSG:4326') {
     $error = true;
-if( Proj4php::$defs[$tgtProjection] == Proj4php::$defs['WGS84'] && $tgtProjection != 'EPSG:4326' )
-    $error = true;
+}
 
-if( $error === true ) {
-    if( $format == 'json' ) {
+if (Proj4php::$defs[$tgtProjection] == Proj4php::$defs['WGS84'] && $tgtProjection != 'EPSG:4326') {
+    $error = true;
+}
+
+if ($error === true) {
+    if ($format == 'json') {
         echo "{\"status\":\"error\", \"erreur\": {\"code\": 2, \"message\": \"Wrong parameters.\"} }";
         exit;
     } else {
@@ -90,7 +94,7 @@ $pointDest = $proj4->transform( $projsource, $projdest, $pointSrc );
 
 $tgtProjection = str_replace( ':', '::', $tgtProjection );
 
-if( $format == 'json' ) {
+if ($format == 'json') {
     echo "{\"status\" :\"success\", \"point\" : {\"x\":" . $pointDest->x . ", \"y\":" . $pointDest->y . ",\"projection\" :\"" . $tgtProjection . "\"}}";
     exit;
 } else {

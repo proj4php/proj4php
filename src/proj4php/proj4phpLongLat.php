@@ -8,18 +8,19 @@ namespace proj4php;
  *                      and Richard Greenwood rich@greenwoodmap.com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
-class proj4phpLongLat {
-
-    public function init() {
-        
+class proj4phpLongLat
+{
+    public function init()
+    {
     }
 
-    public function forward( $pt ) {
+    public function forward($pt)
+    {
         return $pt;
     }
 
-    public function inverse( $pt ) {
+    public function inverse($pt)
+    {
         return $pt;
     }
-
 }

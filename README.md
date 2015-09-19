@@ -29,7 +29,7 @@ echo "Source : " . $pointSrc->toShortString() . " in L93 <br>";
 echo "Conversion : " . $pointDest->toShortString() . " in WGS84<br><br>";
 ```
 
-There's is also ways to define inline projections.
+There are also ways to define inline projections.
 
 A PSR-4 autoloader will be introduced shortly,
 and that will change many of the paths and classnames above.

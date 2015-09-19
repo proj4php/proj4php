@@ -26,4 +26,4 @@ There's is also ways to define inline projections.
 
 ## Developping
 
-Fill free to fork us and submit your changes !
+Feel free to fork us and submit your changes!

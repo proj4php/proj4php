@@ -1,0 +1,38 @@
+{
+    "name": "proj4php/proj4php",
+    "license": "LGPL-2.1",
+    "type": "library",
+    "description": "A PHP-Class for geographic coordinates transformation using proj4 definitions, thanks to a translation from Proj4JS",
+    "keywords": [
+        "geographic",
+        "coordinates",
+        "proj4",
+        "proj4js"
+    ],
+    "homepage": "https://github.com/proj4php/proj4php",
+    "authors": [
+        {
+            "name": "julien2512",
+            "email": "tbc@example.com",
+            "homepage": "https://github.com/julien2512",
+            "role": "Developer"
+        },
+        {
+            "name": "Jason Judge",
+            "email": "jason.judge@academe.co.uk",
+            "homepage": "http://academe.co.uk",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Proj4Php": "src/"
+        }
+    }
+}

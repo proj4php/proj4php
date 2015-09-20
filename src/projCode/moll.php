@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -33,7 +33,9 @@ namespace proj4php;
   State Government Printing Office, Washington D.C., 1987.
  ****************************************************************************** */
 
-class Proj4phpProjMoll {
+use proj4php\Proj4php;
+
+class ProjMoll {
     /* Initialize the Mollweide projection
       ------------------------------------ */
 
@@ -120,4 +122,4 @@ class Proj4phpProjMoll {
     }
 }
 
-Proj4php::$proj['moll'] = new Proj4phpProjMoll();
+Proj4php::$proj['moll'] = new ProjMoll();

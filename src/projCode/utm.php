@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -30,7 +30,10 @@ namespace proj4php;
 /**
   Initialize Transverse Mercator projection
  */
-class Proj4phpProjUtm{
+
+use proj4php\Proj4php;
+
+class ProjUtm{
 
     //public $dependsOn = 'tmerc';
     
@@ -181,4 +184,4 @@ class Proj4phpProjUtm{
     }
 }
 
-Proj4php::$proj['utm'] = new Proj4phpProjUtm();
+Proj4php::$proj['utm'] = new ProjUtm();

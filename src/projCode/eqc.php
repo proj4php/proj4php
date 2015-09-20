@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -9,7 +9,10 @@ namespace proj4php;
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
 /* similar to equi.js FIXME proj4 uses eqc */
-class Proj4phpProjEqc {
+
+use proj4php\Proj4php;
+
+class ProjEqc {
 
     public function init() {
 
@@ -57,4 +60,4 @@ class Proj4phpProjEqc {
 
 }
 
-Proj4php::$proj['eqc'] = new Proj4phpProjEqc();
+Proj4php::$proj['eqc'] = new ProjEqc();

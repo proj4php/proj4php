@@ -1,5 +1,6 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
+
 /*******************************************************************************
   NAME                    LAMBERT CYLINDRICAL EQUAL AREA
 
@@ -42,7 +43,10 @@ namespace proj4php;
  *                      and Richard Greenwood rich@greenwoodma$p->com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
-class Proj4phpProjCea {
+
+use proj4php\Proj4php;
+
+class ProjCea {
     /* Initialize the Cylindrical Equal Area projection
       ------------------------------------------- */
 
@@ -95,4 +99,4 @@ class Proj4phpProjCea {
     }
 }
 
-Proj4php::$proj['cea'] = new Proj4phpProjCea();
+Proj4php::$proj['cea'] = new ProjCea();

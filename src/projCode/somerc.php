@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -23,7 +23,9 @@ namespace proj4php;
 
 *******************************************************************************/
 
-class Proj4phpProjSomerc {
+use proj4php\Proj4php;
+
+class ProjSomerc {
 
     /**
      * 
@@ -134,4 +136,4 @@ class Proj4phpProjSomerc {
 
 }
 
-Proj4php::$proj['somerc'] = new Proj4phpProjSomerc();
+Proj4php::$proj['somerc'] = new ProjSomerc();

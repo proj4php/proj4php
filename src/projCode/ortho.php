@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -31,7 +31,9 @@ namespace proj4php;
   Printing Office, Washington D.C., 1989.
  * ***************************************************************************** */
 
-class Proj4phpProjOrtho {
+use proj4php\Proj4php;
+
+class ProjOrtho {
     
     /* Initialize the Orthographic projection
       ------------------------------------- */
@@ -138,4 +140,4 @@ class Proj4phpProjOrtho {
 
 }
 
-Proj4php::$proj['ortho'] = new Proj4phpProjOrtho();
+Proj4php::$proj['ortho'] = new ProjOrtho();

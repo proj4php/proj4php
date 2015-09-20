@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -30,7 +30,10 @@ namespace proj4php;
 /**
   Initialize Transverse Mercator projection
  */
-class Proj4phpProjTmerc {
+
+use proj4php\Proj4php;
+
+class ProjTmerc {
     
     private $e0, $e1, $e2, $e3, $ml0;
     
@@ -165,4 +168,4 @@ class Proj4phpProjTmerc {
 
 }
 
-Proj4php::$proj['tmerc'] = new Proj4phpProjTmerc();
+Proj4php::$proj['tmerc'] = new ProjTmerc();

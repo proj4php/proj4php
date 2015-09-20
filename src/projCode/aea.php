@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /*******************************************************************************
   NAME                     ALBERS CONICAL EQUAL AREA
@@ -31,7 +31,10 @@ namespace proj4php;
  *                      and Richard Greenwood rich@greenwoodma$p->com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
-class Proj4phpProjAea {
+
+use proj4php\Proj4php;
+
+class ProjAea {
 
     /**
      *
@@ -183,4 +186,4 @@ class Proj4phpProjAea {
 
 }
 
-Proj4php::$proj['aea'] = new Proj4phpProjAea();
+Proj4php::$proj['aea'] = new ProjAea();

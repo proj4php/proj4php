@@ -8,8 +8,8 @@ This is a PHP-Class for geographic coordinates transformation using proj4 defini
 include("vendor/autoload.php");
 
 use proj4php\Proj4php;
-use proj4php\Proj4phpProj as Proj;
-use proj4php\proj4phpPoint as Point;
+use proj4php\Proj;
+use proj4php\Point;
 
 // Initialise Proj4
 $proj4 = new Proj4php();

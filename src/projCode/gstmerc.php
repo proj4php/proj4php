@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -8,7 +8,10 @@ namespace proj4php;
  *                      and Richard Greenwood rich@greenwoodma$p->com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
-class Proj4phpProjGstmerc {
+
+use proj4php\Proj4php;
+
+class ProjGstmerc {
 
     public function init() {
 
@@ -62,4 +65,4 @@ class Proj4phpProjGstmerc {
 
 }
 
-Proj4php::$proj['gstmerc'] = new Proj4phpProjGestmerc();
+Proj4php::$proj['gstmerc'] = new ProjGestmerc();

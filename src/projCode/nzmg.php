@@ -1,5 +1,6 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
+
 /**
  * Author : Julien Moquet
  * 
@@ -120,7 +121,10 @@ namespace proj4php;
 /**
   Initialize New Zealand Map Grip projection
  */
-class Proj4phpProjNzmg {
+
+use proj4php\Proj4php;
+
+class ProjNzmg {
 
     /**
      * iterations: Number of iterations to refine inverse transform.
@@ -336,4 +340,4 @@ class Proj4phpProjNzmg {
 
 }
 
-Proj4php::$proj['nzmg'] = new Proj4phpProjNzmg();
+Proj4php::$proj['nzmg'] = new ProjNzmg();

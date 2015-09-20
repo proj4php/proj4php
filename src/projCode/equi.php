@@ -1,5 +1,6 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
+
 /**
  * Author : Julien Moquet
  * 
@@ -29,7 +30,10 @@ namespace proj4php;
   U.S. Geological Survey Professional Paper 1453 , United State Government
   Printing Office, Washington D.C., 1989.
  *******************************************************************************/
-class Proj4phpProjEqui {
+
+use proj4php\Proj4php;
+
+class ProjEqui {
 
     public function init() {
         if( !$this->x0 )
@@ -78,4 +82,4 @@ class Proj4phpProjEqui {
     }
 }
 
-Proj4php::$proj['equi'] = new Proj4phpProjEqui();
+Proj4php::$proj['equi'] = new ProjEqui();

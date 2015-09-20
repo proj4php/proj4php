@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -30,7 +30,9 @@ namespace proj4php;
   Accessed: 12th November 2009
 ******************************************************************************/
 
-class Proj4phpProjGnom {
+use proj4php\Proj4php;
+
+class ProjGnom {
     
     /**
      * Initialize the Gnomonic projection
@@ -144,4 +146,4 @@ class Proj4phpProjGnom {
     }
 }
 
-Proj4php::$proj['gnom'] = new Proj4phpProjGnom();
+Proj4php::$proj['gnom'] = new ProjGnom();

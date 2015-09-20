@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -10,7 +10,10 @@ namespace proj4php;
  */
 
 // Initialize the Stereographic projection
-class Proj4phpProjStere {
+
+use proj4php\Proj4php;
+
+class ProjStere {
 
     protected $TOL = 1.e-8;
     protected $NITER = 8;
@@ -302,4 +305,4 @@ class Proj4phpProjStere {
 
 }
 
-Proj4php::$proj['stere'] = new Proj4phpProjStere();
+Proj4php::$proj['stere'] = new ProjStere();

@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -8,7 +8,10 @@ namespace proj4php;
  *                      and Richard Greenwood rich@greenwoodma$p->com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
-class Proj4phpProjSterea {
+
+use proj4php\Proj4php;
+
+class ProjSterea {
 
     public $dependsOn = 'gauss';
     
@@ -90,4 +93,4 @@ class Proj4phpProjSterea {
 
 }
 
-Proj4php::$proj['sterea'] = new Proj4phpProjSterea();
+Proj4php::$proj['sterea'] = new ProjSterea();

@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -37,7 +37,9 @@ namespace proj4php;
   Package", U.S. Geological Survey National Mapping Division, May 1982.
  * ***************************************************************************** */
 
-class Proj4phpProjLaea {
+use proj4php\Proj4php;
+
+class ProjLaea {
 
     protected $S_POLE = 1;
     protected $N_POLE = 2;
@@ -396,4 +398,4 @@ class Proj4phpProjLaea {
 
 }
 
-Proj4php::$proj['laea'] = new Proj4phpProjLaea();
+Proj4php::$proj['laea'] = new ProjLaea();

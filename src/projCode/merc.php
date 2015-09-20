@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -42,7 +42,9 @@ namespace proj4php;
 //static double false_easting = x0;	   /* x offset in meters			*/
 //scale_fact = k0 
 
-class Proj4phpProjMerc {
+use proj4php\Proj4php;
+
+class ProjMerc {
 
     public function init() {
         //?$this->temp = $this->r_minor / $this->r_major;
@@ -125,6 +127,6 @@ class Proj4phpProjMerc {
 
 }
 
-Proj4php::$proj['merc'] = new Proj4phpProjMerc();
+Proj4php::$proj['merc'] = new ProjMerc();
 
 

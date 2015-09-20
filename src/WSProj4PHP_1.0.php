@@ -62,8 +62,8 @@ if (isset( $_GET['format'] ) ) {
 
 
 $proj4 = new Proj4php();
-$projsource = new Proj4phpProj( $srcProjection, $proj4 );
-$projdest = new Proj4phpProj( $tgtProjection, $proj4 );
+$projsource = new Proj($srcProjection, $proj4);
+$projdest = new Proj($tgtProjection, $proj4);
 
 // check the projections
 if (Proj4php::$defs[$srcProjection] == Proj4php::$defs['WGS84'] && $srcProjection != 'EPSG:4326') {
@@ -89,10 +89,10 @@ if ($error === true) {
     }
 }
 
-$pointSrc = new proj4phpPoint( $x, $y );
-$pointDest = $proj4->transform( $projsource, $projdest, $pointSrc );
+$pointSrc = new Point($x, $y);
+$pointDest = $proj4->transform($projsource, $projdest, $pointSrc);
 
-$tgtProjection = str_replace( ':', '::', $tgtProjection );
+$tgtProjection = str_replace(':', '::', $tgtProjection);
 
 if ($format == 'json') {
     echo "{\"status\" :\"success\", \"point\" : {\"x\":" . $pointDest->x . ", \"y\":" . $pointDest->y . ",\"projection\" :\"" . $tgtProjection . "\"}}";

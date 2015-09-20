@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -8,7 +8,10 @@ namespace proj4php;
  *                      and Richard Greenwood rich@greenwoodma$p->com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
-class Proj4phpProjGauss {
+
+use proj4php\Proj4php;
+
+class ProjGauss {
 
     /**
      * 
@@ -73,4 +76,4 @@ class Proj4phpProjGauss {
 
 }
 
-Proj4php::$proj['gauss'] = new Proj4phpProjGauss();
+Proj4php::$proj['gauss'] = new ProjGauss();

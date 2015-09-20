@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -34,7 +34,9 @@ namespace proj4php;
 /* Variables common to all subroutines in this code file
 -----------------------------------------------------*/
 
-class Proj4phpProjEqdc {
+use proj4php\Proj4php;
+
+class ProjEqdc {
     
     /* Initialize the Equidistant Conic projection
       ------------------------------------------ */
@@ -151,4 +153,4 @@ class Proj4phpProjEqdc {
     }
 }
 
-Proj4php::$proj['eqdc'] = new Proj4phpProjEqdc();
+Proj4php::$proj['eqdc'] = new ProjEqdc();

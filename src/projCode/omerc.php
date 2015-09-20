@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -31,7 +31,9 @@ namespace proj4php;
   Printing Office, Washington D.C., 1989.
  * ***************************************************************************** */
 
-class Proj4phpProjOmerc {
+use proj4php\Proj4php;
+
+class ProjOmerc {
     /* Initialize the Oblique Mercator  projection
       ------------------------------------------ */
 
@@ -300,4 +302,4 @@ class Proj4phpProjOmerc {
 
 }
 
-Proj4php::$proj['omerc'] = new Proj4phpProjOmerc();
+Proj4php::$proj['omerc'] = new ProjOmerc();

@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -37,7 +37,9 @@ namespace proj4php;
   Package", U.S. Geological Survey National Mapping Division, May 1982.
  * ***************************************************************************** */
 
-class Proj4phpProjVandg {
+use proj4php\Proj4php;
+
+class ProjVandg {
     
     /* Initialize the Van Der Grinten projection
       ---------------------------------------- */
@@ -166,4 +168,4 @@ class Proj4phpProjVandg {
 
 }
 
-Proj4php::$proj['vandg'] = new Proj4phpProjVandg();
+Proj4php::$proj['vandg'] = new ProjVandg();

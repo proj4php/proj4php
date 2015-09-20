@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -13,6 +13,9 @@ namespace proj4php;
 /* Function to compute, phi4, the latitude for the inverse of the
   Polyconic projection.
   ------------------------------------------------------------ */
+
+use proj4php\Proj4php;
+
 function phi4z( $eccent, $e0, $e1, $e2, $e3, $a, $b, &$c, $phi ) {
     /*
     $sinphi;
@@ -88,7 +91,7 @@ function e4fn( $x ) {
   Printing Office, Washington D.C., 1989.
  * ***************************************************************************** */
 
-class Proj4phpProjPoly {
+class ProjPoly {
     
     /* Initialize the POLYCONIC projection
       ---------------------------------- */
@@ -191,4 +194,4 @@ class Proj4phpProjPoly {
 
 }
 
-Proj4php::$proj['poly'] = new Proj4phpProjPoly();
+Proj4php::$proj['poly'] = new ProjPoly();

@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /*******************************************************************************
   NAME                            CASSINI
@@ -32,7 +32,9 @@ namespace proj4php;
 // Initialize the Cassini projection
 // -----------------------------------------------------------------
 
-class Proj4phpProjCass {
+use proj4php\Proj4php;
+
+class ProjCass {
 
     public function init() {
         if( !$this->sphere ) {
@@ -116,4 +118,4 @@ class Proj4phpProjCass {
     }
 }
 
-Proj4php::$proj['cass'] = new Proj4phpProjCass();
+Proj4php::$proj['cass'] = new ProjCass();

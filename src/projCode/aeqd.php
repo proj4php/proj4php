@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -8,7 +8,10 @@ namespace proj4php;
  *                      and Richard Greenwood rich@greenwoodma$p->com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
-class Proj4phpProjAeqd {
+
+use proj4php\Proj4php;
+
+class ProjAeqd {
 
     public function init() {
         $this->sin_p12 = sin( $this->lat0 );
@@ -99,4 +102,4 @@ class Proj4phpProjAeqd {
 
 }
 
-Proj4php::$proj['aeqd'] = new Proj4phpProjAeqd();
+Proj4php::$proj['aeqd'] = new ProjAeqd();

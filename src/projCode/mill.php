@@ -1,5 +1,5 @@
 <?php
-namespace proj4php;
+namespace proj4php\projCode;
 
 /**
  * Author : Julien Moquet
@@ -37,7 +37,9 @@ namespace proj4php;
   Package", U.S. Geological Survey National Mapping Division, May 1982.
  * ***************************************************************************** */
 
-class Proj4phpProjMill {
+use proj4php\Proj4php;
+
+class ProjMill {
     /* Initialize the Miller Cylindrical projection
       ------------------------------------------- */
 
@@ -81,4 +83,4 @@ class Proj4phpProjMill {
     }
 }
 
-Proj4php::$proj['mill'] = new Proj4phpProjMill();
+Proj4php::$proj['mill'] = new ProjMill();

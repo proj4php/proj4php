@@ -7,7 +7,7 @@ This is a PHP-Class for geographic coordinates transformation using proj4 defini
 In this branch we are aiming to bring the package into line with most curent PHP practices. These include:
 
 * Namespacing.
-* PHP5.4+ syntax
+* PHP5.4+ syntax (not aiming to be bleeding edge here)
 * [PSR-2 styling](http://www.php-fig.org/psr/psr-2/)
 * [PSR-4 autoloader](http://www.php-fig.org/psr/psr-4/)
 * Tests. This is difficult until the other changes are made.

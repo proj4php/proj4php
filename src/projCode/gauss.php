@@ -16,8 +16,8 @@ class ProjGauss {
     /**
      * 
      */
-    public function init() {
-        
+    public function init()
+    {
         $sphi = sin( $this->lat0 );
         $cphi = cos( $this->lat0 );
         $cphi *= $cphi;
@@ -33,13 +33,14 @@ class ProjGauss {
      * @param type $p
      * @return type 
      */
-    public function forward( $p ) {
+    public function forward($p)
+    {
         $lon = $p->x;
         $lat = $p->y;
 
         $p->y = 2.0 * atan( $this->K * pow( tan( 0.5 * $lat + Proj4php::$common->FORTPI ), $this->C ) * Proj4php::$common->srat( $this->e * sin( $lat ), $this->ratexp ) ) - Proj4php::$common->HALF_PI;
         $p->x = $this->C * $lon;
-        
+
         return $p;
     }
 
@@ -48,29 +49,31 @@ class ProjGauss {
      * @param type $p
      * @return null 
      */
-    public function inverse( $p ) {
-        
+    public function inverse($p)
+    {
         $DEL_TOL = 1e-14;
         $lon = $p->x / $this->C;
         $lat = $p->y;
         $num = pow( tan( 0.5 * $lat + Proj4php::$common->FORTPI ) / $this->K, 1. / $this->C );
-        
-        for( $i = Proj4php::$common->MAX_ITER; $i > 0; --$i ) {
+
+        for ($i = Proj4php::$common->MAX_ITER; $i > 0; --$i) {
             $lat = 2.0 * atan( $num * Proj4php::$common->srat( $this->e * sin( $p->y ), -0.5 * $this->e ) ) - Proj4php::$common->HALF_PI;
-            if( abs( $lat - $p->y ) < $DEL_TOL )
+            if (abs( $lat - $p->y ) < $DEL_TOL) {
                 break;
+            }
+
             $p->y = $lat;
         }
-        
+
         /* convergence failed */
-        if( !$i ) {
-            Proj4php::reportError( "gauss:inverse:convergence failed" );
+        if ( ! $i) {
+            Proj4php::reportError("gauss:inverse:convergence failed");
             return null;
         }
-        
+
         $p->x = $lon;
         $p->y = $lat;
-        
+
         return $p;
     }
 

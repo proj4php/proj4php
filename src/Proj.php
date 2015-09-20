@@ -80,12 +80,13 @@ class Proj
      * Constructor for Proj4php::Proj objects
      *
      * Parameters:
-     * $srsCode - a code for map projection definition parameters.  These are usually
+     * $srsCode - a code for map projection definition parameters. These are usually
      * (but not always) EPSG codes.
      */
     public function __construct($srsCode) {
         
         $this->srsCodeInput = $srsCode;
+
         //check to see if $this is a WKT string
         if ((strpos($srsCode, 'GEOGCS' ) !== false) ||
             (strpos($srsCode, 'GEOCCS' ) !== false) ||
@@ -142,6 +143,7 @@ class Proj
             $this->srsAuth = '';
             $this->srsProjNumber = $this->srsCode;
         }
+
         $this->loadProjDefinition();
     }
 
@@ -298,11 +300,10 @@ class Proj
     {
         $this->projection = new Proj4php::$proj[$this->projName];
         Proj4php::extend($this->projection, $this);
-      // initiate depending class
 
-        if (false !== ($dependsOn = isset($this->projection->dependsOn) && !empty($this->projection->dependsOn) ? $this->projection->dependsOn : false))
-        {
-            Proj4php::extend( Proj4php::$proj[$dependsOn], $this->projection);
+        // initiate depending class
+        if (false !== ($dependsOn = isset($this->projection->dependsOn) && !empty($this->projection->dependsOn) ? $this->projection->dependsOn : false)) {
+            Proj4php::extend(Proj4php::$proj[$dependsOn], $this->projection);
             Proj4php::$proj[$dependsOn]->init();
             Proj4php::extend($this->projection, Proj4php::$proj[$dependsOn]);
         }
@@ -626,7 +627,7 @@ class Proj
         }
 
         if (!isset($this->a)) {    // do we have an ellipsoid?
-            if (!isset($this->ellps ) || strlen($this->ellps ) == 0 || !array_key_exists($this->ellps, Proj4php::$ellipsoid)) {
+            if (!isset($this->ellps) || strlen($this->ellps ) == 0 || !array_key_exists($this->ellps, Proj4php::$ellipsoid)) {
                 $ellipse = Proj4php::$ellipsoid['WGS84'];
             } else {
                 $ellipse = Proj4php::$ellipsoid[$this->ellps];

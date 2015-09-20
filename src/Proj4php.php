@@ -14,19 +14,21 @@ use Exception;
 class Proj4php {
     protected $defaultDatum = 'WGS84';
 
+    // FIXME: (https://github.com/proj4php/proj4php/issues/4)
     // Making these static means they are global, effectively shared between
     // all instantiations of this class. These properties can only be accessed
     // statically (i.e. not through an instamtiation) but will only be set once
     // this class has been instantiated once. That's just all wrong. These should
     // not be static.
-    public static $ellipsoid = array( );
+
+    public static $ellipsoid = array();
     public static $common = null;
-    public static $datum = array( );
-    public static $defs = array( );
-    public static $wktProjections = array( );
+    public static $datum = array();
+    public static $defs = array();
+    public static $wktProjections = array();
     public static $WGS84 = null;
-    public static $primeMeridian = array( );
-    public static $proj = array( );
+    public static $primeMeridian = array();
+    public static $proj = array();
 
     public $msg = '';
 

@@ -123,7 +123,7 @@ class Common
             }
         }
 
-        assert( "false; /* phi2z has NoConvergence */" );
+        assert("false; /* phi2z has NoConvergence */");
 
         return (-9999);
     }
@@ -396,6 +396,7 @@ class Common
             //$phi -= $t * ($t * sqrt($t)) * $k;
             $t = ($this->pj_mlfn( $phi, $s, cos( $phi ), $en ) - $arg) * ($t * sqrt( $t )) * $k;
             $phi -= $t;
+
             if (abs($t) < Proj4php::$common->EPSLN) {
                 return $phi;
             }

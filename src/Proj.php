@@ -166,8 +166,8 @@ class Proj
         }
 
         // else check for def on the server
-        $filename = dirname(__FILE__) . '/defs/' . strtoupper($this->srsAuth ) . $this->srsProjNumber . '.php';
-//echo " LOADING $filename ";
+        $filename = __DIR__ . '/defs/' . strtoupper($this->srsAuth ) . $this->srsProjNumber . '.php';
+
         try {
             Proj4php::loadScript($filename);
             // success
@@ -180,11 +180,8 @@ class Proj
 
     /**
      * Function: loadFromService
-     *    Creates the REST URL for loading the definition from a web service and
-     *    loads it.
-     *
-     * DO IT AGAIN. : SHOULD PHP CODE BE GET BY WEBSERVICES?
-     * Oh no, certainlu not!
+     * Creates the REST URL for loading the definition from a web service and
+     * loads it.
      */
     public function loadFromService()
     {
@@ -261,13 +258,13 @@ class Proj
 
     /**
      * Function: loadProjCodeSuccess
-     *    Loads any proj dependencies or continue on to final initialization.
+     * Loads any proj dependencies or continue on to final initialization.
      *
      */
     public function loadProjCodeSuccess($projName)
     {
         if (isset(Proj4php::$proj[$projName]->dependsOn) && !empty(Proj4php::$proj[$projName]->dependsOn)) {
-            $this->loadProjCode( Proj4php::$proj[$projName]->dependsOn);
+            $this->loadProjCode(Proj4php::$proj[$projName]->dependsOn);
         } else {
             $this->initTransforms();
         }
@@ -281,7 +278,7 @@ class Proj
      */
     public function loadProjCodeFailure($projName)
     {
-        Proj4php::reportError( "failed to find projection file for: " . $projName);
+        Proj4php::reportError("failed to find projection file for: " . $projName);
         //TBD initialize with identity transforms so proj will still work?
     }
 
@@ -351,12 +348,13 @@ class Proj
      */
     public function parseWKT($wkt)
     {
-        if (false === ($match = preg_match($this->wktRE, $wkt, $wktMatch )) )
+        if (false === ($match = preg_match($this->wktRE, $wkt, $wktMatch))) {
             return;
+        }
 
         $wktObject = $wktMatch[1];
         $wktContent = $wktMatch[2];
-        $wktTemp = explode( ",", $wktContent);
+        $wktTemp = explode(",", $wktContent);
 
         $wktName = (strtoupper($wktObject) == "TOWGS84") ? "TOWGS84" : array_shift($wktTemp);
         $wktName = preg_replace( '/^\"/', "", $wktName);
@@ -379,7 +377,7 @@ class Proj
 
             // ???
             $obj .= $token;
-            if($bkCount === 0) {
+            if ($bkCount === 0) {
                 array_push($wktArray, $obj);
                 $obj = "";
             } else {
@@ -389,7 +387,7 @@ class Proj
 
         //do something based on the type of the wktObject being parsed
         //add in variations in the spelling as required
-        switch($wktObject) {
+        switch ($wktObject) {
             case 'LOCAL_CS':
                 $this->projName = 'identity';
                 $this->localCS = true;
@@ -432,7 +430,7 @@ class Proj
                 $value = floatval( array_shift($wktArray ));
                 //there may be many variations on the wktName values, add in case
                 //statements as required
-                switch($name) {
+                switch ($name) {
                     case 'false_easting':
                         $this->x0 = $value;
                         break;
@@ -461,7 +459,7 @@ class Proj
             case 'AXIS':
                 $name = strtolower($wktName);
                 $value = array_shift($wktArray);
-                switch($value) {
+                switch ($value) {
                     case 'EAST' : $value = 'e';
                         break;
                     case 'WEST' : $value = 'w';
@@ -481,7 +479,7 @@ class Proj
                 if (!$this->axis) {
                     $this->axis = "enu";
                 }
-                switch($name) {
+                switch ($name) {
                     case 'X': $this->axis = $value . substr($this->axis, 1, 2);
                         break;
                     case 'Y': $this->axis = substr($this->axis, 0, 1 ) . $value . substr($this->axis, 2, 1);
@@ -530,8 +528,9 @@ class Proj
                 $paramVal = $property[1];
             }
 
-            switch (trim($paramName)) {  // trim out spaces
-                case "": break;   // throw away nameless parameter
+            switch (trim($paramName)) {
+                // throw away nameless parameter
+                case "": break;
                 case "title": $this->title = $paramVal;
                     break;
                 case "proj": $this->projName = trim($paramVal);
@@ -594,15 +593,18 @@ class Proj
                 // DGR 2010-11-12: axis
                 case "axis": $paramVal = trim($paramVal);
                     $legalAxis = "ewnsud";
-                    if (strlen( paramVal ) == 3 &&
-                        strpos($legalAxis, substr($paramVal, 0, 1 ) ) !== false &&
-                        strpos($legalAxis, substr($paramVal, 1, 1 ) ) !== false &&
-                        strpos($legalAxis, substr($paramVal, 2, 1 ) ) !== false) {
+                    if (strlen(paramVal) == 3 &&
+                        strpos($legalAxis, substr($paramVal, 0, 1)) !== false &&
+                        strpos($legalAxis, substr($paramVal, 1, 1)) !== false &&
+                        strpos($legalAxis, substr($paramVal, 2, 1)) !== false
+                    ) {
                         $this->axis = $paramVal;
                     } //FIXME: be silent ?
+
                     break;
                 case "no_defs": break;
-                default: //alert("Unrecognized parameter: " . paramName);
+                default:
+                    //alert("Unrecognized parameter: " . paramName);
             } // switch()
         } // for paramArray
 
@@ -616,11 +618,11 @@ class Proj
      */
     public function deriveConstants()
     {
-        if (isset($this->nagrids ) && $this->nagrids == '@null') {
+        if (isset($this->nagrids) && $this->nagrids == '@null') {
             $this->datumCode = 'none';
         }
 
-        if (isset($this->datumCode ) && $this->datumCode != 'none') {
+        if (isset($this->datumCode) && $this->datumCode != 'none') {
             $datumDef = Proj4php::$datum[$this->datumCode];
 
             if (is_array($datumDef)) {
@@ -630,8 +632,9 @@ class Proj
             }
         }
 
-        if (!isset($this->a)) {    // do we have an ellipsoid?
-            if (!isset($this->ellps) || strlen($this->ellps ) == 0 || !array_key_exists($this->ellps, Proj4php::$ellipsoid)) {
+        // Do we have an ellipsoid?
+        if (!isset($this->a)) {
+            if ( ! isset($this->ellps) || strlen($this->ellps ) == 0 || ! array_key_exists($this->ellps, Proj4php::$ellipsoid)) {
                 $ellipse = Proj4php::$ellipsoid['WGS84'];
             } else {
                 $ellipse = Proj4php::$ellipsoid[$this->ellps];
@@ -644,7 +647,7 @@ class Proj
             $this->b = (1.0 - 1.0 / $this->rf) * $this->a;
         }
 
-        if ( (isset($this->rf) && $this->rf === 0) || abs($this->a - $this->b) < Proj4php::$common->EPSLN) {
+        if ((isset($this->rf) && $this->rf === 0) || abs($this->a - $this->b) < Proj4php::$common->EPSLN) {
             $this->sphere = true;
             $this->b = $this->a;
         }

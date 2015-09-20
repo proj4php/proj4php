@@ -12,8 +12,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjEqc {
-
+class Eqc
+{
     public function init() {
 
         if( !$this->x0 )
@@ -59,5 +59,3 @@ class ProjEqc {
     }
 
 }
-
-Proj4php::$proj['eqc'] = new ProjEqc();

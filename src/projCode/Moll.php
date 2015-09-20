@@ -35,7 +35,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjMoll {
+class Moll
+{
     /* Initialize the Mollweide projection
       ------------------------------------ */
 
@@ -121,5 +122,3 @@ class ProjMoll {
         return $p;
     }
 }
-
-Proj4php::$proj['moll'] = new ProjMoll();

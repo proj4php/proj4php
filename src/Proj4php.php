@@ -402,17 +402,24 @@ class Proj4php {
     /**
      * Function : loadScript
      * adapted from original. PHP is simplier.
-     * FIXME: we should ne able to stick to autoloading to do this.
+     * FIXME: we should be able to stick to autoloading to do this.
      */
-    public static function loadScript($filename, $onload = null, $onfail = null, $loadCheck = null)
+    public static function loadScript($filename)
     {
         if (stripos($filename, 'http://') !== false ) {
             return @file_get_contents($filename);
         } elseif (file_exists($filename)) {
-            require_once($filename);
+            // Get the definition. An array will be returned.
+            $def = require_once($filename);
+
+            // Add any definitions we have imported to the global (for now) defs array.
+            foreach($def as $def_name => $def_details) {
+                Proj4php::$defs[$def_name] = $def_details;
+            }
+
             return true;
         } else {
-            throw(new Exception("File $filename could not be found or was not able to be loaded."));
+            throw new Exception("File $filename could not be found or was not able to be loaded.");
         }
     }
 

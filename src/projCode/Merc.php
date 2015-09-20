@@ -44,8 +44,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjMerc {
-
+class Merc
+{
     public function init() {
         //?$this->temp = $this->r_minor / $this->r_major;
         //$this->temp = $this->b / $this->a;
@@ -126,7 +126,3 @@ class ProjMerc {
     }
 
 }
-
-Proj4php::$proj['merc'] = new ProjMerc();
-
-

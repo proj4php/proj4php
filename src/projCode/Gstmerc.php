@@ -11,8 +11,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjGstmerc {
-
+class Gstmerc
+{
     public function init() {
 
         // array of:  a, b, lon0, lat0, k0, x0, y0
@@ -64,5 +64,3 @@ class ProjGstmerc {
     }
 
 }
-
-Proj4php::$proj['gstmerc'] = new ProjGestmerc();

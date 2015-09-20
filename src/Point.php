@@ -5,7 +5,7 @@ namespace proj4php;
  * Author : Julien Moquet
  * 
  * Inspired by Proj4js from Mike Adair madairATdmsolutions.ca
- *                      and Richard Greenwood rich@greenwoodmap.com 
+ * and Richard Greenwood rich@greenwoodmap.com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
 
@@ -68,7 +68,7 @@ class Point
      *
      * Return:
      * {String} String representation of Proj4js.Point object. 
-     *           (ex. <i>"x=5,y=42"</i>)
+     * (ex. <i>"x=5,y=42"</i>)
      */
     public function toString()
     {
@@ -81,7 +81,7 @@ class Point
      *
      * Return:
      * {String} Shortened String representation of Proj4js.Point object. 
-     *         (ex. <i>"5, 42"</i>)
+     * (ex. <i>"5, 42"</i>)
      */
     public function toShortString()
     {

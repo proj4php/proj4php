@@ -46,7 +46,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjCea {
+class Cea
+{
     /* Initialize the Cylindrical Equal Area projection
       ------------------------------------------- */
 
@@ -98,5 +99,3 @@ class ProjCea {
         return $p;
     }
 }
-
-Proj4php::$proj['cea'] = new ProjCea();

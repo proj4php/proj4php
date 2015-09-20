@@ -26,8 +26,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjKrovak {
-
+class Krovak
+{
     /**
      * 
      */
@@ -157,5 +157,3 @@ class ProjKrovak {
     }
 
 }
-
-Proj4php::$proj['krovak'] = new ProjKrovak();

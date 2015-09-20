@@ -33,8 +33,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjEqui {
-
+class Equi
+{
     public function init() {
         if( !$this->x0 )
             $this->x0 = 0;
@@ -81,5 +81,3 @@ class ProjEqui {
         $p->y = $lat;
     }
 }
-
-Proj4php::$proj['equi'] = new ProjEqui();

@@ -11,8 +11,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjGauss {
-
+class Gauss
+{
     /**
      * 
      */
@@ -78,5 +78,3 @@ class ProjGauss {
     }
 
 }
-
-Proj4php::$proj['gauss'] = new ProjGauss();

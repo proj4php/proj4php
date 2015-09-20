@@ -39,8 +39,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjVandg {
-    
+class Vandg
+{
     /* Initialize the Van Der Grinten projection
       ---------------------------------------- */
     public function init() {
@@ -167,5 +167,3 @@ class ProjVandg {
     }
 
 }
-
-Proj4php::$proj['vandg'] = new ProjVandg();

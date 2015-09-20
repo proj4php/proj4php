@@ -102,7 +102,8 @@ class Proj
         // DGR 2008-08-03 : support urn and url
         if (strpos($srsCode, 'urn:' ) === 0) {
             //urn:ORIGINATOR:def:crs:CODESPACE:VERSION:ID
-            $urn = explode( ':', $srsCode);
+            $urn = explode(':', $srsCode);
+
             if (($urn[1] == 'ogc' || $urn[1] == 'x-ogc') &&
                 ($urn[2] == 'def') &&
                 ($urn[3] == 'crs')
@@ -125,17 +126,17 @@ class Proj
 
         $this->srsCode = strtoupper($srsCode);
 
-        if (strpos($this->srsCode, "EPSG" ) === 0) {
+        if (strpos($this->srsCode, "EPSG") === 0) {
             $this->srsCode = $this->srsCode;
             $this->srsAuth = 'epsg';
             $this->srsProjNumber = substr($this->srsCode, 5);
             // DGR 2007-11-20 : authority IGNF
-        } elseif (strpos($this->srsCode, "IGNF" ) === 0) {
+        } elseif (strpos($this->srsCode, "IGNF") === 0) {
             $this->srsCode = $this->srsCode;
             $this->srsAuth = 'IGNF';
             $this->srsProjNumber = substr($this->srsCode, 5);
             // DGR 2008-06-19 : pseudo-authority CRS for WMS
-        } elseif (strpos($this->srsCode, "CRS" ) === 0) {
+        } elseif (strpos($this->srsCode, "CRS") === 0) {
             $this->srsCode = $this->srsCode;
             $this->srsAuth = 'CRS';
             $this->srsProjNumber = substr($this->srsCode, 4);
@@ -158,20 +159,22 @@ class Proj
      */
     public function loadProjDefinition()
     {
-        //check in memory
+        // Check in memory
         if (array_key_exists($this->srsCode, Proj4php::$defs)) {
             $this->defsLoaded();
             return;
         }
 
-        //else check for def on the server
-        $filename = dirname( __FILE__ ) . '/defs/' . strtoupper($this->srsAuth ) . $this->srsProjNumber . '.php';
-
+        // else check for def on the server
+        $filename = dirname(__FILE__) . '/defs/' . strtoupper($this->srsAuth ) . $this->srsProjNumber . '.php';
+//echo " LOADING $filename ";
         try {
             Proj4php::loadScript($filename);
-            $this->defsLoaded(); // succes
+            // success
+            $this->defsLoaded();
         } catch (Exception $e) {
-            $this->loadFromService(); // fail
+            // fail
+            $this->loadFromService();
         }
     }
 
@@ -180,8 +183,8 @@ class Proj
      *    Creates the REST URL for loading the definition from a web service and
      *    loads it.
      *
-     *
-     * DO IT AGAIN. : SHOULD PHP CODE BE GET BY WEBSERVICES ?
+     * DO IT AGAIN. : SHOULD PHP CODE BE GET BY WEBSERVICES?
+     * Oh no, certainlu not!
      */
     public function loadFromService()
     {
@@ -231,9 +234,9 @@ class Proj
 
     /**
      * Function: loadProjCode
-     *    Loads projection class code dynamically if required.
-     *     Projection code may be included either through a script tag or in
-     *     a built version of proj4php
+     * Loads projection class code dynamically if required.
+     * Projection code may be included either through a script tag or in
+     * a built version of proj4php
      *
      * An exception occurs if the projection is not found.
      */
@@ -244,13 +247,14 @@ class Proj
             return;
         }
 
-        //the filename for the projection code
-        $filename = dirname( __FILE__ ) . '/projCode/' . $projName . '.php';
+        // The class name for the projection code
+        $classname = '\\proj4php\\projCode\\' . ucfirst($projName);
 
-        try {
-            Proj4php::loadScript($filename);
+        if (class_exists($classname)) {
+            // Instantiate the class then store it in the global static (for now) $prog array.
+            Proj4php::$proj[$projName] = new $classname;
             $this->loadProjCodeSuccess($projName);
-        } catch (Exception $e) {
+        } else {
             $this->loadProjCodeFailure($projName);
         }
     }

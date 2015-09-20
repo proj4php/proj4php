@@ -13,8 +13,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjStere {
-
+class Stere
+{
     protected $TOL = 1.e-8;
     protected $NITER = 8;
     protected $CONV = 1.e-10;
@@ -304,5 +304,3 @@ class ProjStere {
     }
 
 }
-
-Proj4php::$proj['stere'] = new ProjStere();

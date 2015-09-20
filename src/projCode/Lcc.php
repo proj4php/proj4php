@@ -35,8 +35,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjLcc {
-
+class Lcc
+{
     public function init() {
         // array of:  r_maj,r_min,lat1,lat2,c_lon,c_lat,false_east,false_north
         //double c_lat;                   /* center latitude                      */
@@ -165,5 +165,3 @@ class ProjLcc {
         return $p;
     }
 }
-
-Proj4php::$proj['lcc'] = new ProjLcc();

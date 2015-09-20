@@ -36,8 +36,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjEqdc {
-    
+class Eqdc
+{
     /* Initialize the Equidistant Conic projection
       ------------------------------------------ */
     public function init() {
@@ -152,5 +152,3 @@ class ProjEqdc {
         return null;
     }
 }
-
-Proj4php::$proj['eqdc'] = new ProjEqdc();

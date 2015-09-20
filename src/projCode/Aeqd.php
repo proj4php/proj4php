@@ -11,8 +11,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjAeqd {
-
+class Aeqd
+{
     public function init() {
         $this->sin_p12 = sin( $this->lat0 );
         $this->cos_p12 = cos( $this->lat0 );
@@ -101,5 +101,3 @@ class ProjAeqd {
     }
 
 }
-
-Proj4php::$proj['aeqd'] = new ProjAeqd();

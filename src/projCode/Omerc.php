@@ -33,7 +33,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjOmerc {
+class Omerc
+{
     /* Initialize the Oblique Mercator  projection
       ------------------------------------------ */
 
@@ -301,5 +302,3 @@ class ProjOmerc {
     }
 
 }
-
-Proj4php::$proj['omerc'] = new ProjOmerc();

@@ -36,8 +36,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjSinu {
-    
+class Sinu
+{
     /* Initialize the Sinusoidal projection
       ------------------------------------ */
     public function init() {
@@ -139,5 +139,3 @@ class ProjSinu {
     }
 
 }
-
-Proj4php::$proj['sinu'] = new ProjSinu();

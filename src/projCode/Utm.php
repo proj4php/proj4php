@@ -33,15 +33,30 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjTmerc {
+class Utm
+{
+    //public $dependsOn = 'tmerc';
     
+    public $utmSouth = false; // UTM north/south
     private $e0, $e1, $e2, $e3, $ml0;
-    
+
     /**
-     * 
+     *
+     * @return void
      */
     public function init() {
-        
+
+        if( !isset($this->zone) ) {
+            Proj4php::reportError( "utm:init: zone must be specified for UTM" );
+            return;
+        }
+
+        $this->lat0 = 0.0;
+        $this->long0 = ((6 * abs( $this->zone )) - 183) * Proj4php::$common->D2R;
+        $this->x0 = 500000.0;
+        $this->y0 = $this->utmSouth ? 10000000.0 : 0.0;
+        $this->k0 = 0.9996;
+
         $this->e0 = Proj4php::$common->e0fn( $this->es );
         $this->e1 = Proj4php::$common->e1fn( $this->es );
         $this->e2 = Proj4php::$common->e2fn( $this->es );
@@ -53,8 +68,9 @@ class ProjTmerc {
       Transverse Mercator Forward  - long/lat to x/y
       long/lat in radians
      */
+
     public function forward( $p ) {
-        
+
         $lon = $p->x;
         $lat = $p->y;
 
@@ -85,16 +101,16 @@ class ProjTmerc {
             $t = pow( $tq, 2 );
             $con = 1.0 - $this->es * pow( $sin_phi, 2 );
             $n = $this->a / sqrt( $con );
-            
+
             $ml = $this->a * Proj4php::$common->mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $lat );
 
             $x = $this->k0 * $n * $al * (1.0 + $als / 6.0 * (1.0 - $t + $c + $als / 20.0 * (5.0 - 18.0 * $t + pow( $t, 2 ) + 72.0 * $c - 58.0 * $this->ep2))) + $this->x0;
             $y = $this->k0 * ($ml - $this->ml0 + $n * $tq * ($als * (0.5 + $als / 24.0 * (5.0 - $t + 9.0 * $c + 4.0 * pow( $c, 2 ) + $als / 30.0 * (61.0 - 58.0 * $t + pow( $t, 2 ) + 600.0 * $c - 330.0 * $this->ep2))))) + $this->y0;
         }
-        
+
         $p->x = $x;
         $p->y = $y;
-        
+
         return $p;
     }
 
@@ -102,11 +118,10 @@ class ProjTmerc {
       Transverse Mercator Inverse  -  x/y to long/lat
      */
     public function inverse( $p ) {
-        
+
         #$phi;  /* temporary angles       */
         #$delta_phi; /* difference between longitudes    */
         $max_iter = 6;      /* maximun number of iterations */
-
         if( isset($this->sphere) && $this->sphere === true ) { /* spherical form */
             $f = exp( $p->x / ($this->a * $this->k0) );
             $g = .5 * ($f - 1 / $f);
@@ -127,7 +142,7 @@ class ProjTmerc {
 
             $con = ($this->ml0 + $y / $this->k0) / $this->a;
             $phi = $con;
-            
+
             for( $i = 0; true; $i++ ) {
                 $delta_phi = (($con + $this->e1 * sin( 2.0 * $phi ) - $this->e2 * sin( 4.0 * $phi ) + $this->e3 * sin( 6.0 * $phi )) / $this->e0) - $phi;
                 $phi += $delta_phi;
@@ -138,6 +153,8 @@ class ProjTmerc {
                     return(95);
                 }
             } // for()
+
+
             if( abs( $phi ) < Proj4php::$common->HALF_PI ) {
                 // sincos(phi, &sin_phi, &cos_phi);
                 $sin_phi = sin( $phi );
@@ -159,13 +176,10 @@ class ProjTmerc {
                 $lon = $this->long0;
             }
         }
-        
+
         $p->x = $lon;
         $p->y = $lat;
-        
+
         return $p;
     }
-
 }
-
-Proj4php::$proj['tmerc'] = new ProjTmerc();

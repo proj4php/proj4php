@@ -34,18 +34,19 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjAea {
-
+class Aea
+{
     /**
      *
      * @return void 
      */
-    public function init() {
-
-        if( abs( $this->lat1 + $this->lat2 ) < Proj4php::$common->EPSLN ) {
+    public function init()
+    {
+        if (abs( $this->lat1 + $this->lat2 ) < Proj4php::$common->EPSLN) {
             Proj4php::reportError( "aeaInitEqualLatitudes" );
             return;
         }
+
         $this->temp = $this->b / $this->a;
         $this->es = 1.0 - pow( $this->temp, 2 );
         $this->e3 = sqrt( $this->es );
@@ -73,7 +74,7 @@ class ProjAea {
         } else {
             $this->ns0 = $this->con;
         }
-        
+
         $this->c = $this->ms1 * $this->ms1 + $this->ns0 * $this->qs1;
         $this->rh = $this->a * sqrt( $this->c - $this->ns0 * $this->qs0 ) / $this->ns0;
     }
@@ -185,5 +186,3 @@ class ProjAea {
     }
 
 }
-
-Proj4php::$proj['aea'] = new ProjAea();

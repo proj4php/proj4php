@@ -11,8 +11,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjSterea {
-
+class Sterea
+{
     public $dependsOn = 'gauss';
     
     /**
@@ -92,5 +92,3 @@ class ProjSterea {
     }
 
 }
-
-Proj4php::$proj['sterea'] = new ProjSterea();

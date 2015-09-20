@@ -39,7 +39,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjMill {
+class Mill
+{
     /* Initialize the Miller Cylindrical projection
       ------------------------------------------- */
 
@@ -82,5 +83,3 @@ class ProjMill {
         return $p;
     }
 }
-
-Proj4php::$proj['mill'] = new ProjMill();

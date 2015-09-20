@@ -39,8 +39,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjLaea {
-
+class Laea
+{
     protected $S_POLE = 1;
     protected $N_POLE = 2;
     protected $EQUIT = 3;
@@ -397,5 +397,3 @@ class ProjLaea {
     }
 
 }
-
-Proj4php::$proj['laea'] = new ProjLaea();

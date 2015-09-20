@@ -32,8 +32,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjGnom {
-    
+class Gnom
+{
     /**
      * Initialize the Gnomonic projection
      * 
@@ -145,5 +145,3 @@ class ProjGnom {
         return $p;
     }
 }
-
-Proj4php::$proj['gnom'] = new ProjGnom();

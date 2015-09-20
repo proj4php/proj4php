@@ -34,8 +34,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjCass {
-
+class Cass
+{
     public function init() {
         if( !$this->sphere ) {
             $this->en = Proj4php::$common->pj_enfn( $this->es );
@@ -117,5 +117,3 @@ class ProjCass {
         return $p;
     }
 }
-
-Proj4php::$proj['cass'] = new ProjCass();

@@ -124,8 +124,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjNzmg {
-
+class Nzmg
+{
     /**
      * iterations: Number of iterations to refine inverse transform.
      *     0 -> km accuracy
@@ -339,5 +339,3 @@ class ProjNzmg {
     }
 
 }
-
-Proj4php::$proj['nzmg'] = new ProjNzmg();

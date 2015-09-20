@@ -91,8 +91,8 @@ function e4fn( $x ) {
   Printing Office, Washington D.C., 1989.
  * ***************************************************************************** */
 
-class ProjPoly {
-    
+class Poly
+{
     /* Initialize the POLYCONIC projection
       ---------------------------------- */
     public function init() {
@@ -193,5 +193,3 @@ class ProjPoly {
     }
 
 }
-
-Proj4php::$proj['poly'] = new ProjPoly();

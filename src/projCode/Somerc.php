@@ -25,8 +25,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjSomerc {
-
+class Somerc
+{
     /**
      * 
      */
@@ -135,5 +135,3 @@ class ProjSomerc {
     }
 
 }
-
-Proj4php::$proj['somerc'] = new ProjSomerc();

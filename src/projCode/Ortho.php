@@ -33,8 +33,8 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 
-class ProjOrtho {
-    
+class Ortho
+{
     /* Initialize the Orthographic projection
       ------------------------------------- */
     public function init( $def ) {
@@ -139,5 +139,3 @@ class ProjOrtho {
     }
 
 }
-
-Proj4php::$proj['ortho'] = new ProjOrtho();

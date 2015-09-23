@@ -18,7 +18,10 @@ class Sterea extends Gauss
      */
     public function init()
     {
-        if( !$this->rc ) {
+        // Initialise dependant projection first.
+        parent::init();
+
+        if( !$this->rc) {
             Proj4php::reportError("sterea:init:E_ERROR_0");
             return;
         }

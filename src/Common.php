@@ -368,7 +368,7 @@ class Common
      * @param type $en
      * @return type
      */
-    public function static pj_mlfn($phi, $sphi, $cphi, $en)
+    public static function pj_mlfn($phi, $sphi, $cphi, $en)
     {
         $cphi *= $sphi;
         $sphi *= $sphi;

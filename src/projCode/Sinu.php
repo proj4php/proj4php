@@ -35,6 +35,7 @@ namespace proj4php\projCode;
  * ***************************************************************************** */
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Sinu
 {
@@ -46,7 +47,7 @@ class Sinu
         #$this->R = 6370997.0; //Radius of earth
 
         if( !$this->sphere ) {
-            $this->en = Proj4php::$common->pj_enfn( $this->es );
+            $this->en = Common::pj_enfn( $this->es );
         } else {
             $this->n = 1.;
             $this->m = 0.;
@@ -66,17 +67,17 @@ class Sinu
 
         /* Forward equations
           ----------------- */
-        $lon = Proj4php::$common->adjust_lon( $lon - $this->long0 );
+        $lon = Common::adjust_lon( $lon - $this->long0 );
         
         if( isset($this->sphere) ) {
             if( !$this->m ) {
                 $lat = $this->n != 1. ? asin( $this->n * sin( $lat ) ) : $lat;
             } else {
                 $k = $this->n * sin( $lat );
-                for( $i = Proj4php::$common->MAX_ITER; $i; --$i ) {
+                for( $i = Common::MAX_ITER; $i; --$i ) {
                     $V = ($this->m * $lat + sin( $lat ) - $k) / ($this->m + cos( $lat ));
                     $lat -= $V;
-                    if( abs( $V ) < Proj4php::$common->EPSLN )
+                    if( abs( $V ) < Common::EPSLN )
                         break;
                 }
             }
@@ -86,7 +87,7 @@ class Sinu
 
             $s = sin( $lat );
             $c = cos( $lat );
-            $y = $this->a * Proj4php::$common->pj_mlfn( $lat, $s, $c, $this->en );
+            $y = $this->a * Common::pj_mlfn( $lat, $s, $c, $this->en );
             $x = $this->a * $lon * $c / sqrt( 1. - $this->es * $s * $s );
         }
 
@@ -119,15 +120,15 @@ class Sinu
             $lon = $p->x / ($this->C_x * ($this->m + cos( $p->y )));
         }
         else {
-            $lat = Proj4php::$common->pj_inv_mlfn( $p->y / $this->a, $this->es, $this->en );
+            $lat = Common::pj_inv_mlfn( $p->y / $this->a, $this->es, $this->en );
             $s = abs( $lat );
             
-            if( $s < Proj4php::$common->HALF_PI ) {
+            if( $s < Common::HALF_PI ) {
                 $s = sin( $lat );
                 $temp = $this->long0 + $p->x * sqrt( 1. - $this->es * $s * $s ) / ($this->a * cos( $lat ));
                 //temp = $this->long0 + $p->x / ($this->a * cos($lat));
-                $lon = Proj4php::$common->adjust_lon( $temp );
-            } else if( ($s - Proj4php::$common->EPSLN) < Proj4php::$common->HALF_PI ) {
+                $lon = Common::adjust_lon( $temp );
+            } else if( ($s - Common::EPSLN) < Common::HALF_PI ) {
                 $lon = $this->long0;
             }
         }

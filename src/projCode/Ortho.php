@@ -32,6 +32,7 @@ namespace proj4php\projCode;
  * ***************************************************************************** */
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Ortho
 {
@@ -65,7 +66,7 @@ class Ortho
 
         /* Forward equations
           ----------------- */
-        $dlon = Proj4php::$common->adjust_lon($lon - $this->long0);
+        $dlon = Common::adjust_lon($lon - $this->long0);
 
         $sinphi = sin($lat);
         $cosphi = cos($lat);
@@ -74,7 +75,7 @@ class Ortho
         $g = $this->sin_p14 * sinphi + $this->cos_p14 * $cosphi * $coslon;
         $ksp = 1.0;
 
-        if (($g > 0) || (abs($g) <= Proj4php::$common->EPSLN)) {
+        if (($g > 0) || (abs($g) <= Common::EPSLN)) {
             $x = $this->a * $ksp * $cosphi * sin($dlon);
             $y = $this->y0 + $this->a * $ksp * ($this->cos_p14 * $sinphi - $this->sin_p14 * $cosphi * $coslon);
         } else {
@@ -115,25 +116,25 @@ class Ortho
             Proj4php::reportError("orthoInvDataError");
         }
 
-        $z = Proj4php::$common->asinz($rh / $this->a);
+        $z = Common::asinz($rh / $this->a);
 
         $sinz = sin($z);
         $cosz = cos($z);
 
         $lon = $this->long0;
 
-        if (abs($rh) <= Proj4php::$common->EPSLN) {
+        if (abs($rh) <= Common::EPSLN) {
             $lat = $this->lat0;
         }
 
-        $lat = Proj4php::$common->asinz($cosz * $this->sin_p14 + ($p->y * $sinz * $this->cos_p14) / $rh);
-        $con = abs($this->lat0) - Proj4php::$common->HALF_PI;
+        $lat = Common::asinz($cosz * $this->sin_p14 + ($p->y * $sinz * $this->cos_p14) / $rh);
+        $con = abs($this->lat0) - Common::HALF_PI;
 
-        if (abs(con) <= Proj4php::$common->EPSLN) {
+        if (abs(con) <= Common::EPSLN) {
             if ($this->lat0 >= 0) {
-                $lon = Proj4php::$common->adjust_lon($this->long0 + atan2($p->x, -$p->y));
+                $lon = Common::adjust_lon($this->long0 + atan2($p->x, -$p->y));
             } else {
-                $lon = Proj4php::$common->adjust_lon($this->long0 - atan2(-$p->x, $p->y));
+                $lon = Common::adjust_lon($this->long0 - atan2(-$p->x, $p->y));
             }
         }
         $con = $cosz - $this->sin_p14 * sin($lat);

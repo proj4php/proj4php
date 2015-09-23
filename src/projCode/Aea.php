@@ -33,6 +33,7 @@ namespace proj4php\projCode;
  */
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Aea
 {
@@ -41,7 +42,7 @@ class Aea
      */
     public function init()
     {
-        if (abs( $this->lat1 + $this->lat2 ) < Proj4php::$common->EPSLN) {
+        if (abs( $this->lat1 + $this->lat2 ) < Common::EPSLN) {
             Proj4php::reportError("aeaInitEqualLatitudes");
             return;
         }
@@ -54,21 +55,21 @@ class Aea
         $this->cos_po = cos($this->lat1);
         $this->t1 = $this->sin_po;
         $this->con = $this->sin_po;
-        $this->ms1 = Proj4php::$common->msfnz($this->e3, $this->sin_po, $this->cos_po);
-        $this->qs1 = Proj4php::$common->qsfnz($this->e3, $this->sin_po, $this->cos_po);
+        $this->ms1 = Common::msfnz($this->e3, $this->sin_po, $this->cos_po);
+        $this->qs1 = Common::qsfnz($this->e3, $this->sin_po, $this->cos_po);
 
         $this->sin_po = sin($this->lat2);
         $this->cos_po = cos($this->lat2);
         $this->t2 = $this->sin_po;
-        $this->ms2 = Proj4php::$common->msfnz($this->e3, $this->sin_po, $this->cos_po);
-        $this->qs2 = Proj4php::$common->qsfnz($this->e3, $this->sin_po, $this->cos_po);
+        $this->ms2 = Common::msfnz($this->e3, $this->sin_po, $this->cos_po);
+        $this->qs2 = Common::qsfnz($this->e3, $this->sin_po, $this->cos_po);
 
         $this->sin_po = sin($this->lat0);
         $this->cos_po = cos($this->lat0);
         $this->t3 = $this->sin_po;
-        $this->qs0 = Proj4php::$common->qsfnz($this->e3, $this->sin_po, $this->cos_po);
+        $this->qs0 = Common::qsfnz($this->e3, $this->sin_po, $this->cos_po);
 
-        if (abs($this->lat1 - $this->lat2) > Proj4php::$common->EPSLN) {
+        if (abs($this->lat1 - $this->lat2) > Common::EPSLN) {
             $this->ns0 = ($this->ms1 * $this->ms1 - $this->ms2 * $this->ms2) / ($this->qs2 - $this->qs1);
         } else {
             $this->ns0 = $this->con;
@@ -92,9 +93,9 @@ class Aea
         $this->sin_phi = sin($lat);
         $this->cos_phi = cos($lat);
 
-        $qs = Proj4php::$common->qsfnz($this->e3, $this->sin_phi, $this->cos_phi);
+        $qs = Common::qsfnz($this->e3, $this->sin_phi, $this->cos_phi);
         $rh1 = $this->a * sqrt($this->c - $this->ns0 * $qs) / $this->ns0;
-        $theta = $this->ns0 * Proj4php::$common->adjust_lon($lon - $this->long0);
+        $theta = $this->ns0 * Common::adjust_lon($lon - $this->long0);
         $x = rh1 * sin($theta) + $this->x0;
         $y = $this->rh - $rh1 * cos($theta) + $this->y0;
 
@@ -138,16 +139,16 @@ class Aea
                 $lat = $this->phi1z($this->e3, $qs);
             } else {
                 if ($qs >= 0) {
-                    $lat = .5 * Proj4php::$common->PI;
+                    $lat = .5 * Common::PI;
                 } else {
-                    $lat = -.5 * Proj4php::$common->PI;
+                    $lat = -.5 * Common::PI;
                 }
             }
         } else {
             $lat = $this->phi1z($this->e3, $qs);
         }
 
-        $lon = Proj4php::$common->adjust_lon($theta / $this->ns0 + $this->long0);
+        $lon = Common::adjust_lon($theta / $this->ns0 + $this->long0);
 
         $p->x = $lon;
         $p->y = $lat;
@@ -164,9 +165,9 @@ class Aea
      */
     public function phi1z($eccent, $qs)
     {
-        $phi = Proj4php::$common->asinz(0.5 * $qs);
+        $phi = Common::asinz(0.5 * $qs);
 
-        if ($eccent < Proj4php::$common->EPSLN) {
+        if ($eccent < Common::EPSLN) {
             return $phi;
         }
 

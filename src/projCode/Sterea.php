@@ -10,6 +10,7 @@ namespace proj4php\projCode;
  */
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Sterea extends Gauss
 {
@@ -42,7 +43,7 @@ class Sterea extends Gauss
     public function forward($p)
     {
         // adjust del longitude
-        $p->x = Proj4php::$common->adjust_lon($p->x - $this->long0);
+        $p->x = Common::adjust_lon($p->x - $this->long0);
         $p = Proj4php::$proj['gauss']->forward($p);
         $sinc = sin($p->y);
         $cosc = cos($p->y);
@@ -86,7 +87,7 @@ class Sterea extends Gauss
         $p->y = $lat;
         $p = Proj4php::$proj['gauss']->inverse($p);
         // adjust longitude to CM
-        $p->x = Proj4php::$common->adjust_lon($p->x + $this->long0);
+        $p->x = Common::adjust_lon($p->x + $this->long0);
 
         return $p;
     }

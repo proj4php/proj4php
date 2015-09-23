@@ -10,6 +10,7 @@ namespace proj4php\projCode;
  */
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Aeqd
 {
@@ -31,10 +32,10 @@ class Aeqd
 
         $sinphi = sin( $p->y );
         $cosphi = cos( $p->y );
-        $dlon = Proj4php::$common->adjust_lon( lon - $this->long0 );
+        $dlon = Common::adjust_lon( lon - $this->long0 );
         $coslon = cos( $dlon );
         $g = $this->sin_p12 * $sinphi + $this->cos_p12 * $cosphi * $coslon;
-        if( abs( abs( $g ) - 1.0 ) < Proj4php::$common->EPSLN ) {
+        if( abs( abs( $g ) - 1.0 ) < Common::EPSLN ) {
             $ksp = 1.0;
             if( $g < 0.0 ) {
                 Proj4php::reportError( "aeqd:Fwd:PointError" );
@@ -61,7 +62,7 @@ class Aeqd
         $p->y -= $this->y0;
 
         $rh = sqrt( $p->x * $p->x + $p->y * $p->y );
-        if( $rh > (2.0 * Proj4php::$common->HALF_PI * $this->a) ) {
+        if( $rh > (2.0 * Common::HALF_PI * $this->a) ) {
             Proj4php::reportError( "aeqdInvDataError" );
             return;
         }
@@ -72,24 +73,24 @@ class Aeqd
 
         $lon = $this->long0;
         #$lat;
-        if( abs( $rh ) <= Proj4php::$common->EPSLN ) {
+        if( abs( $rh ) <= Common::EPSLN ) {
             $lat = $this->lat0;
         } else {
-            $lat = Proj4php::$common->asinz( $cosz * $this->sin_p12 + ($p->y * $sinz * $this->cos_p12) / $rh );
-            $con = abs( $this->lat0 ) - Proj4php::$common->HALF_PI;
-            if( abs( $con ) <= Proj4php::$common->EPSLN ) {
+            $lat = Common::asinz( $cosz * $this->sin_p12 + ($p->y * $sinz * $this->cos_p12) / $rh );
+            $con = abs( $this->lat0 ) - Common::HALF_PI;
+            if( abs( $con ) <= Common::EPSLN ) {
                 if( $this->lat0 >= 0.0 ) {
-                    $lon = Proj4php::$common->adjust_lon( $this->long0 + atan2( $p->x, -$p->y ) );
+                    $lon = Common::adjust_lon( $this->long0 + atan2( $p->x, -$p->y ) );
                 } else {
-                    $lon = Proj4php::$common->adjust_lon( $this->long0 - atan2( -$p->x, $p->y ) );
+                    $lon = Common::adjust_lon( $this->long0 - atan2( -$p->x, $p->y ) );
                 }
             } else {
                 $con = $cosz - $this->sin_p12 * sin( $lat );
-                if( (abs( $con ) < Proj4php::$common->EPSLN) && (abs( $p->x ) < Proj4php::$common->EPSLN) ) {
+                if( (abs( $con ) < Common::EPSLN) && (abs( $p->x ) < Common::EPSLN) ) {
                     //no-op, just keep the lon value as is
                 } else {
                     #$temp = atan2( ($p->x * $sinz * $this->cos_p12 ), ($con * $rh ) ); // $temp is unused !?!
-                    $lon = Proj4php::$common->adjust_lon( $this->long0 + atan2( ($p->x * $sinz * $this->cos_p12 ), ($con * $rh ) ) );
+                    $lon = Common::adjust_lon( $this->long0 + atan2( ($p->x * $sinz * $this->cos_p12 ), ($con * $rh ) ) );
                 }
             }
         }

@@ -33,13 +33,15 @@ namespace proj4php\projCode;
 // -----------------------------------------------------------------
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Cass
 {
-    public function init() {
-        if( !$this->sphere ) {
-            $this->en = Proj4php::$common->pj_enfn( $this->es );
-            $this->m0 = Proj4php::$common->pj_mlfn( $this->lat0, sin( $this->lat0 ), cos( $this->lat0 ), $this->en );
+    public function init()
+    {
+        if ( ! $this->sphere ) {
+            $this->en = Common::pj_enfn( $this->es );
+            $this->m0 = Common::pj_mlfn( $this->lat0, sin( $this->lat0 ), cos( $this->lat0 ), $this->en );
         }
     }
 
@@ -59,7 +61,7 @@ class Cass
         #$y;
         $lam = $p->x;
         $phi = $p->y;
-        $lam = Proj4php::$common->adjust_lon( $lam - $this->long0 );
+        $lam = Common::adjust_lon( $lam - $this->long0 );
 
         if( $this->sphere ) {
             $x = asin( cos( $phi ) * sin( $lam ) );
@@ -68,7 +70,7 @@ class Cass
             //ellipsoid
             $this->n = sin( $phi );
             $this->c = cos( $phi );
-            $y = $this->pj_mlfn( $phi, $this->n, $this->c, $this->en );
+            $y = $this->pj_mlfn( $phi, $this->n, $this->c, $this->en ); // CHECKME: Common::pj_mlfn()?
             $this->n = 1. / sqrt( 1. - $this->es * $this->n * $this->n );
             $this->tn = tan( $phi );
             $this->t = $this->tn * $this->tn;
@@ -99,7 +101,7 @@ class Cass
             $lam = atan2( tan( $x ), cos( $this->dd ) );
         } else {
             /* ellipsoid */
-            $ph1 = Proj4php::$common->pj_inv_mlfn( $this->m0 + $y, $this->es, $this->en );
+            $ph1 = Common::pj_inv_mlfn( $this->m0 + $y, $this->es, $this->en );
             $this->tn = tan( $ph1 );
             $this->t = $this->tn * $this->tn;
             $this->n = sin( $ph1 );
@@ -111,7 +113,7 @@ class Cass
             $phi = $ph1 - ($this->n * $this->tn / $this->r) * $this->d2 * (.5 - (1. + 3. * $this->t) * $this->d2 * $this->C3);
             $lam = $this->dd * (1. + $this->t * $this->d2 * (-$this->C4 + (1. + 3. * $this->t) * $this->d2 * $this->C5)) / cos( $ph1 );
         }
-        $p->x = Proj4php::$common->adjust_lon( $this->long0 + $lam );
+        $p->x = Common::adjust_lon( $this->long0 + $lam );
         $p->y = $phi;
         
         return $p;

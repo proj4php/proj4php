@@ -13,36 +13,36 @@ class Common
     // FIXME: These are constants, so we should define them as constants,
     // instead of copying them into the global Proj4php::$common.
 
-    public $PI = M_PI; // 3.141592653589793238; //Math.PI,
-    public $HALF_PI = M_PI_2; // 1.570796326794896619; //Math.PI*0.5,
-    public $TWO_PI = 6.283185307179586477; //Math.PI*2,
-    public $FORTPI = 0.78539816339744833;
-    public $R2D = 57.29577951308232088;
-    public $D2R = 0.01745329251994329577;
-    public $SEC_TO_RAD = 4.84813681109535993589914102357e-6; /* SEC_TO_RAD = Pi/180/3600 */
-    public $EPSLN = 1.0e-10;
-    public $MAX_ITER = 20;
+    const PI = M_PI; // 3.141592653589793238; //Math.PI,
+    const HALF_PI = M_PI_2; // 1.570796326794896619; //Math.PI*0.5,
+    const TWO_PI = 6.283185307179586477; //Math.PI*2,
+    const FORTPI = 0.78539816339744833;
+    const R2D = 57.29577951308232088;
+    const D2R = 0.01745329251994329577;
+    const SEC_TO_RAD = 4.84813681109535993589914102357e-6; /* SEC_TO_RAD = Pi/180/3600 */
+    const EPSLN = 1.0e-10;
+    const MAX_ITER = 20;
     // following constants from geocent.c
-    public $COS_67P5 = 0.38268343236508977;  /* cosine of 67.5 degrees */
-    public $AD_C = 1.0026000;                /* Toms region 1 constant */
+    const COS_67P5 = 0.38268343236508977;  /* cosine of 67.5 degrees */
+    const AD_C = 1.0026000;                /* Toms region 1 constant */
 
     /* datum_type values */
-    public $PJD_UNKNOWN = 0;
-    public $PJD_3PARAM = 1;
-    public $PJD_7PARAM = 2;
-    public $PJD_GRIDSHIFT = 3;
-    public $PJD_WGS84 = 4;   // WGS84 or equivalent
-    public $PJD_NODATUM = 5;   // WGS84 or equivalent
+    const PJD_UNKNOWN = 0;
+    const PJD_3PARAM = 1;
+    const PJD_7PARAM = 2;
+    const PJD_GRIDSHIFT = 3;
+    const PJD_WGS84 = 4;   // WGS84 or equivalent
+    const PJD_NODATUM = 5;   // WGS84 or equivalent
 
     const SRS_WGS84_SEMIMAJOR = 6378137.0;  // only used in grid shift transforms
 
     // ellipoid pj_set_ell.c
 
-    public $SIXTH = .1666666666666666667; /* 1/6 */
-    public $RA4 = .04722222222222222222; /* 17/360 */
-    public $RA6 = .02215608465608465608; /* 67/3024 */
-    public $RV4 = .06944444444444444444; /* 5/72 */
-    public $RV6 = .04243827160493827160; /* 55/1296 */
+    const SIXTH = .1666666666666666667; /* 1/6 */
+    const RA4 = .04722222222222222222; /* 17/360 */
+    const RA6 = .02215608465608465608; /* 67/3024 */
+    const RV4 = .06944444444444444444; /* 5/72 */
+    const RV6 = .04243827160493827160; /* 55/1296 */
 
 
     /* meridinal distance for ellipsoid and inverse
@@ -50,18 +50,18 @@ class Common
      * *		with typical major axis values.
      * *	Inverse determines phi to EPS (1e-11) radians, about 1e-6 seconds.
      */
-    protected $C00 = 1.0;
-    protected $C02 = .25;
-    protected $C04 = .046875;
-    protected $C06 = .01953125;
-    protected $C08 = .01068115234375;
-    protected $C22 = .75;
-    protected $C44 = .46875;
-    protected $C46 = .01302083333333333333;
-    protected $C48 = .00712076822916666666;
-    protected $C66 = .36458333333333333333;
-    protected $C68 = .00569661458333333333;
-    protected $C88 = .3076171875;
+    const C00 = 1.0;
+    const C02 = 0.25;
+    const C04 = 0.046875;
+    const C06 = 0.01953125;
+    const C08 = 0.01068115234375;
+    const C22 = 0.75;
+    const C44 = 0.46875;
+    const C46 = 0.01302083333333333333;
+    const C48 = 0.00712076822916666666;
+    const C66 = 0.36458333333333333333;
+    const C68 = 0.00569661458333333333;
+    const C88 = 0.3076171875;
 
     /**
      * Function to compute the constant small m which is the radius of
@@ -72,11 +72,10 @@ class Common
      * @param type $cosphi
      * @return type
      */
-    public function msfnz($eccent, $sinphi, $cosphi)
+    public static function msfnz($eccent, $sinphi, $cosphi)
     {
         $con = $eccent * $sinphi;
-
-        return $cosphi / (sqrt( 1.0 - $con * $con ));
+        return $cosphi / (sqrt(1.0 - $con * $con));
     }
 
     /**
@@ -89,13 +88,13 @@ class Common
      * @param type $sinphi
      * @return type
      */
-    public function tsfnz($eccent, $phi, $sinphi)
+    public static function tsfnz($eccent, $phi, $sinphi)
     {
         $con = $eccent * $sinphi;
         $com = 0.5 * $eccent;
-        $con = pow( ((1.0 - $con) / (1.0 + $con) ), $com );
+        $con = pow(((1.0 - $con) / (1.0 + $con)), $com);
 
-        return (tan( .5 * (M_PI_2 - $phi) ) / $con);
+        return (tan(0.5 * (M_PI_2 - $phi) ) / $con);
     }
 
     /**
@@ -108,14 +107,14 @@ class Common
      * @param type $ts
      * @return type
      */
-    public function phi2z($eccent, $ts)
+    public static function phi2z($eccent, $ts)
     {
         $eccnth = .5 * $eccent;
-        $phi = M_PI_2 - 2 * atan( $ts );
+        $phi = M_PI_2 - 2 * atan($ts);
 
         for ($i = 0; $i <= 15; $i++) {
-            $con = $eccent * sin( $phi );
-            $dphi = M_PI_2 - 2 * atan( $ts * (pow( ((1.0 - $con) / (1.0 + $con) ), $eccnth )) ) - $phi;
+            $con = $eccent * sin($phi);
+            $dphi = M_PI_2 - 2 * atan($ts * (pow(((1.0 - $con) / (1.0 + $con)), $eccnth ))) - $phi;
             $phi += $dphi;
 
             if (abs($dphi) <= .0000000001) {
@@ -136,7 +135,7 @@ class Common
      * @param type $sinphi
      * @return type
      */
-    public function qsfnz($eccent, $sinphi)
+    public static function qsfnz($eccent, $sinphi)
     {
         if ($eccent > 1.0e-7) {
             $con = $eccent * $sinphi;
@@ -153,7 +152,7 @@ class Common
      * @param type $x
      * @return type
      */
-    public function asinz($x)
+    public static function asinz($x)
     {
         return asin(
             abs( $x ) > 1.0 ? ($x > 1.0 ? 1.0 : -1.0) : $x 
@@ -171,7 +170,7 @@ class Common
      * @param type $x
      * @return type
      */
-    public function e0fn($x)
+    public static function e0fn($x)
     {
         return (1.0 - 0.25 * $x * (1.0 + $x / 16.0 * (3.0 + 1.25 * $x)));
     }
@@ -181,7 +180,7 @@ class Common
      * @param type $x
      * @return type
      */
-    public function e1fn($x)
+    public static function e1fn($x)
     {
         return (0.375 * $x * (1.0 + 0.25 * $x * (1.0 + 0.46875 * $x)));
     }
@@ -191,7 +190,7 @@ class Common
      * @param type $x
      * @return type
      */
-    public function e2fn($x)
+    public static function e2fn($x)
     {
         return (0.05859375 * $x * $x * (1.0 + 0.75 * $x));
     }
@@ -201,7 +200,7 @@ class Common
      * @param type $x
      * @return type
      */
-    public function e3fn($x)
+    public static function e3fn($x)
     {
         return ($x * $x * $x * (35.0 / 3072.0));
     }
@@ -215,7 +214,7 @@ class Common
      * @param type $phi
      * @return type
      */
-    public function mlfn($e0, $e1, $e2, $e3, $phi)
+    public static function mlfn($e0, $e1, $e2, $e3, $phi)
     {
         return ($e0 * $phi - $e1 * sin( 2.0 * $phi ) + $e2 * sin( 4.0 * $phi ) - $e3 * sin( 6.0 * $phi ));
     }
@@ -226,7 +225,7 @@ class Common
      * @param type $exp
      * @return type
      */
-    public function srat($esinp, $exp)
+    public static function srat($esinp, $exp)
     {
         return (pow( (1.0 - $esinp) / (1.0 + $esinp), $exp ));
     }
@@ -237,7 +236,7 @@ class Common
      * @param type $x
      * @return type
      */
-    public function sign($x)
+    public static function sign($x)
     {
         return $x < 0.0 ? -1 : 1;
     }
@@ -248,9 +247,9 @@ class Common
      * @param type $x
      * @return type
      */
-    public function adjust_lon($x)
+    public static function adjust_lon($x)
     {
-        return (abs( $x ) < M_PI) ? $x : ($x - ($this->sign( $x ) * $this->TWO_PI));
+        return (abs($x) < M_PI) ? $x : ($x - (static::sign($x) * static::TWO_PI));
     }
 
     /**
@@ -260,9 +259,9 @@ class Common
      * @param type $x
      * @return type
      */
-    public function adjust_lat($x)
+    public static function adjust_lat($x)
     {
-        $x = (abs( $x ) < M_PI_2) ? $x : ($x - ($this->sign( $x ) * M_PI) );
+        $x = (abs($x) < M_PI_2) ? $x : ($x - (static::sign($x) * M_PI) );
 
         return $x;
     }
@@ -275,9 +274,9 @@ class Common
      * @param type $sinphi
      * @return string
      */
-    public function latiso($eccent, $phi, $sinphi)
+    public static function latiso($eccent, $phi, $sinphi)
     {
-        if (abs( $phi ) > M_PI_2) {
+        if (abs($phi) > M_PI_2) {
             return +NaN;
         }
 
@@ -291,7 +290,7 @@ class Common
 
         $con = $eccent * $sinphi;
 
-        return log( tan( (M_PI_2 + $phi) / 2.0 ) ) + $eccent * log( (1.0 - $con) / (1.0 + $con) ) / 2.0;
+        return log(tan((M_PI_2 + $phi) / 2.0 ) ) + $eccent * log( (1.0 - $con) / (1.0 + $con)) / 2.0;
     }
 
     /**
@@ -300,9 +299,9 @@ class Common
      * @param type $L
      * @return type
      */
-    public function fL($x, $L)
+    public static function fL($x, $L)
     {
-        return 2.0 * atan( $x * exp( $L ) ) - M_PI_2;
+        return 2.0 * atan($x * exp($L)) - M_PI_2;
     }
 
     /**
@@ -312,17 +311,17 @@ class Common
      * @param type $ts
      * @return type
      */
-    public function invlatiso($eccent, $ts)
+    public static function invlatiso($eccent, $ts)
     {
-        $phi = $this->fL( 1.0, $ts );
+        $phi = static::fL(1.0, $ts);
         $Iphi = 0.0;
         $con = 0.0;
 
         do {
             $Iphi = $phi;
-            $con = $eccent * sin( $Iphi );
-            $phi = $this->fL( exp( $eccent * log( (1.0 + $con) / (1.0 - $con) ) / 2.0 ), $ts );
-        } while( abs( $phi - $Iphi ) > 1.0e-12 );
+            $con = $eccent * sin($Iphi);
+            $phi = static::fL(exp($eccent * log((1.0 + $con) / (1.0 - $con)) / 2.0 ), $ts);
+        } while(abs($phi - $Iphi) > 1.0e-12);
 
         return $phi;
     }
@@ -335,10 +334,10 @@ class Common
      * @param type $sinphi
      * @return type
      */
-    public function gN($a, $e, $sinphi)
+    public static function gN($a, $e, $sinphi)
     {
         $temp = $e * $sinphi;
-        return $a / sqrt( 1.0 - $temp * $temp );
+        return $a / sqrt(1.0 - $temp * $temp);
     }
 
     /**
@@ -347,16 +346,16 @@ class Common
      * @param type $es
      * @return type
      */
-    public function pj_enfn($es)
+    public static function pj_enfn($es)
     {
         $en = array( );
-        $en[0] = $this->C00 - $es * ($this->C02 + $es * ($this->C04 + $es * ($this->C06 + $es * $this->C08)));
-        $en[1] = es * ($this->C22 - $es * ($this->C04 + $es * ($this->C06 + $es * $this->C08)));
+        $en[0] = static::C00 - $es * (static::C02 + $es * (static::C04 + $es * (static::C06 + $es * static::C08)));
+        $en[1] = es * (static::C22 - $es * (static::C04 + $es * (static::C06 + $es * static::C08)));
         $t = $es * $es;
-        $en[2] = $t * ($this->C44 - $es * ($this->C46 + $es * $this->C48));
+        $en[2] = $t * (static::C44 - $es * (static::C46 + $es * static::C48));
         $t *= $es;
-        $en[3] = $t * ($this->C66 - $es * $this->C68);
-        $en[4] = $t * $es * $this->C88;
+        $en[3] = $t * (static::C66 - $es * static::C68);
+        $en[4] = $t * $es * static::C88;
 
         return $en;
     }
@@ -369,7 +368,7 @@ class Common
      * @param type $en
      * @return type
      */
-    public function pj_mlfn($phi, $sphi, $cphi, $en)
+    public function static pj_mlfn($phi, $sphi, $cphi, $en)
     {
         $cphi *= $sphi;
         $sphi *= $sphi;
@@ -384,20 +383,20 @@ class Common
      * @param type $en
      * @return type
      */
-    public function pj_inv_mlfn($arg, $es, $en)
+    public static function pj_inv_mlfn($arg, $es, $en)
     {
         $k = (float) 1 / (1 - $es);
         $phi = $arg;
-        for ($i = Proj4php::$common->MAX_ITER; $i; --$i) {
+        for ($i = Common::MAX_ITER; $i; --$i) {
             // rarely goes over 2 iterations
-            $s = sin( $phi );
-            $t = 1. - $es * $s * $s;
-            //$t = $this->pj_mlfn($phi, $s, cos($phi), $en) - $arg;
+            $s = sin($phi);
+            $t = 1.0 - $es * $s * $s;
+            //$t = static::pj_mlfn($phi, $s, cos($phi), $en) - $arg;
             //$phi -= $t * ($t * sqrt($t)) * $k;
-            $t = ($this->pj_mlfn( $phi, $s, cos( $phi ), $en ) - $arg) * ($t * sqrt( $t )) * $k;
+            $t = (static::pj_mlfn( $phi, $s, cos($phi), $en) - $arg) * ($t * sqrt($t)) * $k;
             $phi -= $t;
 
-            if (abs($t) < Proj4php::$common->EPSLN) {
+            if (abs($t) < Common::EPSLN) {
                 return $phi;
             }
         }
@@ -406,5 +405,4 @@ class Common
 
         return $phi;
     }
-
 }

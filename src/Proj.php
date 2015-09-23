@@ -68,12 +68,21 @@ class Proj
      * are required.
      */
     public $localCS = false;
-    
+
     /**
-     *
+     * RE to split an SRS code in WKT format.
+     * Given "Alphanum123[something,or,nothing]" would give:
+     * match 1: "Alphanum123"
+     * match 2: "something,or,nothing"
      * @var type
      */
-    protected $wktRE = '/^(\w+)\[(.*)\]$/';
+    const WKT_RE = '/^(\w+)\[(.*)\]$/';
+
+    /**
+     * The supplied Spatial Reference System (SRS) code supplied
+     * on creation of the projection.
+     */
+    protected $srsCodeInput;
 
     /**
      * Constructor: initialize
@@ -87,12 +96,12 @@ class Proj
     {
         $this->srsCodeInput = $srsCode;
 
-        //check to see if $this is a WKT string
-        if ((strpos($srsCode, 'GEOGCS' ) !== false) ||
-            (strpos($srsCode, 'GEOCCS' ) !== false) ||
-            (strpos($srsCode, 'PROJCS' ) !== false) ||
-            (strpos($srsCode, 'LOCAL_CS' ) !== false)
-        ) {
+        // Check to see if $this is a Well Known Text (WKT) string.
+        // This is an old, deprecated format, but still used.
+        // CHECKME: are these the WKT "objects"? If so, we probably
+        // need to check the string *starts* with these names.
+
+        if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
             $this->parseWKT($srsCode);
             $this->deriveConstants();
             $this->loadProjCode($this->projName);
@@ -341,22 +350,23 @@ class Proj
 
     /**
      * Function: parseWKT
-     * Parses a WKT string to get initialization parameters
-     *
+     * Parses a WKT string to get initialization parameters.
      */
     public function parseWKT($wkt)
     {
-        if (false === ($match = preg_match($this->wktRE, $wkt, $wktMatch))) {
+        if (false === ($match = preg_match(static::WKT_RE, $wkt, $wktMatch))) {
             return;
         }
 
         $wktObject = $wktMatch[1];
         $wktContent = $wktMatch[2];
-        $wktTemp = explode(",", $wktContent);
+        $wktTemp = explode(',', $wktContent);
 
         $wktName = (strtoupper($wktObject) == "TOWGS84") ? "TOWGS84" : array_shift($wktTemp);
-        $wktName = preg_replace( '/^\"/', "", $wktName);
-        $wktName = preg_replace( '/\"$/', "", $wktName);
+
+        // Remove one double-quote from the start and one from the end, if present.
+        $wktName = preg_replace('/^\"/', "", $wktName);
+        $wktName = preg_replace('/\"$/', "", $wktName);
 
         /*
           $wktContent = implode(",",$wktTemp);
@@ -383,8 +393,9 @@ class Proj
             }
         }
 
-        // do something based on the type of the wktObject being parsed
-        // add in variations in the spelling as required
+        // Do something based on the type of the wktObject being parsed.
+        // Add in variations in the spelling as required.
+
         switch ($wktObject) {
             case 'LOCAL_CS':
                 $this->projName = 'identity';
@@ -394,7 +405,7 @@ class Proj
             case 'GEOGCS':
                 $this->projName = 'longlat';
                 $this->geocsCode = $wktName;
-                if (!$this->srsCode ) {
+                if ( ! $this->srsCode) {
                     $this->srsCode = $wktName;
                 }
                 break;
@@ -414,19 +425,20 @@ class Proj
                 break;
             case 'SPHEROID':
                 $this->ellps = $wktName;
-                $this->a = floatval( array_shift($wktArray ));
-                $this->rf = floatval( array_shift($wktArray ));
+                $this->a = floatval(array_shift($wktArray));
+                $this->rf = floatval(array_shift($wktArray));
                 break;
             case 'PRIMEM':
-                $this->from_greenwich = floatval( array_shift($wktArray )); //to radians?
+                // to radians?
+                $this->from_greenwich = floatval(array_shift($wktArray));
                 break;
             case 'UNIT':
                 $this->units = $wktName;
-                $this->unitsPerMeter = floatval( array_shift($wktArray ));
+                $this->unitsPerMeter = floatval( array_shift($wktArray));
                 break;
             case 'PARAMETER':
                 $name = strtolower($wktName);
-                $value = floatval( array_shift($wktArray ));
+                $value = floatval(array_shift($wktArray));
 
                 // there may be many variations on the wktName values, add in case
                 // statements as required
@@ -441,10 +453,10 @@ class Proj
                         $this->k0 = $value;
                         break;
                     case 'central_meridian':
-                        $this->long0 = $value * Proj4php::$common->D2R;
+                        $this->long0 = $value * Common::D2R;
                         break;
                     case 'latitude_of_origin':
-                        $this->lat0 = $value * Proj4php::$common->D2R;
+                        $this->lat0 = $value * Common::D2R;
                         break;
                     case 'more_here':
                         break;
@@ -562,31 +574,31 @@ class Proj
                     break;
                 case "lat_0":
                     // phi0, central latitude
-                    $this->lat0 = $paramVal * Proj4php::$common->D2R;
+                    $this->lat0 = $paramVal * Common::D2R;
                     break;
                 case "lat_1":
                     //standard parallel 1
-                    $this->lat1 = $paramVal * Proj4php::$common->D2R;
+                    $this->lat1 = $paramVal * Common::D2R;
                     break;
                 case "lat_2":
                     //standard parallel 2
-                    $this->lat2 = $paramVal * Proj4php::$common->D2R;
+                    $this->lat2 = $paramVal * Common::D2R;
                     break;
                 case "lat_ts":
                     // used in merc and eqc
-                    $this->lat_ts = $paramVal * Proj4php::$common->D2R;
+                    $this->lat_ts = $paramVal * Common::D2R;
                     break;
                 case "lon_0":
                     // lam0, central longitude
-                    $this->long0 = $paramVal * Proj4php::$common->D2R;
+                    $this->long0 = $paramVal * Common::D2R;
                     break;
                 case "alpha":
-                    $this->alpha = floatval($paramVal ) * Proj4php::$common->D2R;
+                    $this->alpha = floatval($paramVal ) * Common::D2R;
                     //for somerc projection
                     break;
                 case "lonc":
                     //for somerc projection
-                    $this->longc = paramVal * Proj4php::$common->D2R;
+                    $this->longc = paramVal * Common::D2R;
                     break;
                 case "x_0":
                     // false easting
@@ -624,14 +636,14 @@ class Proj
                     $this->to_meter = floatval($paramVal);
                     break;
                 case "from_greenwich":
-                    $this->from_greenwich = $paramVal * Proj4php::$common->D2R;
+                    $this->from_greenwich = $paramVal * Common::D2R;
                     break;
                 case "pm":
                     // DGR 2008-07-09 : if pm is not a well-known prime meridian take
                     // the value instead of 0.0, then convert to radians
                     $paramVal = trim($paramVal);
                     $this->from_greenwich = Proj4php::$primeMeridian[$paramVal] ? Proj4php::$primeMeridian[$paramVal] : floatval($paramVal);
-                    $this->from_greenwich *= Proj4php::$common->D2R;
+                    $this->from_greenwich *= Common::D2R;
                     break;
                 case "axis":
                     // DGR 2010-11-12: axis
@@ -692,7 +704,7 @@ class Proj
             $this->b = (1.0 - 1.0 / $this->rf) * $this->a;
         }
 
-        if ((isset($this->rf) && $this->rf === 0) || abs($this->a - $this->b) < Proj4php::$common->EPSLN) {
+        if ((isset($this->rf) && $this->rf === 0) || abs($this->a - $this->b) < Common::EPSLN) {
             $this->sphere = true;
             $this->b = $this->a;
         }
@@ -707,7 +719,7 @@ class Proj
         $this->e = sqrt($this->es);
 
         if (isset($this->R_A)) {
-            $this->a *= 1. - $this->es * (Proj4php::$common->SIXTH + $this->es * (Proj4php::$common->RA4 + $this->es * Proj4php::$common->RA6));
+            $this->a *= 1. - $this->es * (Common::SIXTH + $this->es * (Common::RA4 + $this->es * Common::RA6));
             $this->a2 = $this->a * $this->a;
             $this->b2 = $this->b * $this->b;
             $this->es = 0.0;

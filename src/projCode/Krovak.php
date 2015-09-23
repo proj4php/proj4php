@@ -25,6 +25,7 @@ namespace proj4php\projCode;
 **/
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Krovak
 {
@@ -81,7 +82,7 @@ class Krovak
         
         $lon = $p->x;
         $lat = $p->y;
-        $delta_lon = Proj4php::$common->adjust_lon( $lon - $this->long0 ); // Delta longitude
+        $delta_lon = Common::adjust_lon( $lon - $this->long0 ); // Delta longitude
         
         /* Transformation */
         $gfi = pow( ((1. + $this->e * sin( $lat )) / (1. - $this->e * sin( $lat )) ), ($this->alfa * $this->e / 2. ) );

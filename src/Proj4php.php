@@ -207,8 +207,8 @@ class Proj4php {
         // Transform source points to long/lat, if they aren't already.
         if ($source->projName == "longlat") {
             // convert degrees to radians
-            $point->x *= Proj4php::$common->D2R;
-            $point->y *= Proj4php::$common->D2R;
+            $point->x *= Common::D2R;
+            $point->y *= Common::D2R;
         } else {
             if (isset($source->to_meter)) {
                 $point->x *= $source->to_meter;
@@ -234,8 +234,8 @@ class Proj4php {
 
         if ($dest->projName == "longlat") {
             // convert radians to decimal degrees
-            $point->x *= Proj4php::$common->R2D;
-            $point->y *= Proj4php::$common->R2D;
+            $point->x *= Common::R2D;
+            $point->y *= Common::R2D;
         } else {
             // else project
             $dest->forward($point);
@@ -270,40 +270,40 @@ class Proj4php {
         }
 
         // Explicitly skip datum transform by setting 'datum=none' as parameter for either source or dest
-        if ($source->datum_type == Proj4php::$common->PJD_NODATUM
-            || $dest->datum_type == Proj4php::$common->PJD_NODATUM
+        if ($source->datum_type == Common::PJD_NODATUM
+            || $dest->datum_type == Common::PJD_NODATUM
         ) {
             return $point;
         }
 
         /*
         // If this datum requires grid shifts, then apply it to geodetic coordinates.
-        if ($source->datum_type == Proj4php::$common->PJD_GRIDSHIFT ) {
+        if ($source->datum_type == Common::PJD_GRIDSHIFT ) {
             throw(new Exception( "ERROR: Grid shift transformations are not implemented yet." ));
         }
 
-        if ($dest->datum_type == Proj4php::$common->PJD_GRIDSHIFT ) {
+        if ($dest->datum_type == Common::PJD_GRIDSHIFT ) {
             throw(new Exception( "ERROR: Grid shift transformations are not implemented yet." ));
         }
         */
 
         // Do we need to go through geocentric coordinates?
         if ($source->es != $dest->es || $source->a != $dest->a
-            || $source->datum_type == Proj4php::$common->PJD_3PARAM
-            || $source->datum_type == Proj4php::$common->PJD_7PARAM
-            || $dest->datum_type == Proj4php::$common->PJD_3PARAM
-            || $dest->datum_type == Proj4php::$common->PJD_7PARAM
+            || $source->datum_type == Common::PJD_3PARAM
+            || $source->datum_type == Common::PJD_7PARAM
+            || $dest->datum_type == Common::PJD_3PARAM
+            || $dest->datum_type == Common::PJD_7PARAM
         ) {
             // Convert to geocentric coordinates.
             $source->geodetic_to_geocentric($point);
             // CHECK_RETURN;
             // Convert between datums
-            if ($source->datum_type == Proj4php::$common->PJD_3PARAM || $source->datum_type == Proj4php::$common->PJD_7PARAM) {
+            if ($source->datum_type == Common::PJD_3PARAM || $source->datum_type == Common::PJD_7PARAM) {
                 $source->geocentric_to_wgs84( $point );
                 // CHECK_RETURN;
             }
 
-            if ($dest->datum_type == Proj4php::$common->PJD_3PARAM || $dest->datum_type == Proj4php::$common->PJD_7PARAM) {
+            if ($dest->datum_type == Common::PJD_3PARAM || $dest->datum_type == Common::PJD_7PARAM) {
                 $dest->geocentric_from_wgs84($point);
                 // CHECK_RETURN;
             }
@@ -315,7 +315,7 @@ class Proj4php {
 
         // Apply grid shift to destination if required
         /*
-        if ($dest->datum_type == Proj4php::$common->PJD_GRIDSHIFT ) {
+        if ($dest->datum_type == Common::PJD_GRIDSHIFT ) {
             throw(new Exception( "ERROR: Grid shift transformations are not implemented yet." ));
             // pj_apply_gridshift( pj_param(dest.params,"snadgrids").s, 1, point);
             // CHECK_RETURN;

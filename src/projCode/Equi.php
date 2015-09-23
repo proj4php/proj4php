@@ -32,6 +32,7 @@ namespace proj4php\projCode;
  *******************************************************************************/
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Equi
 {
@@ -54,7 +55,7 @@ class Equi
         $lon = $p->x;
         $lat = $p->y;
 
-        $dlon = Proj4php::$common->adjust_lon( $lon - $this->long0 );
+        $dlon = Common::adjust_lon( $lon - $this->long0 );
         $x = $this->x0 + $this->a * $dlon * cos( $this->lat0 );
         $y = $this->y0 + $this->a * $lat;
 
@@ -73,10 +74,10 @@ class Equi
         $p->y -= $this->y0;
         $lat = $p->y / $this->a;
 
-        if( abs( $lat ) > Proj4php::$common->HALF_PI ) {
+        if( abs( $lat ) > Common::HALF_PI ) {
             Proj4php::reportError( "equi:Inv:DataError" );
         }
-        $lon = Proj4php::$common->adjust_lon( $this->long0 + $p->x / ($this->a * cos( $this->lat0 )) );
+        $lon = Common::adjust_lon( $this->long0 + $p->x / ($this->a * cos( $this->lat0 )) );
         $p->x = $lon;
         $p->y = $lat;
     }

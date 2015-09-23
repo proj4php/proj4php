@@ -38,6 +38,7 @@ namespace proj4php\projCode;
  * ***************************************************************************** */
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 class Mill
 {
@@ -57,9 +58,9 @@ class Mill
         
         /* Forward equations
           ----------------- */
-        $dlon = Proj4php::$common->adjust_lon( $lon - $this->long0 );
+        $dlon = Common::adjust_lon( $lon - $this->long0 );
         $x = $this->x0 + $this->a * $dlon;
-        $y = $this->y0 + $this->a * log( tan( (Proj4php::$common->PI / 4.0) + ($lat / 2.5) ) ) * 1.25;
+        $y = $this->y0 + $this->a * log( tan( (Common::PI / 4.0) + ($lat / 2.5) ) ) * 1.25;
 
         $p->x = $x;
         $p->y = $y;
@@ -74,8 +75,8 @@ class Mill
         $p->x -= $this->x0;
         $p->y -= $this->y0;
 
-        $lon = Proj4php::$common->adjust_lon( $this->long0 + $p->x / $this->a );
-        $lat = 2.5 * (atan( exp( 0.8 * $p->y / $this->a ) ) - Proj4php::$common->PI / 4.0);
+        $lon = Common::adjust_lon( $this->long0 + $p->x / $this->a );
+        $lat = 2.5 * (atan( exp( 0.8 * $p->y / $this->a ) ) - Common::PI / 4.0);
 
         $p->x = $lon;
         $p->y = $lat;

@@ -15,6 +15,7 @@ namespace proj4php\projCode;
   ------------------------------------------------------------ */
 
 use proj4php\Proj4php;
+use proj4php\Common;
 
 function phi4z( $eccent, $e0, $e1, $e2, $e3, $a, $b, &$c, $phi ) {
     /*
@@ -105,11 +106,11 @@ class Poly
         $this->temp = $this->b / $this->a;
         $this->es = 1.0 - pow( $this->temp, 2 ); // devait etre dans tmerc.js mais n y est pas donc je commente sinon retour de valeurs nulles 
         $this->e = sqrt( $this->es );
-        $this->e0 = Proj4php::$common->e0fn( $this->es );
-        $this->e1 = Proj4php::$common->e1fn( $this->es );
-        $this->e2 = Proj4php::$common->e2fn( $this->es );
-        $this->e3 = Proj4php::$common->e3fn( $this->es );
-        $this->ml0 = Proj4php::$common->mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $this->lat0 ); //si que des zeros le calcul ne se fait pas
+        $this->e0 = Common::e0fn( $this->es );
+        $this->e1 = Common::e1fn( $this->es );
+        $this->e2 = Common::e2fn( $this->es );
+        $this->e3 = Common::e3fn( $this->es );
+        $this->ml0 = Common::mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $this->lat0 ); //si que des zeros le calcul ne se fait pas
         //if (!$this->ml0) {$this->ml0=0;}
     }
 
@@ -132,7 +133,7 @@ class Poly
         $lon = $p->x;
         $lat = $p->y;
 
-        $con = Proj4php::$common->adjust_lon( $lon - $this->long0 );
+        $con = Common::adjust_lon( $lon - $this->long0 );
         
         if( abs( $lat ) <= .0000001 ) {
             $x = $this->x0 + $this->a * $con;
@@ -141,8 +142,8 @@ class Poly
             $sinphi = sin( $lat );
             $cosphi = cos( $lat );
             
-            $ml = Proj4php::$common->mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $lat );
-            $ms = Proj4php::$common->msfnz( $this->e, $sinphi, $cosphi );
+            $ml = Common::mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $lat );
+            $ms = Common::msfnz( $this->e, $sinphi, $cosphi );
             
             $x = $this->x0 + $this->a * $ms * sin( $sinphi ) / $sinphi;
             $y = $this->y0 + $this->a * ($ml - $this->ml0 + $ms * (1.0 - cos( $sinphi )) / $sinphi);
@@ -184,7 +185,7 @@ class Poly
             $iflg = phi4z( $this->es, $this->e0, $this->e1, $this->e2, $this->e3, $this->al, $b, $c, $lat );
             if( $iflg != 1 )
                 return($iflg);
-            $lon = Proj4php::$common->adjust_lon( (Proj4php::$common->asinz( $p->x * $c / $this->a ) / sin( $lat )) + $this->long0 );
+            $lon = Common::adjust_lon( (Common::asinz( $p->x * $c / $this->a ) / sin( $lat )) + $this->long0 );
         }
 
         $p->x = $lon;

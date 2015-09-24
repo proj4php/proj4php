@@ -23,7 +23,7 @@ class Proj4php
     // not be static.
 
     public static $ellipsoid = [];
-    public static $datum = [];
+    protected $datums = [];
     protected $defs = [];
     public static $wktProjections = [];
     public static $primeMeridian = [];
@@ -122,16 +122,91 @@ class Proj4php
 
     protected function initDatum()
     {
-        self::$datum["WGS84"] = ['towgs84' => "0,0,0", 'ellipse' => "WGS84", 'datumName' => "WGS84"];
-        self::$datum["GGRS87"] = ['towgs84' => "-199.87,74.79,246.62", 'ellipse' => "GRS80", 'datumName' => "Greek_Geodetic_Reference_System_1987"];
-        self::$datum["NAD83"] = ['towgs84' => "0,0,0", 'ellipse' => "GRS80", 'datumName' => "North_American_Datum_1983"];
-        self::$datum["NAD27"] = ['nadgrids' => "@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat", 'ellipse' => "clrk66", 'datumName' => "North_American_Datum_1927"];
-        self::$datum["potsdam"] = ['towgs84' => "606.0,23.0,413.0", 'ellipse' => "bessel", 'datumName' => "Potsdam Rauenberg 1950 DHDN"];
-        self::$datum["carthage"] = ['towgs84' => "-263.0,6.0,431.0", 'ellipse' => "clark80", 'datumName' => "Carthage 1934 Tunisia"];
-        self::$datum["hermannskogel"] = ['towgs84' => "653.0,-212.0,449.0", 'ellipse' => "bessel", 'datumName' => "Hermannskogel"];
-        self::$datum["ire65"] = ['towgs84' => "482.530,-130.596,564.557,-1.042,-0.214,-0.631,8.15", 'ellipse' => "mod_airy", 'datumName' => "Ireland 1965"];
-        self::$datum["nzgd49"] = ['towgs84' => "59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993", 'ellipse' => "intl", 'datumName' => "New Zealand Geodetic Datum 1949"];
-        self::$datum["OSGB36"] = ['towgs84' => "446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894", 'ellipse' => "airy", 'datumName' => "Airy 1830"];
+        $default_datums = [
+            "WGS84" => [
+                'towgs84' => "0,0,0",
+                'ellipse' => "WGS84",
+                'name' => "WGS84"
+            ],
+            "GGRS87" => [
+                'towgs84' => "-199.87,74.79,246.62",
+                'ellipse' => "GRS80",
+                'name' => "Greek_Geodetic_Reference_System_1987"
+            ],
+            "NAD83" => [
+                'towgs84' => "0,0,0",
+                'ellipse' => "GRS80",
+                'name' => "North_American_Datum_1983"
+            ],
+            "NAD27" => [
+                'nadgrids' => "@conus,@alaska,@ntv2_0.gsb,@ntv1_can.dat",
+                'ellipse' => "clrk66",
+                'name' => "North_American_Datum_1927"
+            ],
+            "potsdam" => [
+                'towgs84' => "606.0,23.0,413.0",
+                'ellipse' => "bessel",
+                'name' => "Potsdam Rauenberg 1950 DHDN"
+            ],
+            "carthage" => [
+                'towgs84' => "-263.0,6.0,431.0",
+                'ellipse' => "clark80",
+                'name' => "Carthage 1934 Tunisia"
+            ],
+            "hermannskogel" => [
+                'towgs84' => "653.0,-212.0,449.0",
+                'ellipse' => "bessel",
+                'name' => "Hermannskogel"
+            ],
+            "ire65" => [
+                'towgs84' => "482.530,-130.596,564.557,-1.042,-0.214,-0.631,8.15",
+                'ellipse' => "mod_airy",
+                'name' => "Ireland 1965"
+            ],
+            "nzgd49" => [
+                'towgs84' => "59.47,-5.04,187.44,0.47,-0.1,1.024,-4.5993",
+                'ellipse' => "intl",
+                'name' => "New Zealand Geodetic Datum 1949"
+            ],
+            "OSGB36" => [
+                'towgs84' => "446.448,-125.157,542.060,0.1502,0.2470,0.8421,-20.4894",
+                'ellipse' => "airy",
+                'name' => "Airy 1830"
+            ],
+        ];
+
+        // Load them through the API so we have a single point of validation.
+        foreach($default_datums as $key => $data) {
+            $this->addDatum($key, $data);
+        }
+    }
+
+    /**
+     * Tells us if a datum has been loaded.
+     * @returns bool
+     */
+    public function hasDatum($key)
+    {
+        return array_key_exists($key, $this->datums);
+    }
+
+    /**
+     * Returns a datum source data.
+     * Returns an empty arry if a datum key is not found.
+     * @returns array
+     */
+    public function getDatum($key)
+    {
+        return $this->hasDatum($key) ? $this->datums[$key] : [];
+    }
+
+    /**
+     * Adda new datum, overwriting if the key already exists.
+     * @returns void
+     */
+    public function addDatum($key, $data)
+    {
+        $this->datums[$key] = $data;
     }
 
     protected function initEllipsoid()
@@ -226,7 +301,7 @@ class Proj4php
      * point - {Object} point to transform, may be geodetic (long, lat) or
      *     projected Cartesian (x,y), but should always have x,y properties.
      */
-    public function transform($source, $dest, $point)
+    public function transform(Proj $source, Proj $dest, Point $point)
     {
         $this->msg = '';
 

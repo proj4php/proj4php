@@ -50,6 +50,9 @@ class Proj
      */
     public $datum = null;
 
+    protected $datum_params;
+    protected $datumCode;
+
     /**
      * Property: x0
      * The x coordinate origin
@@ -689,12 +692,12 @@ class Proj
         }
 
         if (isset($this->datumCode) && $this->datumCode != 'none') {
-            $datumDef = Proj4php::$datum[$this->datumCode];
+            $datumDef = $this->proj4php->getDatum($this->datumCode);
 
             if (is_array($datumDef)) {
-                $this->datum_params = array_key_exists( 'towgs84', $datumDef ) ? explode( ',', $datumDef['towgs84'] ) : null;
+                $this->datum_params = array_key_exists('towgs84', $datumDef) ? explode(',', $datumDef['towgs84']) : null;
                 $this->ellps = $datumDef['ellipse'];
-                $this->datumName = array_key_exists( 'datumName', $datumDef ) ? $datumDef['datumName'] : $this->datumCode;
+                $this->datumName = array_key_exists('name', $datumDef) ? $datumDef['name'] : $this->datumCode;
             }
         }
 

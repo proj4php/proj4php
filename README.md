@@ -2,20 +2,6 @@
 PHP-class for proj4
 This is a PHP-Class for geographic coordinates transformation using proj4 definitions, thanks to a translation from Proj4JS. 
 
-## This "adding-composer" Branch
-
-In this branch we are aiming to bring the package into line with most curent PHP practices. These include:
-
-* Namespacing.
-* PHP5.4+ syntax (not aiming to be bleeding edge here)
-* [PSR-2 styling](http://www.php-fig.org/psr/psr-2/)
-* [PSR-4 autoloader](http://www.php-fig.org/psr/psr-4/)
-* Tests. This is difficult until the other changes are made.
-* [semver](http://semver.org/) relase numbers to packagist.org
-* Full compatibility with [composer](https://getcomposer.org/)
-
-A legacy branch will be maintained for older applications.
-
 ## Using
 
 ```php

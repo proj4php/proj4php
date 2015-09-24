@@ -1,9 +1,9 @@
 <?php
-include_once("../src/proj4php/proj4php.php");
+include("../vendor/autoload.php");
 
-use \proj4php\Proj4php;
-use \proj4php\Proj4phpProj;
-use \proj4php\Point;
+use proj4php\Proj4php;
+use proj4php\Proj;
+use proj4php\Point;
 
 $proj4 = new Proj4php();
 $projL93 = new Proj('EPSG:2154',$proj4);

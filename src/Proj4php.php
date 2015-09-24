@@ -22,9 +22,10 @@ class Proj4php
     // this class has been instantiated once. That's just all wrong. These should
     // not be static.
 
-    public static $ellipsoid = [];
+    protected $ellipsoids = [];
     protected $datums = [];
     protected $defs = [];
+
     public static $wktProjections = [];
     public static $primeMeridian = [];
     public static $proj = [];
@@ -211,48 +212,83 @@ class Proj4php
 
     protected function initEllipsoid()
     {
-        self::$ellipsoid["MERIT"] = ['a' => 6378137.0, 'rf' => 298.257, 'name' => "MERIT 1983"];
-        self::$ellipsoid["SGS85"] = ['a' => 6378136.0, 'rf' => 298.257, 'name' => "Soviet Geodetic System 85"];
-        self::$ellipsoid["GRS80"] = ['a' => 6378137.0, 'rf' => 298.257222101, 'name' => "GRS 1980(IUGG, 1980)"];
-        self::$ellipsoid["IAU76"] = ['a' => 6378140.0, 'rf' => 298.257, 'name' => "IAU 1976"];
-        self::$ellipsoid["airy"] = ['a' => 6377563.396, 'b' => 6356256.910, 'name' => "Airy 1830"];
-        self::$ellipsoid["APL4."] = ['a' => 6378137, 'rf' => 298.25, 'name' => "Appl. Physics. 1965"];
-        self::$ellipsoid["NWL9D"] = ['a' => 6378145.0, 'rf' => 298.25, 'name' => "Naval Weapons Lab., 1965"];
-        self::$ellipsoid["mod_airy"] = ['a' => 6377340.189, 'b' => 6356034.446, 'name' => "Modified Airy"];
-        self::$ellipsoid["andrae"] = ['a' => 6377104.43, 'rf' => 300.0, 'name' => "Andrae 1876 (Den., Iclnd.)"];
-        self::$ellipsoid["aust_SA"] = ['a' => 6378160.0, 'rf' => 298.25, 'name' => "Australian Natl & S. Amer. 1969"];
-        self::$ellipsoid["GRS67"] = ['a' => 6378160.0, 'rf' => 298.2471674270, 'name' => "GRS 67(IUGG 1967)"];
-        self::$ellipsoid["bessel"] = ['a' => 6377397.155, 'rf' => 299.1528128, 'name' => "Bessel 1841"];
-        self::$ellipsoid["bess_nam"] = ['a' => 6377483.865, 'rf' => 299.1528128, 'name' => "Bessel 1841 (Namibia)"];
-        self::$ellipsoid["clrk66"] = ['a' => 6378206.4, 'b' => 6356583.8, 'name' => "Clarke 1866"];
-        self::$ellipsoid["clrk80"] = ['a' => 6378249.145, 'rf' => 293.4663, 'name' => "Clarke 1880 mod."];
-        self::$ellipsoid["CPM"] = ['a' => 6375738.7, 'rf' => 334.29, 'name' => "Comm. des Poids et Mesures 1799"];
-        self::$ellipsoid["delmbr"] = ['a' => 6376428.0, 'rf' => 311.5, 'name' => "Delambre 1810 (Belgium)"];
-        self::$ellipsoid["engelis"] = ['a' => 6378136.05, 'rf' => 298.2566, 'name' => "Engelis 1985"];
-        self::$ellipsoid["evrst30"] = ['a' => 6377276.345, 'rf' => 300.8017, 'name' => "Everest 1830"];
-        self::$ellipsoid["evrst48"] = ['a' => 6377304.063, 'rf' => 300.8017, 'name' => "Everest 1948"];
-        self::$ellipsoid["evrst56"] = ['a' => 6377301.243, 'rf' => 300.8017, 'name' => "Everest 1956"];
-        self::$ellipsoid["evrst69"] = ['a' => 6377295.664, 'rf' => 300.8017, 'name' => "Everest 1969"];
-        self::$ellipsoid["evrstSS"] = ['a' => 6377298.556, 'rf' => 300.8017, 'name' => "Everest (Sabah & Sarawak)"];
-        self::$ellipsoid["fschr60"] = ['a' => 6378166.0, 'rf' => 298.3, 'name' => "Fischer (Mercury Datum) 1960"];
-        self::$ellipsoid["fschr60m"] = ['a' => 6378155.0, 'rf' => 298.3, 'name' => "Fischer 1960"];
-        self::$ellipsoid["fschr68"] = ['a' => 6378150.0, 'rf' => 298.3, 'name' => "Fischer 1968"];
-        self::$ellipsoid["helmert"] = ['a' => 6378200.0, 'rf' => 298.3, 'name' => "Helmert 1906"];
-        self::$ellipsoid["hough"] = ['a' => 6378270.0, 'rf' => 297.0, 'name' => "Hough"];
-        self::$ellipsoid["intl"] = ['a' => 6378388.0, 'rf' => 297.0, 'name' => "International 1909 (Hayford)"];
-        self::$ellipsoid["kaula"] = ['a' => 6378163.0, 'rf' => 298.24, 'name' => "Kaula 1961"];
-        self::$ellipsoid["lerch"] = ['a' => 6378139.0, 'rf' => 298.257, 'name' => "Lerch 1979"];
-        self::$ellipsoid["mprts"] = ['a' => 6397300.0, 'rf' => 191.0, 'name' => "Maupertius 1738"];
-        self::$ellipsoid["new_intl"] = ['a' => 6378157.5, 'b' => 6356772.2, 'name' => "New International 1967"];
-        self::$ellipsoid["plessis"] = ['a' => 6376523.0, 'rf' => 6355863.0, 'name' => "Plessis 1817 (France)"];
-        self::$ellipsoid["krass"] = ['a' => 6378245.0, 'rf' => 298.3, 'name' => "Krassovsky, 1942"];
-        self::$ellipsoid["SEasia"] = ['a' => 6378155.0, 'b' => 6356773.3205, 'name' => "Southeast Asia"];
-        self::$ellipsoid["walbeck"] = ['a' => 6376896.0, 'b' => 6355834.8467, 'name' => "Walbeck"];
-        self::$ellipsoid["WGS60"] = ['a' => 6378165.0, 'rf' => 298.3, 'name' => "WGS 60"];
-        self::$ellipsoid["WGS66"] = ['a' => 6378145.0, 'rf' => 298.25, 'name' => "WGS 66"];
-        self::$ellipsoid["WGS72"] = ['a' => 6378135.0, 'rf' => 298.26, 'name' => "WGS 72"];
-        self::$ellipsoid["WGS84"] = ['a' => 6378137.0, 'rf' => 298.257223563, 'name' => "WGS 84"];
-        self::$ellipsoid["sphere"] = ['a' => 6370997.0, 'b' => 6370997.0, 'name' => "Normal Sphere (r=6370997)"];
+        $default_ellipsoids = [
+            "MERIT" => ['a' => 6378137.0, 'rf' => 298.257, 'name' => "MERIT 1983"],
+            "SGS85" => ['a' => 6378136.0, 'rf' => 298.257, 'name' => "Soviet Geodetic System 85"],
+            "GRS80" => ['a' => 6378137.0, 'rf' => 298.257222101, 'name' => "GRS 1980(IUGG, 1980)"],
+            "IAU76" => ['a' => 6378140.0, 'rf' => 298.257, 'name' => "IAU 1976"],
+            "airy" => ['a' => 6377563.396, 'b' => 6356256.910, 'name' => "Airy 1830"],
+            "APL4." => ['a' => 6378137, 'rf' => 298.25, 'name' => "Appl. Physics. 1965"],
+            "NWL9D" => ['a' => 6378145.0, 'rf' => 298.25, 'name' => "Naval Weapons Lab., 1965"],
+            "mod_airy" => ['a' => 6377340.189, 'b' => 6356034.446, 'name' => "Modified Airy"],
+            "andrae" => ['a' => 6377104.43, 'rf' => 300.0, 'name' => "Andrae 1876 (Den., Iclnd.)"],
+            "aust_SA" => ['a' => 6378160.0, 'rf' => 298.25, 'name' => "Australian Natl & S. Amer. 1969"],
+            "GRS67" => ['a' => 6378160.0, 'rf' => 298.2471674270, 'name' => "GRS 67(IUGG 1967)"],
+            "bessel" => ['a' => 6377397.155, 'rf' => 299.1528128, 'name' => "Bessel 1841"],
+            "bess_nam" => ['a' => 6377483.865, 'rf' => 299.1528128, 'name' => "Bessel 1841 (Namibia)"],
+            "clrk66" => ['a' => 6378206.4, 'b' => 6356583.8, 'name' => "Clarke 1866"],
+            "clrk80" => ['a' => 6378249.145, 'rf' => 293.4663, 'name' => "Clarke 1880 mod."],
+            "CPM" => ['a' => 6375738.7, 'rf' => 334.29, 'name' => "Comm. des Poids et Mesures 1799"],
+            "delmbr" => ['a' => 6376428.0, 'rf' => 311.5, 'name' => "Delambre 1810 (Belgium)"],
+            "engelis" => ['a' => 6378136.05, 'rf' => 298.2566, 'name' => "Engelis 1985"],
+            "evrst30" => ['a' => 6377276.345, 'rf' => 300.8017, 'name' => "Everest 1830"],
+            "evrst48" => ['a' => 6377304.063, 'rf' => 300.8017, 'name' => "Everest 1948"],
+            "evrst56" => ['a' => 6377301.243, 'rf' => 300.8017, 'name' => "Everest 1956"],
+            "evrst69" => ['a' => 6377295.664, 'rf' => 300.8017, 'name' => "Everest 1969"],
+            "evrstSS" => ['a' => 6377298.556, 'rf' => 300.8017, 'name' => "Everest (Sabah & Sarawak)"],
+            "fschr60" => ['a' => 6378166.0, 'rf' => 298.3, 'name' => "Fischer (Mercury Datum) 1960"],
+            "fschr60m" => ['a' => 6378155.0, 'rf' => 298.3, 'name' => "Fischer 1960"],
+            "fschr68" => ['a' => 6378150.0, 'rf' => 298.3, 'name' => "Fischer 1968"],
+            "helmert" => ['a' => 6378200.0, 'rf' => 298.3, 'name' => "Helmert 1906"],
+            "hough" => ['a' => 6378270.0, 'rf' => 297.0, 'name' => "Hough"],
+            "intl" => ['a' => 6378388.0, 'rf' => 297.0, 'name' => "International 1909 (Hayford)"],
+            "kaula" => ['a' => 6378163.0, 'rf' => 298.24, 'name' => "Kaula 1961"],
+            "lerch" => ['a' => 6378139.0, 'rf' => 298.257, 'name' => "Lerch 1979"],
+            "mprts" => ['a' => 6397300.0, 'rf' => 191.0, 'name' => "Maupertius 1738"],
+            "new_intl" => ['a' => 6378157.5, 'b' => 6356772.2, 'name' => "New International 1967"],
+            "plessis" => ['a' => 6376523.0, 'rf' => 6355863.0, 'name' => "Plessis 1817 (France)"],
+            "krass" => ['a' => 6378245.0, 'rf' => 298.3, 'name' => "Krassovsky, 1942"],
+            "SEasia" => ['a' => 6378155.0, 'b' => 6356773.3205, 'name' => "Southeast Asia"],
+            "walbeck" => ['a' => 6376896.0, 'b' => 6355834.8467, 'name' => "Walbeck"],
+            "WGS60" => ['a' => 6378165.0, 'rf' => 298.3, 'name' => "WGS 60"],
+            "WGS66" => ['a' => 6378145.0, 'rf' => 298.25, 'name' => "WGS 66"],
+            "WGS72" => ['a' => 6378135.0, 'rf' => 298.26, 'name' => "WGS 72"],
+            "WGS84" => ['a' => 6378137.0, 'rf' => 298.257223563, 'name' => "WGS 84"],
+            "sphere" => ['a' => 6370997.0, 'b' => 6370997.0, 'name' => "Normal Sphere (r=6370997)"],
+        ];
+
+        // Load them through the API so we have a single point of validation.
+        foreach($default_ellipsoids as $key => $data) {
+            $this->addEllipsoid($key, $data);
+        }
+    }
+
+    /**
+     * Tells us if a datum has been loaded.
+     * @returns bool
+     */
+    public function hasEllipsoid($key)
+    {
+        return array_key_exists($key, $this->ellipsoids);
+    }
+
+    /**
+     * Returns a datum source data.
+     * Returns an empty arry if a datum key is not found.
+     * @returns array
+     */
+    public function getEllipsoid($key)
+    {
+        return $this->hasEllipsoid($key) ? $this->ellipsoids[$key] : [];
+    }
+
+    /**
+     * Adda new datum, overwriting if the key already exists.
+     * @returns void
+     */
+    public function addEllipsoid($key, $data)
+    {
+        $this->ellipsoids[$key] = $data;
     }
 
     protected function initPrimeMeridian()

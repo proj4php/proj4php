@@ -703,10 +703,10 @@ class Proj
 
         // Do we have an ellipsoid?
         if (!isset($this->a)) {
-            if ( ! isset($this->ellps) || strlen($this->ellps ) == 0 || ! array_key_exists($this->ellps, Proj4php::$ellipsoid)) {
-                $ellipse = Proj4php::$ellipsoid['WGS84'];
+            if ( ! isset($this->ellps) || strlen($this->ellps ) == 0 || ! $this->proj4php->hasEllipsoid($this->ellps)) {
+                $ellipse = $this->proj4php->getEllipsoid('WGS84');
             } else {
-                $ellipse = Proj4php::$ellipsoid[$this->ellps];
+                $ellipse = $this->proj4php->getEllipsoid($this->ellps);
             }
 
             Proj4php::extend($this, $ellipse);

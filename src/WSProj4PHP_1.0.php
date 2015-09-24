@@ -1,7 +1,6 @@
 <?php
 namespace proj4php;
-
-include_once("proj4php.php");
+include("../vendor/autoload.php");
 
 $error = false;
 
@@ -65,14 +64,6 @@ $proj4 = new Proj4php();
 $projsource = new Proj($srcProjection, $proj4);
 $projdest = new Proj($tgtProjection, $proj4);
 
-// check the projections
-if (Proj4php::$defs[$srcProjection] == Proj4php::$defs['WGS84'] && $srcProjection != 'EPSG:4326') {
-    $error = true;
-}
-
-if (Proj4php::$defs[$tgtProjection] == Proj4php::$defs['WGS84'] && $tgtProjection != 'EPSG:4326') {
-    $error = true;
-}
 
 if ($error === true) {
     if ($format == 'json') {

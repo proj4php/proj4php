@@ -69,6 +69,9 @@ class Proj
      */
     public $localCS = false;
 
+    // Proj4php injected object.
+    protected $proj4php;
+
     /**
      * RE to split an SRS code in WKT format.
      * Given "Alphanum123[something,or,nothing]" would give:
@@ -92,9 +95,10 @@ class Proj
      * $srsCode - a code for map projection definition parameters. These are usually
      * (but not always) EPSG codes.
      */
-    public function __construct($srsCode)
+    public function __construct($srsCode, Proj4php $proj4php)
     {
         $this->srsCodeInput = $srsCode;
+        $this->proj4php = $proj4php;
 
         // Check to see if $this is a Well Known Text (WKT) string.
         // This is an old, deprecated format, but still used.
@@ -169,7 +173,7 @@ class Proj
     public function loadProjDefinition()
     {
         // Check in memory
-        if (array_key_exists($this->srsCode, Proj4php::$defs)) {
+        if ($this->proj4php->hasDef($this->srsCode)) {
             $this->defsLoaded();
             return;
         }
@@ -178,7 +182,8 @@ class Proj
         $filename = __DIR__ . '/defs/' . strtoupper($this->srsAuth) . $this->srsProjNumber . '.php';
 
         try {
-            Proj4php::loadScript($filename);
+            // Load the def data script.
+            $this->proj4php->loadScript($filename);
             $this->defsLoaded();
         } catch (Exception $e) {
             $this->loadFromService();
@@ -196,7 +201,10 @@ class Proj
         $url = Proj4php::$defsLookupService . '/' . $this->srsAuth . '/' . $this->srsProjNumber . '/proj4/';
 
         try {
-            Proj4php::$defs[strtoupper($this->srsAuth) . ":" . $this->srsProjNumber] = Proj4php::loadScript($url);
+            $this->proj4php->addDef(
+                strtoupper($this->srsAuth) . ':' . $this->srsProjNumber,
+                $this->proj4php->loadScript($url)
+            );
         } catch (Exception $e) {
             $this->defsFailed();
         }
@@ -221,7 +229,7 @@ class Proj
      */
     public function checkDefsLoaded()
     {
-        return isset(Proj4php::$defs[$this->srsCode]) && !empty(Proj4php::$defs[$this->srsCode]);
+        return $this->proj4php->hasDef($this->srsCode) && $this->proj4php->getDef($this->srsCode) != '';
     }
 
     /**
@@ -234,7 +242,10 @@ class Proj
         Proj4php::reportError('failed to load projection definition for: ' . $this->srsCode);
 
         // Set it to something so it can at least continue
-        Proj4php::$defs[$this->srsCode] = Proj4php::$defs['WGS84'];
+        $this->proj4php->addDef(
+            $this->srsCode,
+            $this->proj4php->WGS84
+        );
         $this->defsLoaded();
     }
 
@@ -518,11 +529,9 @@ class Proj
      */
     public function parseDefs()
     {
-        $this->defData = Proj4php::$defs[$this->srsCode];
+        $this->defData = $this->proj4php->getDef($this->srsCode);
 
-        #$paramName;
-        #$paramVal;
-        if (!$this->defData) {
+        if ( ! $this->defData) {
             return;
         }
 

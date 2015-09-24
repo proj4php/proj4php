@@ -23,7 +23,6 @@ class Proj4php
     // not be static.
 
     public static $ellipsoid = [];
-    public static $common = null;
     public static $datum = [];
     protected $defs = [];
     public static $wktProjections = [];
@@ -211,7 +210,6 @@ class Proj4php
 
         self::$proj['longlat'] = new LongLat();
         self::$proj['identity'] = new LongLat();
-        self::$common = new Common();
 
         // Create a default projection. It's not clear why.
         $this->WGS84 = new Proj('WGS84', $this);

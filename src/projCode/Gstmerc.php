@@ -14,57 +14,56 @@ use proj4php\Common;
 
 class Gstmerc
 {
-    public function init() {
-
+    public function init()
+    {
         // array of:  a, b, lon0, lat0, k0, x0, y0
         $temp = $this->b / $this->a;
-        $this->e = sqrt( 1.0 - $temp * $temp );
+        $this->e = sqrt(1.0 - $temp * $temp);
         $this->lc = $this->long0;
-        $this->rs = sqrt( 1.0 + $this->e * $this->e * pow( cos( $this->lat0 ), 4.0 ) / (1.0 - $this->e * $this->e) );
+        $this->rs = sqrt(1.0 + $this->e * $this->e * pow(cos($this->lat0), 4.0) / (1.0 - $this->e * $this->e));
         $sinz = sin( $this->lat0 );
         $pc = asin( $sinz / $this->rs );
         $sinzpc = sin( $pc );
-        $this->cp = Common::latiso( 0.0, $pc, $sinzpc ) - $this->rs * Common::latiso( $this->e, $this->lat0, $sinz );
+        $this->cp = Common::latiso(0.0, $pc, $sinzpc) - $this->rs * Common::latiso($this->e, $this->lat0, $sinz);
         $this->n2 = $this->k0 * $this->a * sqrt( 1.0 - $this->e * $this->e ) / (1.0 - $this->e * $this->e * $sinz * $sinz);
         $this->xs = $this->x0;
         $this->ys = $this->y0 - $this->n2 * $pc;
 
-        if( !$this->title )
+        if ( ! $this->title) {
             $this->title = "Gauss Schreiber transverse mercator";
+        }
     }
 
     // forward equations--mapping lat,long to x,y
     // -----------------------------------------------------------------
-    public function forward( $p ) {
-
+    public function forward($p)
+    {
         $lon = $p->x;
         $lat = $p->y;
 
         $L = $this->rs * ($lon - $this->lc);
-        $Ls = $this->cp + ($this->rs * Common::latiso( $this->e, $lat, sin( $lat ) ));
-        // FIXME: roj4php::$common->cosh() is not a valid method.
-        $lat1 = asin( sin( $L ) / Proj4php::$common->cosh( $Ls ) );
-        $Ls1 = Common::latiso( 0.0, $lat1, sin( $lat1 ) );
+        $Ls = $this->cp + ($this->rs * Common::latiso($this->e, $lat, sin($lat)));
+        $lat1 = asin(sin($L) / cosh($Ls));
+        $Ls1 = Common::latiso( 0.0, $lat1, sin($lat1));
         $p->x = $this->xs + ($this->n2 * $Ls1);
-        // FIXME: $common->sinh() is not a valid method.
-        $p->y = $this->ys + ($this->n2 * atan( Proj4php::$common->sinh( $Ls ) / cos( $L ) ));
+        $p->y = $this->ys + ($this->n2 * atan(sinh($Ls) / cos($L)));
         return $p;
     }
 
     // inverse equations--mapping x,y to lat/long
     // -----------------------------------------------------------------
-    public function inverse( $p ) {
-
+    public function inverse($p)
+    {
         $x = $p->x;
         $y = $p->y;
 
-        // FIXME: $common->sinh() is not a valid method.
-        $L = atan( Proj4php::$common->sinh( ($x - $this->xs) / $this->n2 ) / cos( ($y - $this->ys) / $this->n2 ) );
-        $lat1 = asin( sin( ($y - $this->ys) / $this->n2 ) / Proj4php::$common->cosh( ($x - $this->xs) / $this->n2 ) );
-        $LC = Common::latiso( 0.0, $lat1, sin( $lat1 ) );
+        $L = atan(sinh(($x - $this->xs) / $this->n2) / cos(($y - $this->ys) / $this->n2));
+        $lat1 = asin(sin(($y - $this->ys) / $this->n2 ) / cosh(($x - $this->xs) / $this->n2));
+        $LC = Common::latiso(0.0, $lat1, sin($lat1));
+
         $p->x = $this->lc + $L / $this->rs;
-        $p->y = Common::invlatiso( $this->e, ($LC - $this->cp) / $this->rs );
+        $p->y = Common::invlatiso($this->e, ($LC - $this->cp) / $this->rs);
+
         return $p;
     }
-
 }

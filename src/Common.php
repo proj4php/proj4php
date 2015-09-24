@@ -5,8 +5,11 @@ namespace proj4php;
  * Author : Julien Moquet
  * 
  * Inspired by Proj4js from Mike Adair madairATdmsolutions.ca
- *                      and Richard Greenwood rich@greenwoodmap.com 
+ * and Richard Greenwood rich@greenwoodmap.com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
+ *
+ * All methods in this class are static and all data are constants.
+ * There is no need to instantiate this class.
  */
 class Common
 {

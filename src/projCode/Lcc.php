@@ -126,8 +126,8 @@ class Lcc
 
         // convert to radians
         if ($lat <= 90.0 && $lat >= -90.0 && $lon <= 180.0 && $lon >= -180.0) {
-            //lon = lon * Proj4php::$common.D2R;
-            //lat = lat * Proj4php::$common.D2R;
+            //lon = lon * Common::D2R;
+            //lat = lat * Common::D2R;
         } else {
             Proj4php::reportError("lcc:forward: llInputOutOfRange: " . $lon . " : " . $lat);
             return null;

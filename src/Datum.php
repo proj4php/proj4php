@@ -20,7 +20,7 @@ class Datum
      *
      * @param type $proj 
      */
-    public function __construct($proj)
+    public function __construct(Proj $proj)
     {
         $this->datum_type = Common::PJD_WGS84;   //default setting
 
@@ -42,6 +42,8 @@ class Datum
                     $proj->datum_params[5] != 0 || $proj->datum_params[6] != 0
                 ) {
                     $this->datum_type = Common::PJD_7PARAM;
+
+                    // The Datum messes around with properties of the Proj directly - smells bad.
                     $proj->datum_params[3] *= Common::SEC_TO_RAD;
                     $proj->datum_params[4] *= Common::SEC_TO_RAD;
                     $proj->datum_params[5] *= Common::SEC_TO_RAD;
@@ -126,46 +128,58 @@ class Datum
          * * range as it may just be a rounding issue.  Also removed longitude
          * * test, it should be wrapped by cos() and sin().  NFW for PROJ.4, Sep/2001.
          */
+
         if ($Latitude < -Common::HALF_PI && $Latitude > -1.001 * Common::HALF_PI) {
             $Latitude = -Common::HALF_PI;
         } elseif ($Latitude > Common::HALF_PI && $Latitude < 1.001 * Common::HALF_PI) {
             $Latitude = Common::HALF_PI;
         } elseif (($Latitude < -Common::HALF_PI) || ($Latitude > Common::HALF_PI)) {
-            /* Latitude out of range */
+            // Latitude out of range.
             Proj4php::reportError('geocent:lat out of range:' . $Latitude);
             return null;
         }
 
-        if ($Longitude > Common::PI )
+        if ($Longitude > Common::PI) {
             $Longitude -= (2 * Common::PI);
+        }
 
-        $Sin_Lat = sin($Latitude ); /*  sin(Latitude)  */
-        $Cos_Lat = cos($Latitude ); /*  cos(Latitude)  */
-        $Sin2_Lat = $Sin_Lat * $Sin_Lat; /*  Square of sin(Latitude)  */
-        $Rn = $this->a / (sqrt( 1.0e0 - $this->es * $Sin2_Lat )); /*  Earth radius at location  */
-        $p->x = ($Rn + $Height) * $Cos_Lat * cos($Longitude );
-        $p->y = ($Rn + $Height) * $Cos_Lat * sin($Longitude );
+        // sin(Latitude)
+        $Sin_Lat = sin($Latitude);
+
+        // cos(Latitude)
+        $Cos_Lat = cos($Latitude);
+
+        // Square of sin(Latitude)
+        $Sin2_Lat = $Sin_Lat * $Sin_Lat;
+
+        // Earth radius at location
+        $Rn = $this->a / (sqrt(1.0e0 - $this->es * $Sin2_Lat));
+
+        $p->x = ($Rn + $Height) * $Cos_Lat * cos($Longitude);
+        $p->y = ($Rn + $Height) * $Cos_Lat * sin($Longitude);
         $p->z = (($Rn * (1 - $this->es)) + $Height) * $Sin_Lat;
 
         return $Error_Code;
     }
 
-
     /**
-     *
+     * FIXME: what is $p? It is some kind of object.
      * @param object $p
      * @return type 
      */
     public function geocentric_to_geodetic($p)
     {
-        /* local defintions and variables */
-        /* end-criterium of loop, accuracy of sin(Latitude) */
+        // local defintions and variables
+        // end-criterium of loop, accuracy of sin(Latitude)
+
         $genau = 1.E-12;
         $genau2 = ($genau * $genau);
         $maxiter = 30;
         $X = $p->x;
         $Y = $p->y;
-        $Z = $p->z ? $p->z : 0.0;   //Z value not always supplied
+
+        // Z value not always supplied
+        $Z = $p->z ? $p->z : 0.0;
 
         /*
         $P;        // distance between semi-minor axis and location 
@@ -188,8 +202,8 @@ class Datum
         */
 
         $At_Pole = false;
-        $P = sqrt($X * $X + $Y * $Y );
-        $RR = sqrt($X * $X + $Y * $Y + $Z * $Z );
+        $P = sqrt($X * $X + $Y * $Y);
+        $RR = sqrt($X * $X + $Y * $Y + $Z * $Z);
 
         /*      special cases for latitude and longitude */
         if ($P / $this->a < $genau) {
@@ -205,8 +219,8 @@ class Datum
                 return;
             }
         } else {
-            /*  ellipsoidal (geodetic) longitude
-             *  interval: -PI < Longitude <= +PI */
+            // ellipsoidal (geodetic) longitude
+            // interval: -PI < Longitude <= +PI
             $Longitude = atan2($Y, $X );
         }
 
@@ -221,16 +235,16 @@ class Datum
          */
         $CT = $Z / $RR;
         $ST = $P / $RR;
-        $RX = 1.0 / sqrt( 1.0 - $this->es * (2.0 - $this->es) * $ST * $ST );
+        $RX = 1.0 / sqrt(1.0 - $this->es * (2.0 - $this->es) * $ST * $ST);
         $CPHI0 = $ST * (1.0 - $this->es) * $RX;
         $SPHI0 = $CT * $RX;
         $iter = 0;
 
-        /* loop to find sin(Latitude) res$p-> Latitude
-         * until |sin(Latitude(iter)-Latitude(iter-1))| < genau */
+        // loop to find sin(Latitude) res$p-> Latitude
+        // until |sin(Latitude(iter)-Latitude(iter-1))| < genau
         do {
             ++$iter;
-            $RN = $this->a / sqrt( 1.0 - $this->es * $SPHI0 * $SPHI0 );
+            $RN = $this->a / sqrt(1.0 - $this->es * $SPHI0 * $SPHI0);
 
             /*  ellipsoidal (geodetic) height */
             $Height = $P * $CPHI0 + $Z * $SPHI0 - $RN * (1.0 - $this->es * $SPHI0 * $SPHI0);
@@ -242,10 +256,10 @@ class Datum
             $SDPHI = $SPHI * $CPHI0 - $CPHI * $SPHI0;
             $CPHI0 = $CPHI;
             $SPHI0 = $SPHI;
-        } while($SDPHI * $SDPHI > $genau2 && $iter < $maxiter);
+        } while ($SDPHI * $SDPHI > $genau2 && $iter < $maxiter);
 
-        /*      ellipsoidal (geodetic) latitude */
-        $Latitude = atan($SPHI / abs($CPHI ) );
+        // ellipsoidal (geodetic) latitude
+        $Latitude = atan($SPHI / abs($CPHI));
 
         $p->x = $Longitude;
         $p->y = $Latitude;
@@ -292,7 +306,7 @@ class Datum
         $At_Pole = false;
 
         if ($X <> 0.0) {
-            $Longitude = atan2($Y, $X );
+            $Longitude = atan2($Y, $X);
         } else {
             if ($Y > 0) {
                 $Longitude = Common::HALF_PI;
@@ -312,6 +326,7 @@ class Datum
                 }
             }
         }
+
         $W2 = $X * $X + $Y * $Y;
         $W = sqrt($W2 );
         $T0 = $Z * Common::AD_C;
@@ -325,13 +340,15 @@ class Datum
         $Sin_p1 = $T1 / $S1;
         $Cos_p1 = $Sum / $S1;
         $Rn = $this->a / sqrt( 1.0 - $this->es * $Sin_p1 * $Sin_p1 );
+
         if ($Cos_p1 >= Common::COS_67P5) {
             $Height = $W / $Cos_p1 - $Rn;
-        } else if ($Cos_p1 <= -Common::COS_67P5) {
+        } elseif ($Cos_p1 <= -Common::COS_67P5) {
             $Height = $W / -$Cos_p1 - $Rn;
         } else {
             $Height = $Z / $Sin_p1 + $Rn * ($this->es - 1.0);
         }
+
         if ($At_Pole == false) {
             $Latitude = atan($Sin_p1 / $Cos_p1 );
         }
@@ -400,7 +417,7 @@ class Datum
             $p->x = $x_tmp + $Rz_BF * $y_tmp - $Ry_BF * $z_tmp;
             $p->y = -$Rz_BF * $x_tmp + $y_tmp + $Rx_BF * $z_tmp;
             $p->z = $Ry_BF * $x_tmp - $Rx_BF * $y_tmp + $z_tmp;
-        } //cs_geocentric_from_wgs84()
+        }
     }
 
 }

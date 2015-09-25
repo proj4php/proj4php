@@ -25,9 +25,9 @@ class Proj4php
     protected $ellipsoids = [];
     protected $datums = [];
     protected $defs = [];
+    protected $primeMeridians = [];
 
     public static $wktProjections = [];
-    public static $primeMeridian = [];
     public static $proj = [];
 
     // Default projection always created on instantiation.
@@ -264,7 +264,7 @@ class Proj4php
     }
 
     /**
-     * Tells us if a datum has been loaded.
+     * Tells us if a ellipsoid has been loaded.
      * @returns bool
      */
     public function hasEllipsoid($key)
@@ -273,8 +273,8 @@ class Proj4php
     }
 
     /**
-     * Returns a datum source data.
-     * Returns an empty arry if a datum key is not found.
+     * Returns a ellipsoid source data.
+     * Returns an empty arry if a ellipsoid key is not found.
      * @returns array
      */
     public function getEllipsoid($key)
@@ -283,7 +283,7 @@ class Proj4php
     }
 
     /**
-     * Adda new datum, overwriting if the key already exists.
+     * Adda new ellipsoid, overwriting if the key already exists.
      * @returns void
      */
     public function addEllipsoid($key, $data)
@@ -293,19 +293,54 @@ class Proj4php
 
     protected function initPrimeMeridian()
     {
-        self::$primeMeridian["greenwich"] = '0.0';               //"0dE",
-        self::$primeMeridian["lisbon"] = -9.131906111111;   //"9d07'54.862\"W",
-        self::$primeMeridian["paris"] = 2.337229166667;   //"2d20'14.025\"E",
-        self::$primeMeridian["bogota"] = -74.080916666667;  //"74d04'51.3\"W",
-        self::$primeMeridian["madrid"] = -3.687938888889;  //"3d41'16.58\"W",
-        self::$primeMeridian["rome"] = 12.452333333333;  //"12d27'8.4\"E",
-        self::$primeMeridian["bern"] = 7.439583333333;  //"7d26'22.5\"E",
-        self::$primeMeridian["jakarta"] = 106.807719444444;  //"106d48'27.79\"E",
-        self::$primeMeridian["ferro"] = -17.666666666667;  //"17d40'W",
-        self::$primeMeridian["brussels"] = 4.367975;        //"4d22'4.71\"E",
-        self::$primeMeridian["stockholm"] = 18.058277777778;  //"18d3'29.8\"E",
-        self::$primeMeridian["athens"] = 23.7163375;       //"23d42'58.815\"E",
-        self::$primeMeridian["oslo"] = 10.722916666667;  //"10d43'22.5\"E"
+        $default_prime_meridians = [
+            "greenwich" => '0.0',           // "0dE",
+            "lisbon" => -9.131906111111,    // "9d07'54.862\"W",
+            "paris" => 2.337229166667,      // "2d20'14.025\"E",
+            "bogota" => -74.080916666667,   // "74d04'51.3\"W",
+            "madrid" => -3.687938888889,    // "3d41'16.58\"W",
+            "rome" => 12.452333333333,      // "12d27'8.4\"E",
+            "bern" => 7.439583333333,       // "7d26'22.5\"E",
+            "jakarta" => 106.807719444444,  // "106d48'27.79\"E",
+            "ferro" => -17.666666666667,    // "17d40'W",
+            "brussels" => 4.367975,         // "4d22'4.71\"E",
+            "stockholm" => 18.058277777778, // "18d3'29.8\"E",
+            "athens" => 23.7163375,         // "23d42'58.815\"E",
+            "oslo" => 10.722916666667,      // "10d43'22.5\"E"
+        ];
+
+        // Load them through the API so we have a single point of validation.
+        foreach($default_prime_meridians as $key => $data) {
+            $this->addPrimeMeridian($key, $data);
+        }
+    }
+
+    /**
+     * Tells us if a prime_meridian has been loaded.
+     * @returns bool
+     */
+    public function hasPrimeMeridian($key)
+    {
+        return array_key_exists($key, $this->primeMeridians);
+    }
+
+    /**
+     * Returns a prime_meridian source data.
+     * Returns an empty arry if a prime_meridian key is not found.
+     * @returns array
+     */
+    public function getPrimeMeridian($key)
+    {
+        return $this->hasPrimeMeridian($key) ? $this->primeMeridians[$key] : [];
+    }
+
+    /**
+     * Adda new prime_meridian, overwriting if the key already exists.
+     * @returns void
+     */
+    public function addPrimeMeridian($key, $data)
+    {
+        $this->primeMeridians[$key] = $data;
     }
 
     /**
@@ -322,7 +357,7 @@ class Proj4php
         self::$proj['longlat'] = new LongLat();
         self::$proj['identity'] = new LongLat();
 
-        // Create a default projection. It's not clear why.
+        // Create a default projection, used in some places as a fallback.
         $this->WGS84 = new Proj('WGS84', $this);
     }
 

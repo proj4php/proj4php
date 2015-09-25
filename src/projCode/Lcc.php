@@ -72,7 +72,6 @@ class Lcc
         //double false_north;             /* y offset in meters                   */
 
         // If lat2 is not defined
-        // FIXME: where does lat0 come from?
         if ( ! isset($this->lat2)) {
             $this->lat2 = $this->lat0;
         }

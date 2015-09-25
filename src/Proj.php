@@ -50,8 +50,9 @@ class Proj
      */
     public $datum = null;
 
-    protected $datum_params;
-    protected $datumCode;
+    // The Datum class sets these directly.
+    public $datum_params;
+    public $datumCode;
 
     /**
      * Property: x0
@@ -654,7 +655,12 @@ class Proj
                     // DGR 2008-07-09 : if pm is not a well-known prime meridian take
                     // the value instead of 0.0, then convert to radians
                     $paramVal = trim($paramVal);
-                    $this->from_greenwich = Proj4php::$primeMeridian[$paramVal] ? Proj4php::$primeMeridian[$paramVal] : floatval($paramVal);
+
+                    $this->from_greenwich = 
+                        $this->proj4php->hasPrimeMeridian($paramVal)
+                        ? $this->proj4php->getPrimeMeridian($paramVal)
+                        : floatval($paramVal);
+
                     $this->from_greenwich *= Common::D2R;
                     break;
                 case "axis":
@@ -740,7 +746,7 @@ class Proj
         // used in geocentric
         $this->ep2 = ($this->a2 - $this->b2) / $this->b2;
 
-        if (!isset($this->k0)) {
+        if ( ! isset($this->k0)) {
             // default value
             $this->k0 = 1.0;
         }

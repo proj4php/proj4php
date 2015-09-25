@@ -22,7 +22,7 @@ class Sterea extends Gauss
         // Initialise dependant projection first.
         parent::init();
 
-        if( !$this->rc) {
+        if ( !$this->rc) {
             Proj4php::reportError("sterea:init:E_ERROR_0");
             return;
         }
@@ -31,7 +31,7 @@ class Sterea extends Gauss
         $this->cosc0 = cos($this->phic0);
         $this->R2 = 2.0 * $this->rc;
 
-        if( ! $this->title) {
+        if ( ! $this->title) {
             $this->title = "Oblique Stereographic Alternative";
         }
     }
@@ -44,7 +44,10 @@ class Sterea extends Gauss
     {
         // adjust del longitude
         $p->x = Common::adjust_lon($p->x - $this->long0);
-        $p = Proj4php::$proj['gauss']->forward($p);
+
+        //$p = Proj4php::$proj['gauss']->forward($p);
+        $p = parent::forward($p);
+
         $sinc = sin($p->y);
         $cosc = cos($p->y);
         $cosl = cos($p->x);

@@ -32,14 +32,14 @@ class Datum
                 // So instantiating a Datum object writes properties back to the
                 // Proj class. That's a nasty side-effect! Every new Datum you create
                 // will overwrite those properties.
-                $proj->datum_params[$i] = floatval($proj->datum_params[$i] );
+                $proj->datum_params[$i] = floatval($proj->datum_params[$i]);
             }
 
             if ($proj->datum_params[0] != 0 || $proj->datum_params[1] != 0 || $proj->datum_params[2] != 0) {
                 $this->datum_type = Common::PJD_3PARAM;
             }
 
-            if (sizeof($proj->datum_params ) > 3) {
+            if (sizeof($proj->datum_params) > 3) {
                 if ($proj->datum_params[3] != 0 || $proj->datum_params[4] != 0 ||
                     $proj->datum_params[5] != 0 || $proj->datum_params[6] != 0
                 ) {
@@ -64,24 +64,26 @@ class Datum
             $this->b = $proj->b;
             $this->es = $proj->es;
             $this->ep2 = $proj->ep2;
-            #$this->datum_params = $proj->datum_params;
+            // $this->datum_params = $proj->datum_params;
         }
     }
 
-
     /**
+     * Why not call this class "equals()"? Compare functions tend to return more
+     * than just a true/false. if ($datum1->equals($datum2)) ...
      *
      * @param type $dest
      * @return boolean Returns TRUE if the two datums match, otherwise FALSE.
-     * @throws type 
+     * @throws type
      */
-    public function compare_datums($dest)
+    public function compare_datums(Datum $dest)
     {
         if ($this->datum_type != $dest->datum_type) {
-            return false; // false, datums are not equal
+            // Datums are not equal
+            return false;
         } elseif ($this->a != $dest->a || abs($this->es - $dest->es) > 0.000000000050) {
-            // the tolerence for es is to ensure that GRS80 and WGS84
-            // are considered identical
+            // The tolerence for es is to ensure that GRS80 and WGS84
+            // are considered identical.
             return false;
         } elseif ($this->datum_type == Common::PJD_3PARAM) {
             return (
@@ -101,11 +103,11 @@ class Datum
             );
         } elseif ($this->datum_type == Common::PJD_GRIDSHIFT ||
             $dest->datum_type == Common::PJD_GRIDSHIFT) {
-            throw(new Exception( "ERROR: Grid shift transformations are not implemented." ));
-            return false;
+            throw new Exception("ERROR: Grid shift transformations are not implemented.");
         }
 
-        return true; // datums are equal
+        // Datums are equal.
+        return true;
     }
 
     /*
@@ -126,7 +128,7 @@ class Datum
         $Longitude = $p->x;
         $Latitude = $p->y;
         // Z value not always supplied
-        $Height = isset($p->z) ? $p->z : 0;
+        $Height = (isset($p->z) ? $p->z : 0);
         // GEOCENT_NO_ERROR;
         $Error_Code = 0;
 
@@ -201,25 +203,25 @@ class Datum
         $CPHI;     // cos of searched geodetic latitude
         $SPHI;     // sin of searched geodetic latitude 
         $SDPHI;    // end-criterium: addition-theorem of sin(Latitude(iter)-Latitude(iter-1)) 
-        $At_Pole;     // indicates location is in polar region 
+        $AtPole;     // indicates location is in polar region 
         $iter;        // of continous iteration, max. 30 is always enough (s.a.) 
         $Longitude;
         $Latitude;
         $Height;
         */
 
-        $At_Pole = false;
+        $AtPole = false;
         $P = sqrt($X * $X + $Y * $Y);
         $RR = sqrt($X * $X + $Y * $Y + $Z * $Z);
 
-        /*      special cases for latitude and longitude */
+        // Special cases for latitude and longitude.
         if ($P / $this->a < $genau) {
-            /*  special case, if P=0. (X=0., Y=0.) */
-            $At_Pole = true;
+            // special case, if P=0. (X=0., Y=0.)
+            $AtPole = true;
             $Longitude = 0.0;
 
-            /*  if (X,Y,Z)=(0.,0.,0.) then Height becomes semi-minor axis
-             *  of ellipsoid (=center of mass), Latitude becomes PI/2 */
+            // If (X,Y,Z)=(0.,0.,0.) then Height becomes semi-minor axis
+            // of ellipsoid (=center of mass), Latitude becomes PI/2
             if ($RR / $this->a < $genau) {
                 $Latitude = Common::HALF_PI;
                 $Height = -$this->b;
@@ -228,7 +230,7 @@ class Datum
         } else {
             // ellipsoidal (geodetic) longitude
             // interval: -PI < Longitude <= +PI
-            $Longitude = atan2($Y, $X );
+            $Longitude = atan2($Y, $X);
         }
 
         /* --------------------------------------------------------------
@@ -257,7 +259,7 @@ class Datum
             $Height = $P * $CPHI0 + $Z * $SPHI0 - $RN * (1.0 - $this->es * $SPHI0 * $SPHI0);
 
             $RK = $this->es * $RN / ($RN + $Height);
-            $RX = 1.0 / sqrt( 1.0 - $RK * (2.0 - $RK) * $ST * $ST );
+            $RX = 1.0 / sqrt( 1.0 - $RK * (2.0 - $RK) * $ST * $ST);
             $CPHI = $ST * (1.0 - $RK) * $RX;
             $SPHI = $CT * $RX;
             $SDPHI = $SPHI * $CPHI0 - $CPHI * $SPHI0;
@@ -283,7 +285,7 @@ class Datum
      * @param object Point $p
      * @return object Point $p
      */
-    public function geocentric_to_geodetic_noniter($p)
+    public function geocentric_to_geodetic_noniter(Point $p)
     {
         /*
         $Longitude;
@@ -303,14 +305,19 @@ class Datum
         $Cos_p1;   // cos(phi1) 
         $Rn;       // Earth radius at location 
         $Sum;      // numerator of cos(phi1) 
-        $At_Pole;  // indicates location is in polar region 
+        $AtPole;  // indicates location is in polar region 
         */
 
-        $X = floatval($p->x );  // cast from string to float
-        $Y = floatval($p->y );
-        $Z = floatval($p->z ? $p->z : 0 );
+        // Cast from string to float.
+        // Since we are accepting the Point class only, then we can already
+        // guarantee we have floats. A simple list($x, $y $Z) = $p->toArray() will
+        // give us our values.
 
-        $At_Pole = false;
+        $X = floatval($p->x);
+        $Y = floatval($p->y);
+        $Z = floatval($p->z ? $p->z : 0);
+
+        $AtPole = false;
 
         if ($X <> 0.0) {
             $Longitude = atan2($Y, $X);
@@ -320,7 +327,7 @@ class Datum
             } elseif (Y < 0) {
                 $Longitude = -Common::HALF_PI;
             } else {
-                $At_Pole = true;
+                $AtPole = true;
                 $Longitude = 0.0;
                 if ($Z > 0.0) { /* north pole */
                     $Latitude = Common::HALF_PI;
@@ -335,18 +342,18 @@ class Datum
         }
 
         $W2 = $X * $X + $Y * $Y;
-        $W = sqrt($W2 );
+        $W = sqrt($W2);
         $T0 = $Z * Common::AD_C;
-        $S0 = sqrt($T0 * $T0 + $W2 );
+        $S0 = sqrt($T0 * $T0 + $W2);
         $Sin_B0 = $T0 / $S0;
         $Cos_B0 = $W / $S0;
         $Sin3_B0 = $Sin_B0 * $Sin_B0 * $Sin_B0;
         $T1 = $Z + $this->b * $this->ep2 * $Sin3_B0;
         $Sum = $W - $this->a * $this->es * $Cos_B0 * $Cos_B0 * $Cos_B0;
-        $S1 = sqrt($T1 * $T1 + $Sum * $Sum );
+        $S1 = sqrt($T1 * $T1 + $Sum * $Sum);
         $Sin_p1 = $T1 / $S1;
         $Cos_p1 = $Sum / $S1;
-        $Rn = $this->a / sqrt( 1.0 - $this->es * $Sin_p1 * $Sin_p1 );
+        $Rn = $this->a / sqrt( 1.0 - $this->es * $Sin_p1 * $Sin_p1);
 
         if ($Cos_p1 >= Common::COS_67P5) {
             $Height = $W / $Cos_p1 - $Rn;
@@ -356,8 +363,8 @@ class Datum
             $Height = $Z / $Sin_p1 + $Rn * ($this->es - 1.0);
         }
 
-        if ($At_Pole == false) {
-            $Latitude = atan($Sin_p1 / $Cos_p1 );
+        if ($AtPole == false) {
+            $Latitude = atan($Sin_p1 / $Cos_p1);
         }
 
         $p->x = $Longitude;
@@ -421,5 +428,4 @@ class Datum
             $p->z = $Ry_BF * $x_tmp - $Rx_BF * $y_tmp + $z_tmp;
         }
     }
-
 }

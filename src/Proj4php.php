@@ -414,6 +414,9 @@ class Proj4php
         }
 
         // Convert datums if needed, and if possible.
+        // Note: this updates $point by reference, as well as returning
+        // $point (after it has been changed. $point really needs to be made
+        // immutable so it is clear what is happening.
         $point = $this->datum_transform($source->datum, $dest->datum, $point);
 
         // Adjust for the prime meridian if necessary
@@ -467,11 +470,11 @@ class Proj4php
 
         /*
         // If this datum requires grid shifts, then apply it to geodetic coordinates.
-        if ($source->datum_type == Common::PJD_GRIDSHIFT ) {
+        if ($source->datum_type == Common::PJD_GRIDSHIFT) {
             throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
 
-        if ($dest->datum_type == Common::PJD_GRIDSHIFT ) {
+        if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
             throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
         */
@@ -505,7 +508,7 @@ class Proj4php
 
         // Apply grid shift to destination if required
         /*
-        if ($dest->datum_type == Common::PJD_GRIDSHIFT ) {
+        if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
             throw new Exception("ERROR: Grid shift transformations are not implemented yet."));
             // pj_apply_gridshift(pj_param(dest.params,"snadgrids").s, 1, point);
             // CHECK_RETURN;
@@ -529,7 +532,7 @@ class Proj4php
     {
         $xin = $point->x;
         $yin = $point->y;
-        $zin = isset( $point->z ) ? $point->z : 0.0;
+        $zin = isset( $point->z) ? $point->z : 0.0;
 
         for ($i = 0; $i < 3; $i++) {
             if ($denorm && $i == 2 && !isset($point->z)) {
@@ -584,7 +587,7 @@ class Proj4php
      * An internal method to report errors back to user.
      * Override this in applications to report error messages or throw exceptions.
      */
-    public static function reportError( $msg )
+    public static function reportError($msg)
     {
         throw(new Exception($msg));
     }
@@ -595,7 +598,7 @@ class Proj4php
      */
     public function loadScript($filename)
     {
-        if (stripos($filename, 'http://') !== false ) {
+        if (stripos($filename, 'http://') !== false) {
             // If fecthing from a URL, just return the body of the response.
             return @file_get_contents($filename);
         } elseif (file_exists($filename)) {

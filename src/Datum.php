@@ -5,12 +5,10 @@ namespace proj4php;
  * Author : Julien Moquet
  * 
  * Inspired by Proj4js from Mike Adair madairATdmsolutions.ca
- *                      and Richard Greenwood rich@greenwoodma$p->com 
+ * and Richard Greenwood rich@greenwoodma$p->com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
 
-/** datum object
- */
 class Datum
 {
     public $datum_type;
@@ -22,14 +20,18 @@ class Datum
      */
     public function __construct(Proj $proj)
     {
-        $this->datum_type = Common::PJD_WGS84;   //default setting
+        // default setting
+        $this->datum_type = Common::PJD_WGS84;
 
         if (isset($proj->datumCode) && $proj->datumCode == 'none') {
             $this->datum_type = Common::PJD_NODATUM;
         }
 
         if (isset($proj->datum_params)) {
-            for ($i = 0; $i < sizeof($proj->datum_params ); $i++) {
+            for ($i = 0; $i < sizeof($proj->datum_params); $i++) {
+                // So instantiating a Datum object writes properties back to the
+                // Proj class. That's a nasty side-effect! Every new Datum you create
+                // will overwrite those properties.
                 $proj->datum_params[$i] = floatval($proj->datum_params[$i] );
             }
 
@@ -43,7 +45,8 @@ class Datum
                 ) {
                     $this->datum_type = Common::PJD_7PARAM;
 
-                    // The Datum messes around with properties of the Proj directly - smells bad.
+                    // The Datum messes around with more properties of the Proj directly - smells bad.
+                    // What do these anonymous indexes of the datum_params even mean?
                     $proj->datum_params[3] *= Common::SEC_TO_RAD;
                     $proj->datum_params[4] *= Common::SEC_TO_RAD;
                     $proj->datum_params[5] *= Common::SEC_TO_RAD;
@@ -51,11 +54,13 @@ class Datum
                 }
             }
 
+            // After messing with the Proj datum_params, we copy them back here.
             $this->datum_params = $proj->datum_params;
         }
 
         if (isset($proj)) {
-            $this->a = $proj->a;    //datum object also uses these values
+            // datum object also uses these values
+            $this->a = $proj->a;
             $this->b = $proj->b;
             $this->es = $proj->es;
             $this->ep2 = $proj->ep2;
@@ -120,8 +125,10 @@ class Datum
     {
         $Longitude = $p->x;
         $Latitude = $p->y;
-        $Height = isset($p->z ) ? $p->z : 0;   //Z value not always supplied
-        $Error_Code = 0;  //  GEOCENT_NO_ERROR;
+        // Z value not always supplied
+        $Height = isset($p->z) ? $p->z : 0;
+        // GEOCENT_NO_ERROR;
+        $Error_Code = 0;
 
         /*
          * * Don't blow up if Latitude is just a little out of the value
@@ -360,14 +367,13 @@ class Datum
         return $p;
     }
 
-    /************************************************************** */
-    // pj_geocentic_to_wgs84( p )
-    //  p = point to transform in geocentric coordinates (x,y,z)
-    public function geocentric_to_wgs84($p)
+    /**
+     * p = point to transform in geocentric coordinates (x,y,z)
+     * Note: this will change the point by reference.
+     */
+    public function geocentric_to_wgs84(Point $p)
     {
         if ($this->datum_type == Common::PJD_3PARAM) {
-            // if (x[io] == HUGE_VAL )
-            //    continue;
             $p->x += $this->datum_params[0];
             $p->y += $this->datum_params[1];
             $p->z += $this->datum_params[2];
@@ -379,24 +385,21 @@ class Datum
             $Ry_BF = $this->datum_params[4];
             $Rz_BF = $this->datum_params[5];
             $M_BF = $this->datum_params[6];
-            // if (x[io] == HUGE_VAL )
-            //    continue;
+
             $p->x = $M_BF * ($p->x - $Rz_BF * $p->y + $Ry_BF * $p->z) + $Dx_BF;
             $p->y = $M_BF * ($Rz_BF * $p->x + $p->y - $Rx_BF * $p->z) + $Dy_BF;
             $p->z = $M_BF * (-$Ry_BF * $p->x + $Rx_BF * $p->y + $p->z) + $Dz_BF;
         }
     }
 
-    /*************************************************************** */
-
-    // pj_geocentic_from_wgs84()
-    //  coordinate system definition,
-    //  point to transform in geocentric coordinates (x,y,z)
-    public function geocentric_from_wgs84($p)
+    /**
+     *  coordinate system definition,
+     *  point to transform in geocentric coordinates (x,y,z)
+     * Note: this will change the point by reference.
+     */
+    public function geocentric_from_wgs84(Point $p)
     {
         if ($this->datum_type == Common::PJD_3PARAM) {
-            //if (x[io] == HUGE_VAL )
-            //    continue;
             $p->x -= $this->datum_params[0];
             $p->y -= $this->datum_params[1];
             $p->z -= $this->datum_params[2];
@@ -408,11 +411,10 @@ class Datum
             $Ry_BF = $this->datum_params[4];
             $Rz_BF = $this->datum_params[5];
             $M_BF = $this->datum_params[6];
+
             $x_tmp = ($p->x - $Dx_BF) / $M_BF;
             $y_tmp = ($p->y - $Dy_BF) / $M_BF;
             $z_tmp = ($p->z - $Dz_BF) / $M_BF;
-            //if (x[io] == HUGE_VAL )
-            //    continue;
 
             $p->x = $x_tmp + $Rz_BF * $y_tmp - $Ry_BF * $z_tmp;
             $p->y = -$Rz_BF * $x_tmp + $y_tmp + $Rx_BF * $z_tmp;

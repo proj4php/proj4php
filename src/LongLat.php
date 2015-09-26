@@ -14,13 +14,13 @@ class LongLat
     {
     }
 
-    public function forward($pt)
+    public function forward($point)
     {
-        return $pt;
+        return $point;
     }
 
-    public function inverse($pt)
+    public function inverse($point)
     {
-        return $pt;
+        return $point;
     }
 }

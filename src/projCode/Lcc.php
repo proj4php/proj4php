@@ -5,11 +5,11 @@ namespace proj4php\projCode;
  * Author : Julien Moquet
  * 
  * Inspired by Proj4JS from Mike Adair madairATdmsolutions.ca
- *                      and Richard Greenwood rich@greenwoodma$p->com 
- * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
+ * and Richard Greenwood rich@greenwoodma$p->com
+ * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html
  */
 /*******************************************************************************
-  NAME                            LAMBERT CONFORMAL CONIC
+  NAME LAMBERT CONFORMAL CONIC
 
   PURPOSE:	Transforms input longitude and latitude to Easting and
   Northing for the Lambert Conformal Conic projection.  The
@@ -27,7 +27,6 @@ namespace proj4php\projCode;
   U.S. Geological Survey Professional Paper 1453 , United State Government
  *******************************************************************************/
 
-
 //<2104> +proj=lcc +lat_1=10.16666666666667 +lat_0=10.16666666666667 +lon_0=-71.60561777777777 +k_0=1 +x0=-17044 +x0=-23139.97 +ellps=intl +units=m +no_defs  no_defs
 // Initialize the Lambert Conformal conic projection
 // -----------------------------------------------------------------
@@ -35,6 +34,7 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Lcc
 {
@@ -76,7 +76,6 @@ class Lcc
             $this->lat2 = $this->lat0;
         }
 
-        // if k0 is not defined (it won't be - there is no constructor.
         if ( ! isset($this->k0)) {
             $this->k0 = 1.0;
         }
@@ -103,7 +102,7 @@ class Lcc
         $ts0 = Common::tsfnz($this->e, $this->lat0, sin($this->lat0));
 
         if (abs($this->lat1 - $this->lat2) > Common::EPSLN) {
-            $this->ns = log( $ms1 / $ms2 ) / log( $ts1 / $ts2 );
+            $this->ns = log($ms1 / $ms2) / log($ts1 / $ts2);
         } else {
             $this->ns = $sin1;
         }
@@ -112,24 +111,24 @@ class Lcc
         $this->rh = $this->a * $this->f0 * pow($ts0, $this->ns);
 
         if ( ! isset($this->title)) {
-            $this->title = "Lambert Conformal Conic";
+            $this->title = 'Lambert Conformal Conic';
         }
     }
 
     // Lambert Conformal conic forward equations--mapping lat,long to x,y
     // -----------------------------------------------------------------
-    public function forward($p)
+    // CHECKME: should this be a LongLat object? Why is "log" and "lat" being squeezed into a "point"?
+    public function forward(Point $p)
     {
-        $lon = $p->x;
-        $lat = $p->y;
+        list($lon, $lat) = $p->toArray();
 
         // convert to radians
         if ($lat <= 90.0 && $lat >= -90.0 && $lon <= 180.0 && $lon >= -180.0) {
             //lon = lon * Common::D2R;
             //lat = lat * Common::D2R;
         } else {
-            Proj4php::reportError("lcc:forward: llInputOutOfRange: " . $lon . " : " . $lat);
-            return null;
+            Proj4php::reportError('lcc:forward: llInputOutOfRange: ' . $lon . ' : ' . $lat);
+            return;
         }
 
         $con = abs(abs($lat) - Common::HALF_PI);
@@ -139,10 +138,12 @@ class Lcc
             $rh1 = $this->a * $this->f0 * pow($ts, $this->ns);
         } else {
             $con = $lat * $this->ns;
+
             if ($con <= 0) {
-                Proj4php::reportError("lcc:forward: No Projection");
-                return null;
+                Proj4php::reportError('lcc:forward: No Projection');
+                return;
             }
+
             $rh1 = 0;
         }
 

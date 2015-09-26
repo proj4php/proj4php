@@ -348,7 +348,7 @@ class Proj
      * @param type $pt
      * @return type 
      */
-    public function forward($pt)
+    public function forward(Point $pt)
     {
         return $this->projection->forward($pt);
     }
@@ -358,7 +358,7 @@ class Proj
      * @param type $pt
      * @return type 
      */
-    public function inverse($pt)
+    public function inverse(Point $pt)
     {
         return $this->projection->inverse($pt);
     }

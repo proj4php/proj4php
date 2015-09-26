@@ -10,16 +10,19 @@ namespace proj4php;
  */
 
 /** 
- * point object, nothing fancy, just allows values to be
+ * Point object, nothing fancy, just allows values to be
  * passed back and forth by reference rather than by value.
  * Other point classes may be used as long as they have
  * x and y properties, which will get modified in the transform method.
 */
+
+use InvalidArgumentException;
+
 class Point
 {
-    public $x;
-    public $y;
-    public $z;
+    protected $x;
+    protected $y;
+    protected $z;
 
     /**
      * Constructor: Proj4js.Point
@@ -33,18 +36,21 @@ class Point
     public function __construct($x = null, $y = null, $z = null)
     {
         if (is_array($x)) {
-            $this->x = $x[0];
-            $this->y = $x[1];
-            $this->z = isset($x[2]) ? $x[2] : 0.0;#(count( $x ) > 2) ? $x[2] : 0.0;
+            // [x, y] or [x, y, z]
+            $this->__set('x',  $x[0]);
+            $this->__set('y',  $x[0]);
+            $this->__set('z',  $x[0]);
         } elseif (is_string($x) && !is_numeric($y)) {
+            // "x y" or "x y z"
             $coord = explode(' ', $x);
-            $this->x = floatval($coord[0]);
-            $this->y = floatval($coord[1]);
-            $this->z = (count($coord) > 2) ? floatval($coord[2]) : 0.0;
+            $this->__set('x', $coord[0]);
+            $this->__set('y', $coord[1]);
+            $this->__set('z', (count($coord) > 2 ? $coord[2] : null));
         } else {
-            $this->x = $x !== null ? $x : 0.0;
-            $this->y = $y !== null ? $y : 0.0;
-            $this->z = $z !== null ? $z : 0.0;
+            // Separate x, y, z
+            $this->__set('x', $x);
+            $this->__set('y', $y);
+            $this->__set('z', $z);
         }
     }
 
@@ -59,7 +65,7 @@ class Point
      */
     public function __clone()
     {
-        return new Point($this->x, $this->y, $this->z);
+        return new static($this->x, $this->y, $this->z);
     }
 
     /**
@@ -68,11 +74,11 @@ class Point
      *
      * Return:
      * {String} String representation of Proj4js.Point object. 
-     * (ex. <i>"x=5,y=42"</i>)
+     * (ex. "x=5,y=42")
      */
     public function toString()
     {
-        return "x=" . $this->x . ",y=" . $this->y;
+        return 'x=' . $this->x . ',y=' . $this->y;
     }
 
     /**
@@ -81,11 +87,63 @@ class Point
      *
      * Return:
      * {String} Shortened String representation of Proj4js.Point object. 
-     * (ex. <i>"5, 42"</i>)
+     * (ex. "5, 42")
+     * FIXME: actually "4 42" - a single space as separator, not commas.
      */
     public function toShortString()
     {
-        return $this->x . " " . $this->y;
+        return $this->x . ' ' . $this->y;
     }
 
+    /**
+     * Getter for x, y and z.
+     */
+    public function __get($name)
+    {
+        $name = strtolower($name);
+
+        if ($name != 'x' && $name != 'y' && $name != 'z') {
+            // Invalid property exception.
+            throw new InvalidArgumentException(sprintf('Invalid property "%s"; expects x, y or z.', $name));
+        }
+
+        return $this->$name;
+    }
+
+    /**
+     * Setter for x, y and z.
+     */
+    public function __set($name, $value)
+    {
+        $name = strtolower($name);
+
+        if ($name != 'x' && $name != 'y' && $name != 'z') {
+            // Invalid property exception.
+            throw new InvalidArgumentException(sprintf('Invalid property "%s"; expects x, y or z.', $name));
+        }
+
+        $this->$name = (isset($value) ? (float)$value : 0.0);
+    }
+
+    /**
+     * Setter for x, y and z.
+     */
+    public function __isset($name)
+    {
+        $name = strtolower($name);
+
+        if ($name != 'x' && $name != 'y' && $name != 'z') {
+            return false;
+        }
+
+        return isset($this->$name);
+    }
+
+    /**
+     * Return as an [x, y, z] array.
+     */
+    public function toArray()
+    {
+        return [$this->x, $this->y, $this->z];
+    }
 }

@@ -387,14 +387,15 @@ class Proj4php
         }
 
         // DGR, 2010/11/12
-
         if ($source->axis != "enu") {
             $this->adjust_axis($source, false, $point);
         }
 
         // Transform source points to long/lat, if they aren't already.
-        if ($source->projName == "longlat") {
-            // convert degrees to radians
+        // Note it is the source projection that defines what units the points are
+        // in, and not the points object itself.
+        if ($source->projName == 'longlat') {
+            // Convert degrees to radians
             $point->x *= Common::D2R;
             $point->y *= Common::D2R;
         } else {
@@ -439,39 +440,39 @@ class Proj4php
         }
 
         // Nov 2014 - changed Werner Schäffer
-        // clone point to avoid a lot of problems
+        // Clone point to avoid a lot of problems
         return (clone $point);
     }
 
-    /** datum_transform()
-      source coordinate system definition,
-      destination coordinate system definition,
-      point to transform in geodetic coordinates (long, lat, height)
+    /**
+     * source coordinate system definition.
+     * destination coordinate system definition.
+     * point to transform in geodetic coordinates (long, lat, height).
      */
-    public function datum_transform($source, $dest, $point)
+    public function datum_transform(Datum $source, Datum $dest, Point $point)
     {
         // Short cut if the datums are identical.
         if ($source->compare_datums($dest)) {
-            return $point; // in this case, zero is sucess,
+            // In this case, zero is sucess,
             // whereas cs_compare_datums returns 1 to indicate TRUE
-            // confusing, should fix this
+            // confusing, should fix this.
+
+            return $point;
         }
 
         // Explicitly skip datum transform by setting 'datum=none' as parameter for either source or dest
-        if ($source->datum_type == Common::PJD_NODATUM
-            || $dest->datum_type == Common::PJD_NODATUM
-        ) {
+        if ($source->datum_type == Common::PJD_NODATUM || $dest->datum_type == Common::PJD_NODATUM) {
             return $point;
         }
 
         /*
         // If this datum requires grid shifts, then apply it to geodetic coordinates.
         if ($source->datum_type == Common::PJD_GRIDSHIFT ) {
-            throw(new Exception( "ERROR: Grid shift transformations are not implemented yet." ));
+            throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
 
         if ($dest->datum_type == Common::PJD_GRIDSHIFT ) {
-            throw(new Exception( "ERROR: Grid shift transformations are not implemented yet." ));
+            throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
         */
 
@@ -484,10 +485,11 @@ class Proj4php
         ) {
             // Convert to geocentric coordinates.
             $source->geodetic_to_geocentric($point);
+
             // CHECK_RETURN;
             // Convert between datums
             if ($source->datum_type == Common::PJD_3PARAM || $source->datum_type == Common::PJD_7PARAM) {
-                $source->geocentric_to_wgs84( $point );
+                $source->geocentric_to_wgs84($point);
                 // CHECK_RETURN;
             }
 
@@ -504,11 +506,12 @@ class Proj4php
         // Apply grid shift to destination if required
         /*
         if ($dest->datum_type == Common::PJD_GRIDSHIFT ) {
-            throw(new Exception( "ERROR: Grid shift transformations are not implemented yet." ));
-            // pj_apply_gridshift( pj_param(dest.params,"snadgrids").s, 1, point);
+            throw new Exception("ERROR: Grid shift transformations are not implemented yet."));
+            // pj_apply_gridshift(pj_param(dest.params,"snadgrids").s, 1, point);
             // CHECK_RETURN;
         }
         */
+
         return $point;
     }
 

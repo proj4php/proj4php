@@ -117,7 +117,7 @@ class Proj
         }
 
         // DGR 2008-08-03 : support urn and url
-        if (strpos($srsCode, 'urn:' ) === 0) {
+        if (strpos($srsCode, 'urn:') === 0) {
             //urn:ORIGINATOR:def:crs:CODESPACE:VERSION:ID
             $urn = explode(':', $srsCode);
 
@@ -125,7 +125,7 @@ class Proj
                 ($urn[2] == 'def') &&
                 ($urn[3] == 'crs')
             ) {
-                $srsCode = $urn[4] . ':' . $urn[strlen($urn ) - 1];
+                $srsCode = $urn[4] . ':' . $urn[strlen($urn) - 1];
             }
         } elseif (strpos($srsCode, 'http://') === 0) {
             //url#ID
@@ -509,9 +509,9 @@ class Proj
                 switch ($name) {
                     case 'X': $this->axis = $value . substr($this->axis, 1, 2);
                         break;
-                    case 'Y': $this->axis = substr($this->axis, 0, 1 ) . $value . substr($this->axis, 2, 1);
+                    case 'Y': $this->axis = substr($this->axis, 0, 1) . $value . substr($this->axis, 2, 1);
                         break;
-                    case 'Z': $this->axis = substr($this->axis, 0, 2 ) . $value;
+                    case 'Z': $this->axis = substr($this->axis, 0, 2) . $value;
                         break;
                     default : break;
                 }
@@ -606,7 +606,7 @@ class Proj
                     $this->long0 = $paramVal * Common::D2R;
                     break;
                 case "alpha":
-                    $this->alpha = floatval($paramVal ) * Common::D2R;
+                    $this->alpha = floatval($paramVal) * Common::D2R;
                     //for somerc projection
                     break;
                 case "lonc":
@@ -709,7 +709,7 @@ class Proj
 
         // Do we have an ellipsoid?
         if (!isset($this->a)) {
-            if ( ! isset($this->ellps) || strlen($this->ellps ) == 0 || ! $this->proj4php->hasEllipsoid($this->ellps)) {
+            if ( ! isset($this->ellps) || strlen($this->ellps) == 0 || ! $this->proj4php->hasEllipsoid($this->ellps)) {
                 $ellipse = $this->proj4php->getEllipsoid('WGS84');
             } else {
                 $ellipse = $this->proj4php->getEllipsoid($this->ellps);
@@ -718,7 +718,7 @@ class Proj
             Proj4php::extend($this, $ellipse);
         }
 
-        if (isset($this->rf ) && !isset($this->b)) {
+        if (isset($this->rf) && !isset($this->b)) {
             $this->b = (1.0 - 1.0 / $this->rf) * $this->a;
         }
 

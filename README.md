@@ -45,7 +45,7 @@ $pointDest = $proj4->transform($projL93, $projWGS84, $pointSrc);
 echo "Source: " . $pointSrc->toShortString() . " in L93 <br>";
 echo "Conversion: " . $pointDest->toShortString() . " in WGS84<br><br>";
 
-// Source: 2.3557811127971 48.831938054369 in L93
+// Source:  652709.401 6859290.946 in L93
 // Conversion: 2.3557811127971 48.831938054369 in WGS84
 ```
 

@@ -36,7 +36,7 @@ $projL93    = new Proj('EPSG:2154', $proj4);
 $projWGS84  = new Proj('EPSG:4326', $proj4);
 
 // Create a point.
-$pointSrc = new Point(652709.401, 6859290.946, null, $projL93);
+$pointSrc = new Point(652709.401, 6859290.946, $projL93);
 
 // Transform the point between datums.
 $pointDest = $proj4->transform($projWGS84, $pointSrc);

@@ -43,10 +43,17 @@ class Point
      *     the full coordinates
      * - y {float} the second component
      * - z {float} the third component, optional.
-     * - projection {Proj} the point projection.
+     * - projection {Proj} the point projection, optional.
+     *
+     * Notice z can be ommitted when projection still present.
      */
     public function __construct($x = null, $y = null, $z = null, $projection = null)
     {
+        if ($projection===null and $z instanceof Proj)
+        {
+          $projection = $z;
+          $z = null;
+        }
         $this->projection = $projection;
         if (is_array($x)) {
             // [x, y] or [x, y, z]

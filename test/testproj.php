@@ -27,7 +27,7 @@ $proj5514 = new Proj('EPSG:5514',$proj4);
 // 601413.709   1125717.730
 //
 
-$pointSrc = new Point('652709.401','6859290.946',null,$projL93);
+$pointSrc = new Point('652709.401','6859290.946',$projL93);
 echo "Source : ".$pointSrc->toShortString()." in L93 <br>";
 $pointDest = $proj4->transform($projWGS84,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";

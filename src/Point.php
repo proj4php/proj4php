@@ -16,6 +16,7 @@ namespace proj4php;
  * x and y properties, which will get modified in the transform method.
 */
 
+use Proj4php\Proj;
 use InvalidArgumentException;
 
 class Point
@@ -23,6 +24,16 @@ class Point
     protected $x;
     protected $y;
     protected $z;
+
+    protected $projection = null;
+
+    public function getProjection() {
+        return $this->projection;
+    }
+
+    public function setProjection($projection) {
+        $this->projection = $projection;
+    }
 
     /**
      * Constructor: Proj4js.Point
@@ -32,9 +43,18 @@ class Point
      *     the full coordinates
      * - y {float} the second component
      * - z {float} the third component, optional.
+     * - projection {Proj} the point projection, optional.
+     *
+     * Notice z can be ommitted when projection still present.
      */
-    public function __construct($x = null, $y = null, $z = null)
+    public function __construct($x = null, $y = null, $z = null, $projection = null)
     {
+        if ($projection===null and $z instanceof Proj)
+        {
+          $projection = $z;
+          $z = null;
+        }
+        $this->projection = $projection;
         if (is_array($x)) {
             // [x, y] or [x, y, z]
             $this->__set('x',  $x[0]);

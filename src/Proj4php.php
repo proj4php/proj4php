@@ -361,19 +361,43 @@ class Proj4php
         $this->WGS84 = new Proj('WGS84', $this);
     }
 
+
     /**
      * Method: transform(source, dest, point)
      * Transform a point coordinate from one map projection to another.  This is
      * really the only public method you should need to use.
      *
      * Parameters:
-     * source - {Proj4phpProj} source map projection for the transformation
+     * source - {Proj4phpProj} optionnal source map projection for the transformation. Otherwise it comes from point's projection.
      * dest - {Proj4phpProj} destination map projection for the transformation
      * point - {Object} point to transform, may be geodetic (long, lat) or
      *     projected Cartesian (x,y), but should always have x,y properties.
      */
-    public function transform(Proj $source, Proj $dest, Point $point)
+    public function transform()
     {
+        if (func_num_args()==2)
+        {
+          $source = null;
+          $dest = func_get_arg(0);
+          $point = func_get_arg(1);
+        }
+        else
+        {
+          $source = func_get_arg(0);
+          $dest = func_get_arg(1);
+          $point = func_get_arg(2);
+        }
+
+        if ($source===null)
+        {
+           if ($point->getProjection()===null)
+           {
+              self::reportError("No projection for point");
+              return $point;
+           }
+           $source = $point->getProjection();
+        }
+
         $this->msg = '';
 
         if ( ! $source->readyToUse) {
@@ -441,6 +465,8 @@ class Proj4php
         if ($dest->axis != "enu") {
             $this->adjust_axis($dest, true, $point);
         }
+
+        $point->setProjection($dest);
 
         // Nov 2014 - changed Werner Schäffer
         // Clone point to avoid a lot of problems

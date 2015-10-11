@@ -27,29 +27,29 @@ $proj5514 = new Proj('EPSG:5514',$proj4);
 // 601413.709   1125717.730
 //
 
-$pointSrc = new Point('652709.401','6859290.946');
+$pointSrc = new Point('652709.401','6859290.946',$projL93);
 echo "Source : ".$pointSrc->toShortString()." in L93 <br>";
-$pointDest = $proj4->transform($projL93,$projWGS84,$pointSrc);
+$pointDest = $proj4->transform($projWGS84,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
 
 $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
-$pointDest = $proj4->transform($projWGS84,$projLSud,$pointSrc);
+$pointDest = $proj4->transform($projLSud,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in Lambert Sud<br><br>";
 
 $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in Lambert Sud<br>";
-$pointDest = $proj4->transform($projLSud,$projWGS84,$pointSrc);
+$pointDest = $proj4->transform($projWGS84,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
 
 $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
-$pointDest = $proj4->transform($projWGS84,$projLI,$pointSrc);
+$pointDest = $proj4->transform($projLI,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in LI <br><br>";
 
 $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in LI<br>";
-$pointDest = $proj4->transform($projLI,$projL93,$pointSrc);
+$pointDest = $proj4->transform($projL93,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in L93<br><br>";
 
 

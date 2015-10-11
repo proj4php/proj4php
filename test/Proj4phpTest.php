@@ -33,20 +33,20 @@ $proj5514 = new Proj('EPSG:5514',$proj4);
 // 601413.709   1125717.730
 //
 
-$pointSrc = new Point('652709.401','6859290.946');
-$pointDest = $proj4->transform($projL93,$projWGS84,$pointSrc);
+$pointSrc = new Point('652709.401','6859290.946',$projL93);
+$pointDest = $proj4->transform($projWGS84,$pointSrc);
 
 $pointSrc = $pointDest;
-$pointDest = $proj4->transform($projWGS84,$projLSud,$pointSrc);
+$pointDest = $proj4->transform($projLSud,$pointSrc);
 
 $pointSrc = $pointDest;
-$pointDest = $proj4->transform($projLSud,$projWGS84,$pointSrc);
+$pointDest = $proj4->transform($projWGS84,$pointSrc);
 
 $pointSrc = $pointDest;
-$pointDest = $proj4->transform($projWGS84,$projLI,$pointSrc);
+$pointDest = $proj4->transform($projLI,$pointSrc);
 
 $pointSrc = $pointDest;
-$pointDest = $proj4->transform($projLI,$projL93,$pointSrc);
+$pointDest = $proj4->transform($projL93,$pointSrc);
 
 
 

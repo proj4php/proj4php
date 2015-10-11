@@ -37,15 +37,15 @@ class Point
     {
         if (is_array($x)) {
             // [x, y] or [x, y, z]
-            $this->__set('x',  $x[0]);
-            $this->__set('y',  $x[0]);
-            $this->__set('z',  $x[0]);
-        } elseif (is_string($x) && !is_numeric($y)) {
+            $this->__set('x', $x[0]);
+            $this->__set('y', $x[1]);
+            $this->__set('z', isset($x[2]) ? $x[2] : null);
+        } elseif (is_string($x) && is_null($y)) {
             // "x y" or "x y z"
             $coord = explode(' ', $x);
             $this->__set('x', $coord[0]);
             $this->__set('y', $coord[1]);
-            $this->__set('z', (count($coord) > 2 ? $coord[2] : null));
+            $this->__set('z', isset($coord[2]) ? $coord[2] : null);
         } else {
             // Separate x, y, z
             $this->__set('x', $x);

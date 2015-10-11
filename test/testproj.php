@@ -1,5 +1,5 @@
 <?php
-include("../vendor/autoload.php");
+include(__DIR__ . "/../vendor/autoload.php");
 
 use proj4php\Proj4php;
 use proj4php\Proj;

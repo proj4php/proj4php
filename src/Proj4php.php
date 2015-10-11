@@ -629,11 +629,20 @@ class Proj4php
             return @file_get_contents($filename);
         } elseif (file_exists($filename)) {
             // Get the definition. An array will be returned.
-            $def = require_once($filename);
+			// DO NOT require_once, will return "true" at the second call
+            $def = require($filename);
 
             // Add any definitions we have imported to the defs array.
             foreach($def as $def_name => $def_details) {
-                $this->defs[$def_name] = $def_details;
+				if(!is_array($def_details)) {
+					$this->defs[$def_name] = $def_details;
+				} else {
+					$attributes = array();
+					array_walk($def_details, function($val, $key) use(&$attributes) { 
+							$attributes[] = $key."=".$val; 
+						});
+					$this->defs[$def_name] = implode(" ", $attributes);
+				}
             }
 
             return true;

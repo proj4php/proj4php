@@ -36,16 +36,16 @@ $projL93    = new Proj('EPSG:2154', $proj4);
 $projWGS84  = new Proj('EPSG:4326', $proj4);
 
 // Create a point.
-$pointSrc = new Point(652709.401, 6859290.946);
+$pointSrc = new Point(652709.401, 6859290.946,$projL93);
 echo "Source: " . $pointSrc->toShortString() . " in L93 <br>";
 
 // Transform the point between datums.
-$pointDest = $proj4->transform($projL93, $projWGS84, $pointSrc);
+$pointDest = $proj4->transform($projWGS84, $pointSrc);
 
 // Display the result.
 echo "Conversion: " . $pointDest->toShortString() . " in WGS84<br><br>";
 
-// Source:  652709.401 6859290.946 in L93
+// Source: 652709.401 6859290.946 in L93
 // Conversion: 2.3557811127971 48.831938054369 in WGS84
 ```
 

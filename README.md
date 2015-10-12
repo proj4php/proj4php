@@ -41,8 +41,6 @@ echo "Source: " . $pointSrc->toShortString() . " in L93 <br>";
 
 // Transform the point between datums.
 $pointDest = $proj4->transform($projWGS84, $pointSrc);
-
-// Display the result.
 echo "Conversion: " . $pointDest->toShortString() . " in WGS84<br><br>";
 
 // Source: 652709.401 6859290.946 in L93

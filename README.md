@@ -51,9 +51,6 @@ echo "Conversion: " . $pointDest->toShortString() . " in WGS84<br><br>";
 
 There are also ways to define inline projections.
 
-A PSR-4 autoloader will be introduced shortly,
-and that will change many of the paths and classnames above.
-
 ## Developing
 
 Feel free to fork us and submit your changes!

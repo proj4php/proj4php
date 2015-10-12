@@ -47,7 +47,7 @@ class Point
      *
      * Notice z can be ommitted when projection still present.
      */
-    public function __construct($x = null, $y = null, $z = null, $projection = null)
+    public function __construct($x = null, $y = null, $z = null, Proj $projection = null)
     {
         if ($projection===null and $z instanceof Proj)
         {

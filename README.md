@@ -8,13 +8,13 @@ thanks to a translation from Proj4JS.
 To keep up with the relentless pace of PHP versions and best practice, the following
 features are being implemented on this package:
 
-* Namespacing.
-* PHP5.4+ syntax (not aiming to be bleeding edge here, just yet)
-* [PSR-2 styling](http://www.php-fig.org/psr/psr-2/)
-* [PSR-4 autoloader](http://www.php-fig.org/psr/psr-4/)
-* [semver](http://semver.org/) relase numbers to packagist.org
-* Full compatibility with [composer](https://getcomposer.org/)
-* Tests to come once the above is implemented.
+* [x] Namespacing.
+* [ ] PHP5.4+ syntax (not aiming to be bleeding edge here, just yet)
+* [ ] [PSR-2 styling](http://www.php-fig.org/psr/psr-2/)
+* [x] [PSR-4 autoloader](http://www.php-fig.org/psr/psr-4/)
+* [x] [semver](http://semver.org/) relase numbers to packagist.org
+* [x] Full compatibility with [composer](https://getcomposer.org/)
+* [ ] Tests to come once the above is implemented.
 
 A [legacy branch php4proj5.2](https://github.com/proj4php/proj4php/tree/proj4php5.2) will be
 maintained for older applications that need it.

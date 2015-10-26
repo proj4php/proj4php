@@ -75,8 +75,6 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
     public function testProjFour()
     {
-
-
         $proj4           = new Proj4php();
         $projL93         = new Proj('EPSG:2154', $proj4);
         $projWGS84       = new Proj('EPSG:4326', $proj4);
@@ -89,24 +87,47 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('652709.401 6859290.946', $pointSrc->toShortString());
 
         $pointDest = $proj4->transform($projL93, $projWGS84, $pointSrc);
-        $this->assertEquals('2.3557811127971 48.831938054369', $pointDest->toShortString());
+        $this->assertEquals(2.3557811127971, $pointDest->x, '', 0.1);
+        $this->assertEquals(48.831938054369, $pointDest->y, '', 0.1);
 
         $pointDest = $proj4->transform($projWGS84, $projLSeventyTwo, $pointSrc);
-        $this->assertEquals('2179.4161950587 -51404.553066903', $pointDest->toShortString());
+        $this->assertEquals(2179.4161950587, $pointDest->x, '', 20);
+        $this->assertEquals(-51404.55306690, $pointDest->y, '', 20);
+        $this->assertEquals(2354.4969810662, $pointDest->x, '', 300);
+        $this->assertEquals(-51359.251012595, $pointDest->y, '', 300);
+
 
         $pointDest = $proj4->transform($projLSeventyTwo, $projWGS84, $pointSrc);
-        $this->assertEquals('2.3557811002407 48.831938050542', $pointDest->toShortString());
+        $this->assertEquals(2.3557811002407, $pointDest->x, '', 0.1);
+        $this->assertEquals(48.831938050542, $pointDest->y, '', 0.1);
+        $this->assertEquals(2.3557811127971, $pointDest->x, '', 0.1);
+        $this->assertEquals(48.831938054369, $pointDest->y, '', 0.1);
 
         $pointDest = $proj4->transform($projWGS84, $projLSud, $pointSrc);
-        $this->assertEquals('601419.93654252 726554.08650133', $pointDest->toShortString());
+        $this->assertEquals(601419.93654252, $pointDest->x, '', 0.1);
+        $this->assertEquals(726554.08650133, $pointDest->y, '', 0.1);
+        $this->assertEquals(601419.93647681, $pointDest->x, '', 0.1);
+        $this->assertEquals(726554.08650133, $pointDest->y, '', 0.1);
 
         $pointDest = $proj4->transform($projLSud, $projWGS84, $pointSrc);
-        $this->assertEquals('2.3557811002407 48.831938050527', $pointDest->toShortString());
+
+        $this->assertEquals(2.3557810993491, $pointDest->x, '', 0.1);
+        $this->assertEquals(48.831938051718, $pointDest->y, '', 0.1);
+        $this->assertEquals(2.3557811002407, $pointDest->x, '', 0.1);
+        $this->assertEquals(48.831938050527, $pointDest->y, '', 0.1);
 
         $pointDest = $proj4->transform($projWGS84, $projLI, $pointSrc);
-        $this->assertEquals('601415.06994621 1125718.0308472', $pointDest->toShortString());
+
+        $this->assertEquals(601415.06988072, $pointDest->x, '', 0.1);
+        $this->assertEquals(1125718.0309796, $pointDest->y, '', 0.1);
+        $this->assertEquals(601415.06994621, $pointDest->x, '', 0.1);
+        $this->assertEquals(1125718.0308472, $pointDest->y, '', 0.1);
 
         $pointDest = $proj4->transform($projLI, $projL93, $pointSrc);
-        $this->assertEquals('652709.40007563 6859290.9456811', $pointDest->toShortString());
+
+        $this->assertEquals(652709.40007563, $pointDest->x, '', 0.1);
+        $this->assertEquals(6859290.9456811, $pointDest->y, '', 0.1);
+        $this->assertEquals(652709.40001126, $pointDest->x, '', 0.1);
+        $this->assertEquals(6859290.9458141, $pointDest->y, '', 0.1);
     }
 }

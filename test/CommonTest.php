@@ -60,39 +60,39 @@ class CommonTest
         $this->assertEquals("1.5707963267949", substr(strval($ret), 0, 16));
     }
 
-    public function testeZerofn()
+    public function teste0fn()
     {
-        $ret = Common::eZerofn(0.35363122);
+        $ret = Common::e0fn(0.35363122);
         $this->assertEquals("0.90486650238871", substr(strval($ret), 0, 16));
 
-        $ret = Common::eZerofn(0.31245122);
+        $ret = Common::e0fn(0.31245122);
         $this->assertEquals("0.91671521990135", substr(strval($ret), 0, 16));
 
-        $ret = Common::eZerofn(0.1257483412);
+        $ret = Common::e0fn(0.1257483412);
         $this->assertEquals("0.96778286074154", substr(strval($ret), 0, 16));
     }
 
-    public function testeOnefn()
+    public function teste1fn()
     {
-        $ret = Common::eOnefn(0.112341);
+        $ret = Common::e1fn(0.112341);
         $this->assertEquals("0.0433733525487", substr(strval($ret), 0, 15));
 
-        $ret = Common::eOnefn(0.12141321122);
+        $ret = Common::e1fn(0.12141321122);
         $this->assertEquals("0.0469905908072", substr(strval($ret), 0, 15));
 
-        $ret = Common::eOnefn(0.12544522);
+        $ret = Common::e1fn(0.12544522);
         $this->assertEquals("0.04860400576082", substr(strval($ret), 0, 16));
     }
 
-    public function testeTwofn()
+    public function teste2fn()
     {
-        $ret = Common::eTwofn(0.22253223);
+        $ret = Common::e2fn(0.22253223);
         $this->assertEquals("0.00338587145", substr(strval($ret), 0, 13));
 
-        $ret = Common::eTwofn(0.1212);
+        $ret = Common::e2fn(0.1212);
         $this->assertEquals("0.00093894785718", substr(strval($ret), 0, 16));
 
-        $ret = Common::eTwofn(0.1422);
+        $ret = Common::e2fn(0.1422);
         $this->assertEquals("0.00131117534683", substr(strval($ret), 0, 16));
     }
 

@@ -67,8 +67,9 @@ $proj4 = new Proj4php();
 // Add a new projection
 $proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
 
-// Create the projection
+// Create our projections
 $projOSGB36 = new Proj('EPSG:27700',$proj4);
+$projWGS84  = new Proj('EPSG:4326', $proj4);
 
 // Create a point
 $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);

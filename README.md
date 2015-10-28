@@ -51,7 +51,8 @@ echo "Conversion: " . $pointDest->toShortString() . " in WGS84<br><br>";
 // Conversion: 2.3557811127971 48.831938054369 in WGS84
 ```
 
-There are also ways to define inline projections :
+There are also ways to define inline projections.
+Check http://spatialreference.org/ref/epsg/ and seek for your projection and proj4 definition.
 
 ```php
 // Use a PSR-4 autoloader for the `proj4php` root namespace.

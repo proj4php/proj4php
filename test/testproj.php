@@ -89,3 +89,19 @@ $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
 $pointDest = $proj4->transform($projWGS84,$proj5514,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in S-JTSK<br><br>";
+
+
+
+$proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
+
+$projOSGB36 = new Proj('EPSG:27700',$proj4);
+$pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
+echo "Source : ".$pointSrc->toShortString()." in OSGB36<br>";
+$pointDest = $proj4->transform($projWGS84, $pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
+
+$pointSrc = $pointDest;
+echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
+$pointDest = $proj4->transform($projOSGB36, $pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in OSGB36<br><br>";
+

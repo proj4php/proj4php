@@ -76,12 +76,6 @@ $projWGS84  = new Proj('EPSG:4326', $proj4);
 $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
 echo "Source : ".$pointSrc->toShortString()." in OSGB36<br>";
 
-$pointDest = $proj4->transform($projWGS84, $pointSrc);
-echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
-
-$pointSrc = $pointDest;
-echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
-
 // Transform the point between datums
 $pointDest = $proj4->transform($projOSGB36, $pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in OSGB36<br><br>";

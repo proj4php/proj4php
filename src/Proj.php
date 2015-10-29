@@ -55,6 +55,12 @@ class Proj
     public $datumCode;
 
     /**
+     * Property: axis
+     * The axis.
+     */
+    public $axis;
+
+    /**
      * Property: x0
      * The x coordinate origin
      */
@@ -364,49 +370,67 @@ class Proj
     }
 
     /**
+     * returns an array with three parts,
+     * 0: the wktObject ie: PROJCS
+     * 1: the wktName ie: NAD_1983_UTM_Zone_17N
+     * 2: the wkt sub sections array, returns nested wkt strings as an array, each can be passed into this
+     * method again later
+     *
+     * @param string $wktStr            
+     */
+    private static function ParseWKTIntoSections($wktStr) {
+        $regex = '/^(\w+)\[(.*)\]$/';
+        
+        if (false === ($match = preg_match($regex, $wktStr, $wktMatch)))
+            return;
+        if (!isset($wktMatch[1]))
+            return;
+        
+        $wktObject = $wktMatch[1];
+        $wktContent = $wktMatch[2];
+        $wktTemp = explode(",", $wktContent);
+        
+        $wktName = (strtoupper($wktObject) == "TOWGS84") ? "TOWGS84" : trim(array_shift($wktTemp), '"');
+        
+        $wktArray = array();
+        $bkCount = 0;
+        
+        $obj = '';
+        while (count($wktTemp)) {
+            
+            $obj .= array_shift($wktTemp);
+            $bkCount = substr_count($obj, '[') - substr_count($obj, ']');
+            
+            if ($bkCount === 0) {
+                array_push($wktArray, $obj);
+                $obj = '';
+            } else {
+                $obj .= ',';
+            }
+        }
+        
+        return array(
+            $wktObject,
+            $wktName,
+            $wktArray
+        );
+    }
+
+    /**
      * Function: parseWKT
      * Parses a WKT string to get initialization parameters.
      */
     public function parseWKT($wkt)
     {
-        if (false === ($match = preg_match(static::WKT_RE, $wkt, $wktMatch))) {
+        $wktSections = self::ParseWKTIntoSections($wkt);
+        
+        if (empty($wktSections)) {
             return;
         }
-
-        $wktObject = $wktMatch[1];
-        $wktContent = $wktMatch[2];
-        $wktTemp = explode(',', $wktContent);
-
-        $wktName = (strtoupper($wktObject) == "TOWGS84") ? "TOWGS84" : array_shift($wktTemp);
-
-        // Remove one double-quote from the start and one from the end, if present.
-        $wktName = preg_replace('/^\"/', "", $wktName);
-        $wktName = preg_replace('/\"$/', "", $wktName);
-
-        /*
-          $wktContent = implode(",",$wktTemp);
-          $wktArray = explode("],",$wktContent);
-          for ($i=0; i<sizeof($wktArray)-1; ++$i) {
-          $wktArray[$i] .= "]";
-          }
-         */
-
-        $wktArray = array();
-        $bkCount = 0;
-        $obj = "";
-
-        foreach ($wktTemp as $token) {
-            $bkCount = substr_count($token, "[") - substr_count($token, "]");
-
-            // ???
-            $obj .= $token;
-            if ($bkCount === 0) {
-                array_push($wktArray, $obj);
-                $obj = "";
-            } else {
-                $obj .= ",";
-            }
-        }
+        
+        $wktObject = $wktSections[0];
+        $wktName = $wktSections[1];
+        $wktArray = $wktSections[2];
 
         // Do something based on the type of the wktObject being parsed.
         // Add in variations in the spelling as required.
@@ -425,7 +449,7 @@ class Proj
                 }
                 break;
             case 'PROJCS':
-                $$this->srsCode = $wktName;
+                $this->srsCode = $wktName;
                 break;
             case 'GEOCCS':
                 break;

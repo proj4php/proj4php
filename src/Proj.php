@@ -95,7 +95,7 @@ class Proj
      * The supplied Spatial Reference System (SRS) code supplied
      * on creation of the projection.
      */
-    protected $srsCodeInput;
+    protected $srsCode;
 
     /**
      * Constructor: initialize

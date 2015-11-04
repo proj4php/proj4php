@@ -70,15 +70,6 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointSrc  = $pointDest;
         $pointDest = $proj4->transform($projWGS84, $proj5514, $pointSrc);
-
-        $proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
-
-        $projOSGB36 = new Proj('EPSG:27700',$proj4);
-        $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
-        $pointDest = $proj4->transform($projWGS84, $pointSrc);
-
-        $pointSrc = $pointDest;
-        $pointDest = $proj4->transform($projOSGB36, $pointSrc);
     }
 
     public function testInlineProjectionMethod1()
@@ -97,6 +88,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointDest = $proj4->transform($projOSGB36, $pointSrc);
         $this->assertEquals(671196.3657, $pointDest->x, '', 20);
         $this->assertEquals(1230275.0454, $pointDest->y, '', 20);
+
     }
 
     public function testInlineProjectionMethod2()
@@ -114,6 +106,9 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointDest = $proj4->transform($projOSGB36, $pointSrc);
         $this->assertEquals(671196.3657, $pointDest->x, '', 20);
         $this->assertEquals(1230275.0454, $pointDest->y, '', 20);
+
+        new Proj('GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]',$proj4);
+
     }
 
     public function testProjFour()

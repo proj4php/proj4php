@@ -113,6 +113,7 @@ class Proj4php
     protected function initWKTProjections()
     {
         self::$wktProjections["Lambert Tangential Conformal Conic Projection"] = "lcc";
+        self::$wktProjections["Lambert_Conformal_Conic_2SP"] = "lcc";
         self::$wktProjections["Mercator"] = "merc";
         self::$wktProjections["Mercator_1SP"] = "merc";
         self::$wktProjections["Transverse_Mercator"] = "tmerc";

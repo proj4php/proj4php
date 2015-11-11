@@ -497,6 +497,12 @@ class Proj
                     case 'latitude_of_origin':
                         $this->lat0 = $value * Common::D2R;
                         break;
+                    case 'standard_parallel_1':
+                        $this->lat1 = $value * Common::D2R;
+                        break;
+                    case 'standard_parallel_2':
+                        $this->lat2 = $value * Common::D2R;
+                        break;
                     case 'more_here':
                         break;
                     default:

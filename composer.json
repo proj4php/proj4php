@@ -22,6 +22,12 @@
             "email": "jason.judge@academe.co.uk",
             "homepage": "http://academe.co.uk",
             "role": "Developer"
+        },
+        {
+            "name": "Nick Blackwell",
+            "email": "nickblackwell82@gmail.com",
+            "homepage": "https://people.ok.ubc.ca/nblackwe",
+            "role": "Developer"
         }
     ],
     "require": {

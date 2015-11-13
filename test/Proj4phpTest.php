@@ -110,6 +110,22 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         // check known convertion value for OSGB36
         $pointOSGB36 =$proj4->transform($projOSGB36, $pointLCC2SP);
         $this->assertEquals(671196.3657, $pointOSGB36->x, '', 20);
+        $this->assertEquals(1230275.0454, $pointOSGB36->y, '', 20);
+
+
+
+        // The same tests using the third argument function :
+        $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
+        $pointLCC2SP=$proj4->transform($projOSGB36, $projLCC2SP, $pointSrc);
+
+        // check known conversion value for WGS84
+        $pointWGS84 =$proj4->transform($projWGS84, $pointLCC2SP);
+        $this->assertEquals(2.9964931538756, $pointWGS84->x, '', 0.1);
+        $this->assertEquals(60.863435314163, $pointWGS84->y, '', 0.1);
+
+        // check known convertion value for OSGB36
+        $pointOSGB36 =$proj4->transform($projOSGB36, $pointLCC2SP);
+        $this->assertEquals(671196.3657, $pointOSGB36->x, '', 20);
         $this->assertEquals(1230275.0454, $pointOSGB36->y, '', 20);        
     }
 

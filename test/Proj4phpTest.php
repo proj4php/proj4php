@@ -101,6 +101,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $projLCC2SP = new Proj('PROJCS["Belge 1972 / Belgian Lambert 72",GEOGCS["Belge 1972",DATUM["Reseau_National_Belge_1972",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],TOWGS84[106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1],AUTHORITY["EPSG","6313"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4313"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",51.16666723333333],PARAMETER["standard_parallel_2",49.8333339],PARAMETER["latitude_of_origin",90],PARAMETER["central_meridian",4.367486666666666],PARAMETER["false_easting",150000.013],PARAMETER["false_northing",5400088.438],AUTHORITY["EPSG","31370"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
         $pointLCC2SP=$proj4->transform($projLCC2SP, $pointSrc);
+        $this->assertEquals(74099.1593319, $pointLCC2SP->x, '', 0.1);
+        $this->assertEquals(1293297.19415, $pointLCC2SP->y, '', 0.1);
 
         // check known conversion value for WGS84
         $pointWGS84 =$proj4->transform($projWGS84, $pointLCC2SP);
@@ -117,6 +119,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         // The same tests using the third argument function :
         $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
         $pointLCC2SP=$proj4->transform($projOSGB36, $projLCC2SP, $pointSrc);
+        $this->assertEquals(74099.1593319, $pointLCC2SP->x, '', 0.1);
+        $this->assertEquals(1293297.19415, $pointLCC2SP->y, '', 0.1);
 
         // check known conversion value for WGS84
         $pointWGS84 =$proj4->transform($projWGS84, $pointLCC2SP);

@@ -76,9 +76,12 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
     {
         $proj4           = new Proj4php();
         $proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
+        $proj4->addDef("EPSG:31370","+proj=lcc +lat_1=51.16666723333333 +lat_2=49.8333339 +lat_0=90 +lon_0=4.367486666666666 +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1 +units=m +no_defs");
 
         $projWGS84       = new Proj('EPSG:4326', $proj4);
         $projOSGB36 = new Proj('EPSG:27700',$proj4);
+        $projLCC2SP = new Proj('EPSG:31370',$proj4);
+
         $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
         $pointDest = $proj4->transform($projWGS84, $pointSrc);
         $this->assertEquals(2.9964931538756, $pointDest->x, '', 0.1);
@@ -89,48 +92,61 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(671196.3657, $pointDest->x, '', 20);
         $this->assertEquals(1230275.0454, $pointDest->y, '', 20);
 
+//from @coreation
+        $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
+        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+
+        $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
+        $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
+        $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.1);
+
+
+
+        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+        $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
+
+        $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
+        $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
+        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
     }
 
-    public function testInlineProjectionMethod2()
-    {
-        $proj4           = new Proj4php();
+    public function testInlineProjectionMethod2(){
 
-        $projWGS84       = new Proj('GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]',$proj4);
-        $projOSGB36      = new Proj('PROJCS["OSGB 1936 / British National Grid",GEOGCS["OSGB 1936",DATUM["OSGB_1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],AUTHORITY["EPSG","6277"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4277"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",49],PARAMETER["central_meridian",-2],PARAMETER["scale_factor",0.9996012717],PARAMETER["false_easting",400000],PARAMETER["false_northing",-100000],AUTHORITY["EPSG","27700"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]',$proj4);
-        $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
+
+
+        $proj4           = new Proj4php();
+        $projWGS84       = new Proj('EPSG:4326', $proj4);
 
         $projLCC2SP = new Proj('PROJCS["Belge 1972 / Belgian Lambert 72",GEOGCS["Belge 1972",DATUM["Reseau_National_Belge_1972",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],TOWGS84[106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1],AUTHORITY["EPSG","6313"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4313"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",51.16666723333333],PARAMETER["standard_parallel_2",49.8333339],PARAMETER["latitude_of_origin",90],PARAMETER["central_meridian",4.367486666666666],PARAMETER["false_easting",150000.013],PARAMETER["false_northing",5400088.438],AUTHORITY["EPSG","31370"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
-        $pointLCC2SP=$proj4->transform($projLCC2SP, $pointSrc);
-        $this->assertEquals(74099.1593319, $pointLCC2SP->x, '', 0.1);
-        $this->assertEquals(1293297.19415, $pointLCC2SP->y, '', 0.1);
-
-        // check known conversion value for WGS84
-        $pointWGS84 =$proj4->transform($projWGS84, $pointLCC2SP);
-        $this->assertEquals(2.9964931538756, $pointWGS84->x, '', 0.1);
-        $this->assertEquals(60.863435314163, $pointWGS84->y, '', 0.1);
-
-        // check known convertion value for OSGB36
-        $pointOSGB36 =$proj4->transform($projOSGB36, $pointLCC2SP);
-        $this->assertEquals(671196.3657, $pointOSGB36->x, '', 20);
-        $this->assertEquals(1230275.0454, $pointOSGB36->y, '', 20);
 
 
+        //from @coreation
+        $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
 
-        // The same tests using the third argument function :
-        $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
-        $pointLCC2SP=$proj4->transform($projOSGB36, $projLCC2SP, $pointSrc);
-        $this->assertEquals(74099.1593319, $pointLCC2SP->x, '', 0.1);
-        $this->assertEquals(1293297.19415, $pointLCC2SP->y, '', 0.1);
+        // from http://cs2cs.mygeodata.eu/
+        // using:
+        // input projection: Belge 1972 / Belgian Lambert 72 (SRID=31370)
+        // +proj=lcc +lat_1=51.16666723333333 +lat_2=49.8333339 +lat_0=90 +lon_0=4.367486666666666 
+        // +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=-106.868628,52.297783,-103.723893,0.336570,-0.456955,1.842183,-1.2747 +units=m +no_defs 
+        // 
+        // output projection:
+        // WWGS 84 (SRID=4326)
+        // +proj=longlat +datum=WGS84 +no_defs 
+        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
 
-        // check known conversion value for WGS84
-        $pointWGS84 =$proj4->transform($projWGS84, $pointLCC2SP);
-        $this->assertEquals(2.9964931538756, $pointWGS84->x, '', 0.1);
-        $this->assertEquals(60.863435314163, $pointWGS84->y, '', 0.1);
+        $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
+        $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
+        $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.1);
 
-        // check known convertion value for OSGB36
-        $pointOSGB36 =$proj4->transform($projOSGB36, $pointLCC2SP);
-        $this->assertEquals(671196.3657, $pointOSGB36->x, '', 20);
-        $this->assertEquals(1230275.0454, $pointOSGB36->y, '', 20);        
+        // reverse transform.
+        // I have to redefine the input/output expected points because above they 
+        // are altered. (is that really the desired behavior?)
+        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+        $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
+
+        $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
+        $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
+        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
     }
 
     public function testProjFour()

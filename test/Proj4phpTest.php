@@ -76,9 +76,12 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
     {
         $proj4           = new Proj4php();
         $proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
+        $proj4->addDef("EPSG:31370","+proj=lcc +lat_1=51.16666723333333 +lat_2=49.8333339 +lat_0=90 +lon_0=4.367486666666666 +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1 +units=m +no_defs");
 
         $projWGS84       = new Proj('EPSG:4326', $proj4);
         $projOSGB36 = new Proj('EPSG:27700',$proj4);
+        $projLCC2SP = new Proj('EPSG:31370',$proj4);
+
         $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
         $pointDest = $proj4->transform($projWGS84, $pointSrc);
         $this->assertEquals(2.9964931538756, $pointDest->x, '', 0.1);
@@ -89,6 +92,22 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(671196.3657, $pointDest->x, '', 20);
         $this->assertEquals(1230275.0454, $pointDest->y, '', 20);
 
+//from @coreation
+        $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
+        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+
+        $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
+        $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
+        $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.1);
+
+
+
+        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+        $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
+
+        $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
+        $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
+        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
     }
 
     public function testInlineProjectionMethod2(){
@@ -116,21 +135,18 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
 
         $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
-
         $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
         $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.1);
 
         // reverse transform.
         // I have to redefine the input/output expected points because above they 
         // are altered. (is that really the desired behavior?)
-
         $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
 
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
         $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
-        
-
+        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
     }
 
     public function testProjFour()

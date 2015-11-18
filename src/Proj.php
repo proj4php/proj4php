@@ -97,7 +97,7 @@ class Proj
      */
     public $srsCode;
 
-    protected  $unitsPerMeter=1.0;
+    public  $unitsPerMeter=1.0;
 
     /**
      * Constructor: initialize
@@ -111,6 +111,8 @@ class Proj
     {
         $this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
+
+        $this->unitsPerMeter=1.0;
 
         // Check to see if $this is a Well Known Text (WKT) string.
         // This is an old, deprecated format, but still used.
@@ -424,6 +426,8 @@ class Proj
      */
     public function parseWKT($wkt)
     {
+
+        
         $wktSections = self::ParseWKTIntoSections($wkt);
         
         if (empty($wktSections)) {
@@ -475,7 +479,9 @@ class Proj
                 break;
             case 'UNIT':
                 $this->units = $wktName;
-                $this->unitsPerMeter = floatval( array_shift($wktArray));
+                if($wktName=='US survey foot'){
+                    $this->unitsPerMeter = floatval( array_shift($wktArray));
+                }
                 break;
             case 'PARAMETER':
                 $name = strtolower($wktName);

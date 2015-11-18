@@ -75,7 +75,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testParseInlineWKTCode1(){
+    public function testParseInlineWKTCode(){
 
         $proj4 = new Proj4php();
 
@@ -89,14 +89,6 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $projNAD27=new Proj('EPSG:32040', $proj4);
 
         $this->assertEquals(array_intersect_key(get_object_vars($projNAD27), $compare), array_intersect_key(get_object_vars($projNAD27Inline), $compare));
-    }
-
-    /**
-     * @runInSeparateProcess
-     */
-    public function testParseInlineWKTCode2(){        
-        $proj4 = new Proj4php();
-                $compare=array( 'lat0'=>'', 'lat1'=>'', 'lat2'=>'', 'k0'=>'', 'a'=>'',  'b'=>'', 'e'=>'', 'title'=>'', 'long0'=>'', 'x0'=>'', 'y0'=>'');
 
 
         //$proj4->addDef("EPSG:31370","+proj=lcc +lat_1=51.16666723333333 +lat_2=49.8333339 +lat_0=90 +lon_0=4.367486666666666 +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1 +units=m +no_defs");

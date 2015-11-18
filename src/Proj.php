@@ -97,6 +97,8 @@ class Proj
      */
     public $srsCode;
 
+    protected  $unitsPerMeter=1.0;
+
     /**
      * Constructor: initialize
      * Constructor for Proj4php::Proj objects
@@ -483,10 +485,10 @@ class Proj
                 // statements as required
                 switch ($name) {
                     case 'false_easting':
-                        $this->x0 = $value;
+                        $this->x0 = $this->unitsPerMeter*$value;
                         break;
                     case 'false_northing':
-                        $this->y0 = $value;
+                        $this->y0 = $this->unitsPerMeter*$value;
                         break;
                     case 'scale_factor':
                         $this->k0 = $value;

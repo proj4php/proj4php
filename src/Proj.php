@@ -480,7 +480,13 @@ class Proj
             case 'UNIT':
                 $this->units = $wktName;
                 if($wktName=='US survey foot'){
-                    $this->unitsPerMeter = floatval( array_shift($wktArray));
+                    $this->to_meter= floatval( array_shift($wktArray));
+                    if(isset($this->x0)){
+                            $this->x0=$this->to_meter*$this->x0;
+                        }
+                         if(isset($this->y0)){
+                            $this->y0=$this->to_meter*$this->y0;
+                        }
                 }
                 break;
             case 'PARAMETER':
@@ -491,10 +497,16 @@ class Proj
                 // statements as required
                 switch ($name) {
                     case 'false_easting':
-                        $this->x0 = $this->unitsPerMeter*$value;
+                        $this->x0 =$value;
+                        if(isset($this->to_meter)){
+                            $this->x0=$this->to_meter*$this->x0;
+                        }
                         break;
                     case 'false_northing':
-                        $this->y0 = $this->unitsPerMeter*$value;
+                        $this->y0 =$value;
+                         if(isset($this->to_meter)){
+                            $this->y0=$this->to_meter*$this->y0;
+                        }
                         break;
                     case 'scale_factor':
                         $this->k0 = $value;

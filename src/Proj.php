@@ -97,6 +97,8 @@ class Proj
      */
     public $srsCode;
 
+    public  $unitsPerMeter=1.0;
+
     /**
      * A cartesian scale factor.
      */
@@ -114,6 +116,8 @@ class Proj
     {
         $this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
+
+        $this->unitsPerMeter=1.0;
 
         // Check to see if $this is a Well Known Text (WKT) string.
         // This is an old, deprecated format, but still used.
@@ -427,6 +431,8 @@ class Proj
      */
     public function parseWKT($wkt)
     {
+
+        
         $wktSections = self::ParseWKTIntoSections($wkt);
         
         if (empty($wktSections)) {
@@ -489,10 +495,16 @@ class Proj
                 // statements as required
                 switch ($name) {
                     case 'false_easting':
-                        $this->x0 = $value;
+                        $this->x0 =$value;
+                        if(isset($this->to_meter)){
+                            $this->x0=$this->to_meter*$this->x0;
+                        }
                         break;
                     case 'false_northing':
-                        $this->y0 = $value;
+                        $this->y0 =$value;
+                         if(isset($this->to_meter)){
+                            $this->y0=$this->to_meter*$this->y0;
+                        }
                         break;
                     case 'scale_factor':
                         $this->k0 = $value;

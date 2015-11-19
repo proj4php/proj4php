@@ -98,6 +98,11 @@ class Proj
     public $srsCode;
 
     /**
+     * A cartesian scale factor.
+     */
+    public $to_meter = 1;
+
+    /**
      * Constructor: initialize
      * Constructor for Proj4php::Proj objects
      *
@@ -474,6 +479,7 @@ class Proj
             case 'UNIT':
                 $this->units = $wktName;
                 $this->unitsPerMeter = floatval( array_shift($wktArray));
+                $this->to_meter = $this->unitsPerMeter;
                 break;
             case 'PARAMETER':
                 $name = strtolower($wktName);

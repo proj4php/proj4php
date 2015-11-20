@@ -120,7 +120,7 @@ class Proj
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
             
             $this->parseWKT($srsCode);
-            $this->applyWKTUtmFromTmerc();
+            $this->applyWKTUtmFromTmerc(); 
 
             if(isset($this->defData)){
                 // wkt codes can contain EXTENSION["PROJ4", "..."]
@@ -393,11 +393,14 @@ class Proj
      */
     private static function ParseWKTIntoSections($wktStr) {
         $regex = '/^(\w+)\[(.*)\]$/';
+
         
-        if (false === ($match = preg_match($regex, $wktStr, $wktMatch)))
+        if (false === ($match = preg_match($regex, $wktStr, $wktMatch))){
             return;
-        if (!isset($wktMatch[1]))
+        }
+        if (!isset($wktMatch[1])){
             return;
+        }
         
         $wktObject = $wktMatch[1];
         $wktContent = $wktMatch[2];
@@ -436,7 +439,6 @@ class Proj
     public function parseWKT($wkt)
     {
 
-        
         $wktSections = self::ParseWKTIntoSections($wkt);
         
         if (empty($wktSections)) {
@@ -449,7 +451,6 @@ class Proj
 
         // Do something based on the type of the wktObject being parsed.
         // Add in variations in the spelling as required.
-
         switch ($wktObject) {
             case 'LOCAL_CS':
                 $this->projName = 'identity';
@@ -470,6 +471,7 @@ class Proj
             case 'GEOCCS':
                 break;
             case 'PROJECTION':
+
                 if(key_exists($wktName, Proj4php::$wktProjections)){
                     $this->projName = Proj4php::$wktProjections[$wktName];
                 }else{
@@ -505,7 +507,7 @@ class Proj
                 break;
             case 'UNIT':
                 $this->units = $wktName;
-                $this->parseWKTToMeter($wktName);
+                $this->parseWKTToMeter($wktName, $wktArray);
                 break;
             case 'PARAMETER':
                 $name = strtolower($wktName);
@@ -515,6 +517,7 @@ class Proj
                 // statements as required
                 switch ($name) {
                     case 'false_easting':
+
                         $this->x0 =$value;
                         if(isset($this->to_meter)){
                             $this->x0=$this->to_meter*$this->x0;
@@ -663,7 +666,7 @@ class Proj
         }
     }
 
-    protected function parseWKTToMeter($wktName){
+    protected function parseWKTToMeter($wktName, &$wktArray){
         if($wktName=='US survey foot'||
             $wktName=='US Survey Foot'||
             $wktName=='Foot_US'||

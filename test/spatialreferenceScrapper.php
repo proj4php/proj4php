@@ -58,3 +58,6 @@ while ($next && $max !== 0) {
 
     file_put_contents(__DIR__ . '/codes.json', json_encode($pageCodes, JSON_PRETTY_PRINT));
 }
+
+$c = count($pageCodes);
+echo 'Total: '.$c.' definition'.($c==1?'':'s')."\n";

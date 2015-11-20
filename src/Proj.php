@@ -120,33 +120,7 @@ class Proj
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
             
             $this->parseWKT($srsCode);
-
-            // 'UTM Zone 15', 
-            //  WGS_1984_UTM_Zone_17N, 
-            // 'Lao_1997_UTM_48N' 
-            // 'UTM Zone 13, Southern Hemisphere'
-            // 'Hito XVIII 1963 / UTM zone 19S'
-            // 'ETRS89 / ETRS-TM26' EPSG:3038 (UTM 26)
-            $srsCode=strtolower(str_replace('_', ' ', $this->srsCode));
-            if(strpos($srsCode, "utm zone ") !==false||strpos($srsCode, "lao 1997 utm ") !==false||strpos($srsCode, "etrs-tm") !==false){
-
-                $srsCode=str_replace('-tm', '-tm ', $srsCode); //'ETRS89 / ETRS-TM26' ie: EPSG:3038 (UTM 26)
-
-                $zoneStr=substr($srsCode, strrpos($srsCode , ' ')+1);
-                $zlen=strlen($zoneStr);
-                if($zoneStr{$zlen-1}=='n'){
-                    $zoneStr=substr($zoneStr,0,-1);
-                }elseif($zoneStr{$zlen-1}=='s'){
-                    // EPSG:2084 has Hito XVIII 1963 / UTM zone 19S
-                    $zoneStr=substr($zoneStr,0,-1);
-                    $this->utmSouth=true;
-                }
-                $this->zone = intval($zoneStr, 10);
-                $this->projName = "utm";
-                if(!isset($this->utmSouth)){
-                    $this->utmSouth=false;
-                }
-            }
+            $this->applyWKTUtmFromTmerc();
 
             if(isset($this->defData)){
                 // wkt codes can contain EXTENSION["PROJ4", "..."]
@@ -347,7 +321,7 @@ class Proj
      */
     public function loadProjCodeFailure($projName)
     {
-        Proj4php::reportError("failed to find projection file for: " . $projName);
+        Proj4php::reportError("failed to find projection file for: (".gettype($projName).")" . $projName);
         //TBD initialize with identity transforms so proj will still work?
     }
 
@@ -486,11 +460,6 @@ class Proj
                 $this->projName = 'longlat';
                 $this->geocsCode = $wktName;
 
-                //this can probably be removed, as the DATUM field should be more consistent
-                // if($this->proj4php->hasDatum($wktName)){
-                //    $this->datumCode = $wktName;
-                // }
-
                 if ( ! $this->srsCode) {
                     $this->srsCode = $wktName;
                 }
@@ -536,40 +505,7 @@ class Proj
                 break;
             case 'UNIT':
                 $this->units = $wktName;
-                if($wktName=='US survey foot'||
-                    $wktName=='US Survey Foot'||
-                    $wktName=='Foot_US'||
-                    $wktName=="Clarke's link"||
-                    $wktName=="Clarke's foot"||
-                    $wktName=="link"||
-                    $wktName=="Gold Coast foot"||
-                    $wktName=="foot"||
-                    $wktName=="British chain (Sears 1922 truncated)"||
-                    $wktName=="Meter"
-                    ){
-
-                    //$wktName=="1/32meter" = 0.03125 SR-ORG:98 ? should we support this?
-
-                    //Example projections with non-meter units:
-                    // R-ORG:27 Foot_US
-                    // EPSG:2066 Clarke's link http://georepository.com/unit_9039/Clarke-s-link.html
-                    // EPSG:2136 Gold Coast foot, 0.3047997101815088
-                    // EPSG:2155 US survey foot
-                    // SR-ORG:6659 US Survey Foot
-                    // EPSG:2222 foot
-                    // EPSG:2314 Clarke's foot
-                    // EPSG:3140 link
-                    // EPSG:3167 British chain (Sears 1922 truncated)",20.116756
-                    // SR-ORG:6635 UNIT["Meter",-1]
-
-                    $this->to_meter= floatval( array_shift($wktArray));
-                    if(isset($this->x0)){
-                            $this->x0=$this->to_meter*$this->x0;
-                        }
-                         if(isset($this->y0)){
-                            $this->y0=$this->to_meter*$this->y0;
-                        }
-                }
+                $this->parseWKTToMeter($wktName);
                 break;
             case 'PARAMETER':
                 $name = strtolower($wktName);
@@ -698,7 +634,7 @@ class Proj
                     case 'northing':
                         break;
                     default : 
-                        throw new Exception("Unknown Axis Name: ".$name);
+                        throw new Exception("Unknown Axis Name: ".$name); //for testing
                     break;
                 }
 
@@ -726,6 +662,80 @@ class Proj
             $this->parseWKT($wktArrayContent);
         }
     }
+
+    protected function parseWKTToMeter($wktName){
+        if($wktName=='US survey foot'||
+            $wktName=='US Survey Foot'||
+            $wktName=='Foot_US'||
+            $wktName=="Clarke's link"||
+            $wktName=="Clarke's foot"||
+            $wktName=="link"||
+            $wktName=="Gold Coast foot"||
+            $wktName=="foot"||
+            $wktName=="British chain (Sears 1922 truncated)"||
+            $wktName=="Meter"
+            ){
+
+            //$wktName=="1/32meter" = 0.03125 SR-ORG:98 ? should we support this?
+
+            //Example projections with non-meter units:
+            // R-ORG:27 Foot_US
+            // EPSG:2066 Clarke's link http://georepository.com/unit_9039/Clarke-s-link.html
+            // EPSG:2136 Gold Coast foot, 0.3047997101815088
+            // EPSG:2155 US survey foot
+            // SR-ORG:6659 US Survey Foot
+            // EPSG:2222 foot
+            // EPSG:2314 Clarke's foot
+            // EPSG:3140 link
+            // EPSG:3167 British chain (Sears 1922 truncated)",20.116756
+            // SR-ORG:6635 UNIT["Meter",-1]
+
+            $this->to_meter= floatval( array_shift($wktArray));
+            if(isset($this->x0)){
+                    $this->x0=$this->to_meter*$this->x0;
+                }
+                 if(isset($this->y0)){
+                    $this->y0=$this->to_meter*$this->y0;
+                }
+        }
+
+    }
+
+    /**
+     * convert from tmerc to utm+zone after parseWkt
+     * @return [type] [description]
+     */
+    protected function applyWKTUtmFromTmerc(){
+            // 'UTM Zone 15', 
+            //  WGS_1984_UTM_Zone_17N, 
+            // 'Lao_1997_UTM_48N' 
+            // 'UTM Zone 13, Southern Hemisphere'
+            // 'Hito XVIII 1963 / UTM zone 19S'
+            // 'ETRS89 / ETRS-TM26' EPSG:3038 (UTM 26)
+            $srsCode=strtolower(str_replace('_', ' ', $this->srsCode));
+            if(strpos($srsCode, "utm zone ") !==false||strpos($srsCode, "lao 1997 utm ") !==false||strpos($srsCode, "etrs-tm") !==false){
+
+                $srsCode=str_replace('-tm', '-tm ', $srsCode); //'ETRS89 / ETRS-TM26' ie: EPSG:3038 (UTM 26)
+
+                $zoneStr=substr($srsCode, strrpos($srsCode , ' ')+1);
+                $zlen=strlen($zoneStr);
+                if($zoneStr{$zlen-1}=='n'){
+                    $zoneStr=substr($zoneStr,0,-1);
+                }elseif($zoneStr{$zlen-1}=='s'){
+                    // EPSG:2084 has Hito XVIII 1963 / UTM zone 19S
+                    $zoneStr=substr($zoneStr,0,-1);
+                    $this->utmSouth=true;
+                }
+                $this->zone = intval($zoneStr, 10);
+                $this->projName = "utm";
+                if(!isset($this->utmSouth)){
+                    $this->utmSouth=false;
+                }
+            }
+    }
+
+
+
 
     /**
      * Function: parseDefs

@@ -140,7 +140,7 @@ class Proj4php
         self::$wktProjections['Equirectangular']="eqc"; //EPSG:3786
         self::$wktProjections["Sinusoidal"]="sinu"; //SR-ORG:4741
         self::$wktProjections["Stereographic"]="stere"; //SR-ORG:6647
-
+        
     }
 
     protected function initWKTPEllipsoids(){

@@ -40,16 +40,19 @@ class Omerc
       ------------------------------------------ */
 
     public function init() {
-        if((!isset($this->mode)) || !$this->mode ) //EPSG:2057
+        if(!isset($this->mode)){ //EPSG:2057
             $this->mode = 0;
-        if((!isset($this->lon1)) || !$this->lon1 ) {
+        }
+        if(!isset($this->lon1)){
             $this->lon1 = 0;
             $this->mode = 1;
         }
-        if((!isset($this->lon2)) || !$this->lon2 )
+        if(!isset($this->lon2)){
             $this->lon2 = 0;
-        if((!isset($this->lat2)) || !$this->lat2 )
+        }
+        if(!isset($this->lat2)){
             $this->lat2 = 0;
+        }
 
         /* Place parameters in static storage for common use
           ------------------------------------------------- */

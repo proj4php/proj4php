@@ -60,7 +60,7 @@ class Merc
             $this->lat_ts=0;
         }
         if ($this->lat_ts) {
-            if (isset($this->sphere)&&$this->sphere) { //EPSG:3752 does not define sphere
+            if (isset($this->sphere)) { //EPSG:3752 does not define sphere
                 $this->k0 = cos( $this->lat_ts );
             } else {
                 $this->k0 = Common::msfnz($this->es, sin($this->lat_ts), cos($this->lat_ts));

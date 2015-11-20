@@ -40,7 +40,7 @@ class Stere
      * 
      */
     public function init() {
-        $this->phits = (isset($this->lat_ts)) ? $this->lat_ts : Common::HALF_PI;
+        $this->phits = isset($this->lat_ts) ? $this->lat_ts : Common::HALF_PI;
         $t = abs( $this->lat0 );
         if( (abs( $t ) - Common::HALF_PI) < Common::EPSLN ) {
             $this->mode = $this->lat0 < 0. ? $this->S_POLE : $this->N_POLE;

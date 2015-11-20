@@ -120,7 +120,7 @@ class Lcc
         }
 
         $this->f0 = $ms1 / ($this->ns * pow($ts1, $this->ns));
-        $this->rh = ($this->a * $this->f0 * pow($ts0, $this->ns))/$this->to_meter;
+        $this->rh = ($this->a * $this->f0 * pow($ts0, $this->ns));///$this->to_meter;
 
         if ( ! isset($this->title)) {
             $this->title = 'Lambert Conformal Conic';
@@ -147,7 +147,7 @@ class Lcc
 
         if ($con > Common::EPSLN) {
             $ts = Common::tsfnz($this->e, $lat, sin($lat));
-            $rh1 = ($this->a * $this->f0 * pow($ts, $this->ns))/$this->to_meter;
+            $rh1 = ($this->a * $this->f0 * pow($ts, $this->ns));///$this->to_meter;
         } else {
             $con = $lat * $this->ns;
             if ($con <= 0) {
@@ -159,8 +159,8 @@ class Lcc
         }
 
         $theta = $this->ns * Common::adjust_lon($lon - $this->long0);
-        $p->x = $this->to_meter * ($this->k0 * ($rh1 * sin($theta)) + $this->x0);
-        $p->y = $this->to_meter * ($this->k0 * ($this->rh - $rh1 * cos($theta)) + $this->y0);
+        $p->x = /*$this->to_meter **/ ($this->k0 * ($rh1 * sin($theta)) + $this->x0);
+        $p->y = /*$this->to_meter **/ ($this->k0 * ($this->rh - $rh1 * cos($theta)) + $this->y0);
 
         Proj4php::reportDebug($this->debugString());
         Proj4php::reportDebug("lon=$lon lat=$lat\n");

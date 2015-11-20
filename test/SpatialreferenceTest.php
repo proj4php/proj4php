@@ -135,10 +135,17 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
              * @var string
              */
             $onlyTestThisProjection = null;
-            //$onlyTestThisProjection='SR-ORG:6734'; // uncomment or comment this to test one or all projections.
+            $onlyTestThisProjection=array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test one or all projections.
 
-            if ((!empty($onlyTestThisProjection)) && $code !== $onlyTestThisProjection) {
-                continue;
+            if ((!empty($onlyTestThisProjection))){
+                
+                if(is_array($onlyTestThisProjection)){
+                    if(!in_array($code, $onlyTestThisProjection)){
+                        continue;
+                    }
+                }elseif($code !== $onlyTestThisProjection) {
+                    continue;
+                }
             }
 
             if (in_array($code, $this->skipAllTestsForCode)) {

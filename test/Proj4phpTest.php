@@ -196,6 +196,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84 = new Point(rad2deg(-1.67551608),rad2deg(0.49741884),  $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
 
+        
+        
         $this->assertEquals($pointNAD27->x,2963503.91,'', 10);
         $this->assertEquals($pointNAD27->y,254759.80,'', 10);
 

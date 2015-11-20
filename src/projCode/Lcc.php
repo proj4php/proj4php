@@ -71,9 +71,19 @@ class Lcc
         //double false_east;              /* x offset in meters                   */
         //double false_north;             /* y offset in meters                   */
 
+        // SR-ORG:123
+        if ( ! isset($this->lat0)) {
+            $this->lat0=0.0;
+        }
+
         // If lat2 is not defined
         if ( ! isset($this->lat2)) {
             $this->lat2 = $this->lat0;
+        }
+
+        // SR-ORG:113
+        if ( ! isset($this->lat1)) {
+            $this->lat1 = $this->lat0;
         }
 
         if ( ! isset($this->k0)) {

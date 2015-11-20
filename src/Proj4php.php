@@ -28,6 +28,8 @@ class Proj4php
     protected $primeMeridians = [];
 
     public static $wktProjections = [];
+    public static $wktEllipsoids = [];
+    public static $wktDatums=[];
     public static $proj = [];
 
     // Default projection always created on instantiation.
@@ -113,14 +115,55 @@ class Proj4php
     protected function initWKTProjections()
     {
         self::$wktProjections["Lambert Tangential Conformal Conic Projection"] = "lcc";
+        self::$wktProjections["Lambert_Conformal_Conic_1SP"]="lcc"; //SR-ORG:91
         self::$wktProjections["Lambert_Conformal_Conic_2SP"] = "lcc";
+        self::$wktProjections["Lambert_Conformal_Conic_2SP_Belgium"]="lcc"; //SR-ORG:49
         self::$wktProjections["Mercator"] = "merc";
         self::$wktProjections["Mercator_1SP"] = "merc";
+        self::$wktProjections["Mercator_2SP"] = "merc";
         self::$wktProjections["Transverse_Mercator"] = "tmerc";
         self::$wktProjections["Transverse Mercator"] = "tmerc";
         self::$wktProjections["Lambert Azimuthal Equal Area"] = "laea";
         self::$wktProjections["Universal Transverse Mercator System"] = "utm";
+
+        self::$wktProjections["Mollweide"]='moll'; //SR-ORG:7
+        self::$wktProjections["Albers_Conic_Equal_Area"]='aea'; //SR-ORG:10
+        self::$wktProjections["Cylindrical_Equal_Area"]="cea"; //SR-ORG:22
+        self::$wktProjections["Lambert_Azimuthal_Equal_Area"]="laea";//SR-ORG:28
+        self::$wktProjections["Krovak"]="krovak";//SR-ORG:36
+        self::$wktProjections["Oblique_Stereographic"]="sterea";//SR-ORG:43
+        self::$wktProjections["Polyconic"]="poly";//SR-ORG:86
+        self::$wktProjections["New_Zealand_Map_Grid"]="nzmg";//SR-ORG:118
+        self::$wktProjections["Hotine_Oblique_Mercator"]="omerc"; //EPSG:2057
+        self::$wktProjections["Cassini_Soldner"]="cass"; //EPSG:2066
+        self::$wktProjections["Polar_Stereographic"]="stere"; //EPSG:3031
+        self::$wktProjections['Equirectangular']="eqc"; //EPSG:3786
+        self::$wktProjections["Sinusoidal"]="sinu"; //SR-ORG:4741
+        self::$wktProjections["Stereographic"]="stere"; //SR-ORG:6647
+
     }
+
+    protected function initWKTPEllipsoids(){
+    
+      self::$wktEllipsoids["Clarke 1880 (RGS)"] = "clrk80";
+      self::$wktEllipsoids["Clarke_1866"]= "clrk66"; //SR-ORG:11
+      self::$wktEllipsoids["WGS 84"]="WGS84"; //SR-ORG:62
+
+    }
+
+    protected function initWKTPDatums(){
+    
+      self::$wktDatums["WGS_1984"] = "WGS84";
+      self::$wktDatums["World Geodetic System 1984"]="WGS84"; //SR-ORG:29
+      self::$wktDatums["North_American_Datum_1983"]="NAD83"; //SR-ORG:10
+      self::$wktDatums["North_American_Datum_1927"]="NAD27"; //SR-ORG:11
+      self::$wktDatums["Deutsches_Hauptdreiecksnetz"]="potsdam";//EPSG:3068
+      self::$wktDatums["New_Zealand_Geodetic_Datum_1949"]="nzgd49";//EPSG:4272
+      self::$wktDatums["OSGB_1936"]="OSGB36"; //EPSG:4277
+
+
+    }
+    
 
     protected function initDatum()
     {
@@ -350,6 +393,8 @@ class Proj4php
     public function __construct()
     {
         $this->initWKTProjections();
+        $this->initWKTPEllipsoids();
+        $this->initWKTPDatums();
         $this->initDefs();
         $this->initDatum();
         $this->initEllipsoid();
@@ -601,7 +646,7 @@ class Proj4php
                     }
                     break;
                 default :
-                    throw(new Exception("ERROR: unknow axis (" . $crs->axis[$i] . ") - check definition of " . $crs->projName));
+                    throw(new Exception("ERROR: unknown axis (" . $crs->axis[$i] . ") - check definition of " . $crs->projName));
                     return null;
             }
         }
@@ -630,7 +675,7 @@ class Proj4php
             return @file_get_contents($filename);
         } elseif (file_exists($filename)) {
             // Get the definition. An array will be returned.
-			// DO NOT require_once, will return "true" at the second call
+			 // DO NOT require_once, will return "true" at the second call
             $def = require($filename);
 
             // Add any definitions we have imported to the defs array.

@@ -97,7 +97,6 @@ class Proj
      */
     public $srsCode;
 
-    public  $unitsPerMeter=1.0;
 
     /**
      * Constructor: initialize
@@ -112,7 +111,6 @@ class Proj
         $this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
 
-        $this->unitsPerMeter=1.0;
 
         // Check to see if $this is a Well Known Text (WKT) string.
         // This is an old, deprecated format, but still used.
@@ -120,7 +118,44 @@ class Proj
         // need to check the string *starts* with these names.
 
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
+            
             $this->parseWKT($srsCode);
+
+            // 'UTM Zone 15', 
+            //  WGS_1984_UTM_Zone_17N, 
+            // 'Lao_1997_UTM_48N' 
+            // 'UTM Zone 13, Southern Hemisphere'
+            // 'Hito XVIII 1963 / UTM zone 19S'
+            // 'ETRS89 / ETRS-TM26' EPSG:3038 (UTM 26)
+            $srsCode=strtolower(str_replace('_', ' ', $this->srsCode));
+            if(strpos($srsCode, "utm zone ") !==false||strpos($srsCode, "lao 1997 utm ") !==false||strpos($srsCode, "etrs-tm") !==false){
+
+                $srsCode=str_replace('-tm', '-tm ', $srsCode); //'ETRS89 / ETRS-TM26' ie: EPSG:3038 (UTM 26)
+
+                $zoneStr=substr($srsCode, strrpos($srsCode , ' ')+1);
+                $zlen=strlen($zoneStr);
+                if($zoneStr{$zlen-1}=='n'){
+                    $zoneStr=substr($zoneStr,0,-1);
+                }elseif($zoneStr{$zlen-1}=='s'){
+                    // EPSG:2084 has Hito XVIII 1963 / UTM zone 19S
+                    $zoneStr=substr($zoneStr,0,-1);
+                    $this->utmSouth=true;
+                }
+                $this->zone = intval($zoneStr, 10);
+                $this->projName = "utm";
+                if(!isset($this->utmSouth)){
+                    $this->utmSouth=false;
+                }
+            }
+
+            if(isset($this->defData)){
+                // wkt codes can contain EXTENSION["PROJ4", "..."]
+                // for example SR-ORG:6
+                $this->parseDefs();
+                $this->initTransforms();
+                return;
+            }
+
             $this->deriveConstants();
             $this->loadProjCode($this->projName);
             return;
@@ -450,6 +485,12 @@ class Proj
             case 'GEOGCS':
                 $this->projName = 'longlat';
                 $this->geocsCode = $wktName;
+
+                //this can probably be removed, as the DATUM field should be more consistent
+                // if($this->proj4php->hasDatum($wktName)){
+                //    $this->datumCode = $wktName;
+                // }
+
                 if ( ! $this->srsCode) {
                     $this->srsCode = $wktName;
                 }
@@ -460,26 +501,67 @@ class Proj
             case 'GEOCCS':
                 break;
             case 'PROJECTION':
-                $this->projName = Proj4php::$wktProjections[$wktName];
+                if(key_exists($wktName, Proj4php::$wktProjections)){
+                    $this->projName = Proj4php::$wktProjections[$wktName];
+                }else{
+                    Proj4php::reportError('Undefined Projection: '.$wktName);
+                }
                 break;
             case 'DATUM':
                 $this->datumName = $wktName;
+                if(key_exists($wktName, Proj4php::$wktDatums)){
+                    $this->datumCode = Proj4php::$wktDatums[$wktName];
+                }
                 break;
             case 'LOCAL_DATUM':
                 $this->datumCode = 'none';
                 break;
             case 'SPHEROID':
-                $this->ellps = $wktName;
-                $this->a = floatval(array_shift($wktArray));
-                $this->rf = floatval(array_shift($wktArray));
+               
+
+                if(key_exists($wktName, Proj4php::$wktEllipsoids)){
+                    $this->ellps = Proj4php::$wktEllipsoids[$wktName];
+                }else{
+                     $this->ellps = $wktName;
+                     $this->a = floatval(array_shift($wktArray));
+                     $this->rf = floatval(array_shift($wktArray));
+                }
+
+                
                 break;
             case 'PRIMEM':
                 // to radians?
-                $this->from_greenwich = floatval(array_shift($wktArray));
+
+                $this->from_greenwich = floatval(array_shift($wktArray))*Common::D2R;
                 break;
             case 'UNIT':
                 $this->units = $wktName;
-                if($wktName=='US survey foot'){
+                if($wktName=='US survey foot'||
+                    $wktName=='US Survey Foot'||
+                    $wktName=='Foot_US'||
+                    $wktName=="Clarke's link"||
+                    $wktName=="Clarke's foot"||
+                    $wktName=="link"||
+                    $wktName=="Gold Coast foot"||
+                    $wktName=="foot"||
+                    $wktName=="British chain (Sears 1922 truncated)"||
+                    $wktName=="Meter"
+                    ){
+
+                    //$wktName=="1/32meter" = 0.03125 SR-ORG:98 ? should we support this?
+
+                    //Example projections with non-meter units:
+                    // R-ORG:27 Foot_US
+                    // EPSG:2066 Clarke's link http://georepository.com/unit_9039/Clarke-s-link.html
+                    // EPSG:2136 Gold Coast foot, 0.3047997101815088
+                    // EPSG:2155 US survey foot
+                    // SR-ORG:6659 US Survey Foot
+                    // EPSG:2222 foot
+                    // EPSG:2314 Clarke's foot
+                    // EPSG:3140 link
+                    // EPSG:3167 British chain (Sears 1922 truncated)",20.116756
+                    // SR-ORG:6635 UNIT["Meter",-1]
+
                     $this->to_meter= floatval( array_shift($wktArray));
                     if(isset($this->x0)){
                             $this->x0=$this->to_meter*$this->x0;
@@ -512,16 +594,36 @@ class Proj
                         $this->k0 = $value;
                         break;
                     case 'central_meridian':
+                    case 'longitude_of_center'; // SR-ORG:10
+                        $this->longc = $value * Common::D2R;
+                    case 'longitude_of_origin'; // SR-ORG:118
                         $this->long0 = $value * Common::D2R;
+
                         break;
                     case 'latitude_of_origin':
+                    case 'latitude_of_center'; // SR-ORG:10
                         $this->lat0 = $value * Common::D2R;
+                        if($this->projName=='merc'||$this->projName=='eqc'){
+                             $this->lat_ts = $value * Common::D2R; //EPSG:3752 (merc), EPSG:3786 (eqc)
+                             //this cannot be set here in: SR-ORG:6647 (stere)
+                        }
                         break;
                     case 'standard_parallel_1':
                         $this->lat1 = $value * Common::D2R;
+                        $this->lat_ts = $value * Common::D2R; //SR-ORG:22
                         break;
                     case 'standard_parallel_2':
                         $this->lat2 = $value * Common::D2R;
+                        break;
+                    case 'rectified_grid_angle':
+                        if(!isset($this->alpha)){
+                            //I'm not sure if this should be set here. 
+                            //EPSG:3167 defineds azimuth and rectified_grid_angle. both are similar (azimuth is closer)
+                            $this->alpha=$value* Common::D2R;
+                        }
+                        break;
+                    case 'azimuth':
+                        $this->alpha=$value* Common::D2R;//EPSG:2057
                         break;
                     case 'more_here':
                         break;
@@ -550,21 +652,70 @@ class Proj
                     case 'DOWN' : $value = 'd';
                         break;
                     case 'OTHER':
-                    default : $value = ' ';
+
+                    default : 
+                    throw new Exception("Unknown Axis ".$name." Value:  ".$value); 
+                    $value = ' ';
+                    
                         break; // FIXME
                 }
                 if (!$this->axis) {
                     $this->axis = "enu";
                 }
+
                 switch ($name) {
-                    case 'X': $this->axis = $value . substr($this->axis, 1, 2);
+                    case 'e(x)': // EPSG:2140
+                    case 'x': $this->axis = $value . substr($this->axis, 1, 2); 
                         break;
-                    case 'Y': $this->axis = substr($this->axis, 0, 1) . $value . substr($this->axis, 2, 1);
+                    case 'n(y)':
+                    case 'y': $this->axis = substr($this->axis, 0, 1) . $value . substr($this->axis, 2, 1);
                         break;
-                    case 'Z': $this->axis = substr($this->axis, 0, 2) . $value;
+                    case 'z': $this->axis = substr($this->axis, 0, 2) . $value;
                         break;
-                    default : break;
+
+                    // from SR-ORG:29 
+                    // "Geodetic longitude", EAST 
+                    // "Geodetic latitude", NORTH
+                    case 'geodetic latitude':
+
+                    //some other ones that i have found
+                    case 'latitude':
+                    case 'lat':
+                    case 'geodetic longitude':
+                    case 'longitude':
+                    case 'long':
+                    case 'lon':
+
+                    case 'e':
+                    case 'n': //SR-ORG:4705
+
+                    case 'east':
+                    case 'north': //SR-ORG:4705
+
+                    case 'ellipsoidal height': //EPSG:3823
+
+                    case 'easting':
+                    case 'northing':
+                        break;
+                    default : 
+                        throw new Exception("Unknown Axis Name: ".$name);
+                    break;
                 }
+
+            case 'EXTENSION':
+
+                $name = strtolower($wktName);
+                $value = array_shift($wktArray);
+                switch ($name) {
+                    case 'proj4':
+                        // WKT can define a proj4 definition. for example SR-ORG:6
+                        $this->defData=$value;
+                        
+                        break;
+                    default:
+                        break;
+                }
+                break;
             case 'MORE_HERE':
                 break;
             default:
@@ -583,7 +734,10 @@ class Proj
      */
     public function parseDefs()
     {
-        $this->defData = $this->proj4php->getDef($this->srsCode);
+        if(!isset($this->defData)){
+            // allow wkt to define defData, and not be overwritten here.
+            $this->defData = $this->proj4php->getDef($this->srsCode);
+        }
 
         if ( ! $this->defData) {
             return;
@@ -661,7 +815,7 @@ class Proj
                     break;
                 case "lonc":
                     //for somerc projection
-                    $this->longc = paramVal * Common::D2R;
+                    $this->longc = $paramVal * Common::D2R;
                     break;
                 case "x_0":
                     // false easting
@@ -711,7 +865,7 @@ class Proj
                         ? $this->proj4php->getPrimeMeridian($paramVal)
                         : floatval($paramVal);
 
-                    $this->from_greenwich *= Common::D2R;
+                    $this->from_greenwich *= Common::D2R; 
                     break;
                 case "axis":
                     // DGR 2010-11-12: axis
@@ -768,11 +922,12 @@ class Proj
             Proj4php::extend($this, $ellipse);
         }
 
-        if (isset($this->rf) && !isset($this->b)) {
+        if (isset($this->rf) && !isset($this->b)&&$this->rf!=0) { // SR-ORG:28 division by 0
             $this->b = (1.0 - 1.0 / $this->rf) * $this->a;
         }
 
-        if ((isset($this->rf) && $this->rf === 0) || abs($this->a - $this->b) < Common::EPSLN) {
+        // rf is a floatval to ===0 fails // SR-ORG:28
+        if ((isset($this->rf) && $this->rf == 0) || abs($this->a - $this->b) < Common::EPSLN) {
             $this->sphere = true;
             $this->b = $this->a;
         }

@@ -13,6 +13,8 @@ use Exception;
 
 class Proj4php
 {
+    public static $debugOn = false;
+
     protected $defaultDatum = 'WGS84';
 
     // FIXME: (https://github.com/proj4php/proj4php/issues/4)
@@ -488,7 +490,6 @@ class Proj4php
         // $point (after it has been changed. $point really needs to be made
         // immutable so it is clear what is happening.
         $point = $this->datum_transform($source->datum, $dest->datum, $point);
-
         // Adjust for the prime meridian if necessary
         if (isset($dest->from_greenwich)) {
             $point->x -= $dest->from_greenwich;
@@ -662,6 +663,17 @@ class Proj4php
     public static function reportError($msg)
     {
         throw(new Exception($msg));
+    }
+
+    public static function setDebug($debug)
+    {
+        self::$debugOn = $debug;
+    }
+
+    public static function reportDebug($msg)
+    {
+        if (self::$debugOn)
+          echo $msg;
     }
 
     /**

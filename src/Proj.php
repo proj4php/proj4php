@@ -98,6 +98,8 @@ class Proj
     public $srsCode;
 
 
+    public $to_meter = 1;
+
     /**
      * Constructor: initialize
      * Constructor for Proj4php::Proj objects
@@ -120,6 +122,9 @@ class Proj
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
             
             $this->parseWKT($srsCode);
+
+            // this is useful for a bunch of projections that are using tmerc while the proj4code uses utm+zone
+            // however I would like to remove it if I can compare tmerc to utm 
             $this->applyWKTUtmFromTmerc(); 
 
             if(isset($this->defData)){

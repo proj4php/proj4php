@@ -84,7 +84,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
 
         $proj4->addDef('EPSG:32040', '+proj=lcc +lat_1=28.38333333333333 +lat_2=30.28333333333333 +lat_0=27.83333333333333 +lon_0=-99 +x_0=609601.2192024384 +y_0=0 +ellps=clrk66 +datum=NAD27 +to_meter=0.3048006096012192 +no_defs');
-        
+
         $projNAD27Inline = new Proj('PROJCS["NAD27 / Texas South Central",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],UNIT["US survey foot",0.3048006096012192,AUTHORITY["EPSG","9003"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",28.38333333333333],PARAMETER["standard_parallel_2",30.28333333333333],PARAMETER["latitude_of_origin",27.83333333333333],PARAMETER["central_meridian",-99],PARAMETER["false_easting",2000000],PARAMETER["false_northing",0],AUTHORITY["EPSG","32040"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
         $projNAD27=new Proj('EPSG:32040', $proj4);
 
@@ -203,6 +203,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $proj4           = new Proj4php();
         $projWGS84       = new Proj('EPSG:4326', $proj4);
 
+        $projED50  = new Proj('GEOGCS["ED50",DATUM["European_Datum_1950",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],AUTHORITY["EPSG","6230"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4230"]]',$proj4);
         $projNAD27 = new Proj('PROJCS["NAD27 / Texas South Central",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],UNIT["US survey foot",0.3048006096012192,AUTHORITY["EPSG","9003"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",28.38333333333333],PARAMETER["standard_parallel_2",30.28333333333333],PARAMETER["latitude_of_origin",27.83333333333333],PARAMETER["central_meridian",-99],PARAMETER["false_easting",2000000],PARAMETER["false_northing",0],AUTHORITY["EPSG","32040"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
         $projLCC2SP = new Proj('PROJCS["Belge 1972 / Belgian Lambert 72",GEOGCS["Belge 1972",DATUM["Reseau_National_Belge_1972",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],TOWGS84[106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1],AUTHORITY["EPSG","6313"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4313"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",51.16666723333333],PARAMETER["standard_parallel_2",49.8333339],PARAMETER["latitude_of_origin",90],PARAMETER["central_meridian",4.367486666666666],PARAMETER["false_easting",150000.013],PARAMETER["false_northing",5400088.438],AUTHORITY["EPSG","31370"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
 
@@ -217,6 +218,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84 = $proj4->transform($projWGS84,$pointNAD27);
         $this->assertEquals($pointWGS84->x,0.49741884,'',0.1);
         $this->assertEquals($pointWGS84->y,-1.67551608,'',0.1);
+
 
         //from @coreation
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
@@ -245,6 +247,27 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
         $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
         $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
+    }
+
+    public function testDatum()
+    {
+        Proj4php::setDebug(false);
+
+        $proj4           = new Proj4php();
+        $projWGS84       = new Proj('EPSG:4326', $proj4);
+
+        $projED50  = new Proj('GEOGCS["ED50",DATUM["European_Datum_1950",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],AUTHORITY["EPSG","6230"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4230"]]',$proj4);
+
+        // from http://www.ihsenergy.com/epsg/guid7.pdf
+        // Chapter 2.3.2
+        // 53°48'33.82"N
+        // 2°07'46.38"E
+        $pointWGS84 = new Point(53.809189444,2.129455, $projWGS84);
+
+        $proj4->datum_transform($projWGS84->datum,$projED50->datum,$pointWGS84);
+
+        $this->assertEquals(53.809189444,$pointWGS84->x,'',0.1);
+        $this->assertEquals(2.129455,$pointWGS84->y,'',0.1);
     }
 
     public function testProjFour()

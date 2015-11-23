@@ -38,7 +38,7 @@ class Ortho
 {
     /* Initialize the Orthographic projection
       ------------------------------------- */
-    public function init($def)
+    public function init() //SR-ORG:6980
     {
         //double temp;			/* temporary variable		*/
 

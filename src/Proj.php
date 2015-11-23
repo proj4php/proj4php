@@ -113,6 +113,8 @@ class Proj
         $this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
 
+        $this->to_rads=COMMON::D2R;
+
 
         // Check to see if $this is a Well Known Text (WKT) string.
         // This is an old, deprecated format, but still used.
@@ -513,6 +515,7 @@ class Proj
             case 'UNIT':
                 $this->units = $wktName;
                 $this->parseWKTToMeter($wktName, $wktArray);
+                $this->parseWKTToRads($wktName, $wktArray);
                 break;
             case 'PARAMETER':
                 $name = strtolower($wktName);
@@ -539,35 +542,35 @@ class Proj
                         break;
                     case 'central_meridian':
                     case 'longitude_of_center'; // SR-ORG:10
-                        $this->longc = $value * Common::D2R;
+                        $this->longc = $value * $this->to_rads;
                     case 'longitude_of_origin'; // SR-ORG:118
-                        $this->long0 = $value * Common::D2R;
+                        $this->long0 = $value * $this->to_rads;
 
                         break;
                     case 'latitude_of_origin':
                     case 'latitude_of_center'; // SR-ORG:10
-                        $this->lat0 = $value * Common::D2R;
+                        $this->lat0 = $value * $this->to_rads;
                         if($this->projName=='merc'||$this->projName=='eqc'){
-                             $this->lat_ts = $value * Common::D2R; //EPSG:3752 (merc), EPSG:3786 (eqc)
+                             $this->lat_ts = $value *  $this->to_rads; //EPSG:3752 (merc), EPSG:3786 (eqc)
                              //this cannot be set here in: SR-ORG:6647 (stere)
                         }
                         break;
                     case 'standard_parallel_1':
-                        $this->lat1 = $value * Common::D2R;
-                        $this->lat_ts = $value * Common::D2R; //SR-ORG:22
+                        $this->lat1 = $value * $this->to_rads;
+                        $this->lat_ts = $value * $this->to_rads; //SR-ORG:22
                         break;
                     case 'standard_parallel_2':
-                        $this->lat2 = $value * Common::D2R;
+                        $this->lat2 = $value * $this->to_rads;
                         break;
                     case 'rectified_grid_angle':
                         if(!isset($this->alpha)){
                             //I'm not sure if this should be set here. 
                             //EPSG:3167 defineds azimuth and rectified_grid_angle. both are similar (azimuth is closer)
-                            $this->alpha=$value* Common::D2R;
+                            $this->alpha=$value * $this->to_rads;
                         }
                         break;
                     case 'azimuth':
-                        $this->alpha=$value* Common::D2R;//EPSG:2057
+                        $this->alpha=$value * $this->to_rads;//EPSG:2057
                         break;
                     case 'more_here':
                         break;
@@ -684,7 +687,9 @@ class Proj
             $wktName=="Gold Coast foot"||
             $wktName=="foot"||
             $wktName=="British chain (Sears 1922 truncated)"||
-            $wktName=="Meter"
+            $wktName=="Meter"||
+            $wktName=="metre" ||
+            $wktName=="foot_survey_us"
             ){
 
             //$wktName=="1/32meter" = 0.03125 SR-ORG:98 ? should we support this?
@@ -701,14 +706,56 @@ class Proj
             // EPSG:3167 British chain (Sears 1922 truncated)",20.116756
             // SR-ORG:6635 UNIT["Meter",-1]
             // SR-ORG:6887 U.S. Foot
+            // SR-ORG:6982 UNIT[\"metre\",1.048153]]
+            // SR-ORG:7008 foot_survey_us
 
             $this->to_meter= floatval( array_shift($wktArray));
             if(isset($this->x0)){
                     $this->x0=$this->to_meter*$this->x0;
                 }
-                 if(isset($this->y0)){
-                    $this->y0=$this->to_meter*$this->y0;
-                }
+            if(isset($this->y0)){
+                $this->y0=$this->to_meter*$this->y0;
+            }
+        }
+
+    }
+
+    protected function parseWKTToRads($wktName, &$wktArray){
+        if($wktName=='Radian'
+            ){
+/*
+            $this->to_rads= floatval( array_shift($wktArray));
+            if(isset($this->lat_ts)){
+                $this->lat_ts=$this->to_rads*$this->lat_ts;
+            }
+
+            if(isset($this->x0)){
+                $this->x0=$this->to_rads*$this->x0;
+            }
+
+            if(isset($this->y0)){
+                $this->y0=$this->to_rads*$this->y0;
+            }
+
+            if(isset($this->longc)){
+                $this->longc=$this->to_rads*$this->longc;
+            }
+
+
+            if(isset($this->longc)){
+                $this->longc=$this->to_rads*$this->longc;
+            }
+
+
+
+            
+            $this->long0
+            $this->lat0
+            $this->lat1
+            $this->lat2
+            $this->alpha
+            */
+            
         }
 
     }

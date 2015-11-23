@@ -130,6 +130,8 @@ class Proj4php
 
         self::$wktProjections["Mollweide"]='moll'; //SR-ORG:7
         self::$wktProjections["Albers_Conic_Equal_Area"]='aea'; //SR-ORG:10
+        self::$wktProjections['Albers_conic_equal_area']='aea'; //SR-ORG:6952
+
         self::$wktProjections["Cylindrical_Equal_Area"]="cea"; //SR-ORG:22
         self::$wktProjections["Lambert_Azimuthal_Equal_Area"]="laea";//SR-ORG:28
         self::$wktProjections["Krovak"]="krovak";//SR-ORG:36
@@ -142,6 +144,9 @@ class Proj4php
         self::$wktProjections['Equirectangular']="eqc"; //EPSG:3786
         self::$wktProjections["Sinusoidal"]="sinu"; //SR-ORG:4741
         self::$wktProjections["Stereographic"]="stere"; //SR-ORG:6647
+
+       // self::$wktProjections['VanDerGrinten']='vandg';
+        self::$wktProjections['Orthographic']='ortho'; //SR-ORG:6980
         
     }
 
@@ -155,8 +160,9 @@ class Proj4php
 
     protected function initWKTPDatums(){
     
-      self::$wktDatums["WGS_1984"] = "WGS84";
-      self::$wktDatums["World Geodetic System 1984"]="WGS84"; //SR-ORG:29
+      //self::$wktDatums["WGS_1984"] = "WGS84";
+      // self::$wktDatums["D_WGS_1984"] = "WGS84"; //SR-ORG:6917 but breaks SR-ORG:6668
+      //self::$wktDatums["World Geodetic System 1984"]="WGS84"; //SR-ORG:29
       self::$wktDatums["North_American_Datum_1983"]="NAD83"; //SR-ORG:10
       self::$wktDatums["North_American_Datum_1927"]="NAD27"; //SR-ORG:11
       self::$wktDatums["Deutsches_Hauptdreiecksnetz"]="potsdam";//EPSG:3068

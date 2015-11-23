@@ -125,7 +125,7 @@ class Proj
 
             // this is useful for a bunch of projections that are using tmerc while the proj4code uses utm+zone
             // however I would like to remove it if I can compare tmerc to utm 
-            $this->applyWKTUtmFromTmerc(); 
+            //$this->applyWKTUtmFromTmerc(); 
 
             if(isset($this->defData)){
                 // wkt codes can contain EXTENSION["PROJ4", "..."]
@@ -633,6 +633,8 @@ class Proj
                     case 'e':
                     case 'n': //SR-ORG:4705
 
+                    case 'gravity-related height':
+
                     case 'east':
                     case 'north': //SR-ORG:4705
 
@@ -675,6 +677,7 @@ class Proj
         if($wktName=='US survey foot'||
             $wktName=='US Survey Foot'||
             $wktName=='Foot_US'||
+            $wktName=='U.S. Foot'||
             $wktName=="Clarke's link"||
             $wktName=="Clarke's foot"||
             $wktName=="link"||
@@ -697,6 +700,7 @@ class Proj
             // EPSG:3140 link
             // EPSG:3167 British chain (Sears 1922 truncated)",20.116756
             // SR-ORG:6635 UNIT["Meter",-1]
+            // SR-ORG:6887 U.S. Foot
 
             $this->to_meter= floatval( array_shift($wktArray));
             if(isset($this->x0)){

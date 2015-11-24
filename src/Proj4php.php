@@ -139,6 +139,8 @@ class Proj4php
         self::$wktProjections["Polyconic"]="poly";//SR-ORG:86
         self::$wktProjections["New_Zealand_Map_Grid"]="nzmg";//SR-ORG:118
         self::$wktProjections["Hotine_Oblique_Mercator"]="omerc"; //EPSG:2057
+        self::$wktProjections["hotine_oblique_mercator"]="omerc"; //SR-ORG:7531
+
         self::$wktProjections["Cassini_Soldner"]="cass"; //EPSG:2066
         self::$wktProjections["Polar_Stereographic"]="stere"; //EPSG:3031
         self::$wktProjections['Equirectangular']="eqc"; //EPSG:3786
@@ -148,6 +150,9 @@ class Proj4php
        // self::$wktProjections['VanDerGrinten']='vandg';
         self::$wktProjections['Orthographic']='ortho'; //SR-ORG:6980
         self::$wktProjections["Azimuthal_Equidistant"]="aeqd"; //SR-ORG:7238
+        self::$wktProjections["Miller_Cylindrical"]="mill"; //SR-ORG:8064
+        self::$wktProjections["Equidistant_Conic"]="eqdc"; //SR-ORG:8159
+
         
     }
 
@@ -169,6 +174,7 @@ class Proj4php
       self::$wktDatums["North_American_Datum_1983"]="NAD83"; //SR-ORG:10
       self::$wktDatums["North American Datum 1983"]="NAD83"; //SR-ORG:7220
       self::$wktDatums["North_American_Datum_1927"]="NAD27"; //SR-ORG:11
+      self::$wktDatums["North American Datum 1927"]="NAD27";
       self::$wktDatums["Deutsches_Hauptdreiecksnetz"]="potsdam";//EPSG:3068
       self::$wktDatums["New_Zealand_Geodetic_Datum_1949"]="nzgd49";//EPSG:4272
       self::$wktDatums["OSGB_1936"]="OSGB36"; //EPSG:4277

@@ -550,8 +550,9 @@ class Proj
                     case 'latitude_of_origin':
                     case 'latitude_of_center'; // SR-ORG:10
                         $this->lat0 = $value * $this->to_rads;
-                        if($this->projName=='merc'||$this->projName=='eqc'){
-                             $this->lat_ts = $value *  $this->to_rads; //EPSG:3752 (merc), EPSG:3786 (eqc)
+                        if($this->projName=='merc'||$this->projName=='eqc'
+                            ){
+                             $this->lat_ts = $value *  $this->to_rads; //EPSG:3752 (merc), EPSG:3786 (eqc), SR-ORG:7710" (stere)
                              //this cannot be set here in: SR-ORG:6647 (stere)
                         }
                         break;
@@ -622,7 +623,7 @@ class Proj
                         break;
 
                     // Here is a list of other axis that exist in wkt definitions. are they useful?
-                    /*
+                    
                     
                     case 'geodetic latitude': //from SR-ORG:29 
 
@@ -638,6 +639,8 @@ class Proj
 
                     case 'gravity-related height':
 
+                    case 'geocentric y': //SR-ORG:7910
+
                     case 'east':
                     case 'north': //SR-ORG:4705
 
@@ -646,9 +649,9 @@ class Proj
                     case 'easting':
                     case 'northing':
                         break;
-                    */
+                    
                     default : 
-                        // throw new Exception("Unknown Axis Name: ".$name); //for testing
+                         throw new Exception("Unknown Axis Name: ".$name); //for testing
                     break;
                 }
 
@@ -687,10 +690,15 @@ class Proj
             $wktName=="link"||
             $wktName=="Gold Coast foot"||
             $wktName=="foot"||
+            $wktName=="Foot" ||
             $wktName=="British chain (Sears 1922 truncated)"||
             $wktName=="Meter"||
             $wktName=="metre" ||
-            $wktName=="foot_survey_us"
+            $wktName=="foot_survey_us" ||
+            $wktName=="Kilometer" ||
+            $wktName=="international_feet" ||
+            $wktName=="m" ||
+            $wktName=="Mile_US"
             ){
 
             //$wktName=="1/32meter" = 0.03125 SR-ORG:98 ? should we support this?
@@ -709,6 +717,11 @@ class Proj
             // SR-ORG:6887 U.S. Foot
             // SR-ORG:6982 UNIT[\"metre\",1.048153]]
             // SR-ORG:7008 foot_survey_us
+            // SR-ORG:7496 Kilometer
+            // SR-ORG:7508 international_feet
+            // SR-ORG:7677 Foot
+            // SR-ORG:7753 m = 9000.0
+            // SR-ORG:7889 Mile_US
 
             $this->to_meter= floatval( array_shift($wktArray));
             if(isset($this->x0)){
@@ -723,8 +736,11 @@ class Proj
 
     protected function parseWKTToRads($wktName, &$wktArray){
         if($wktName=='Radian'||
-            $wktName=='Degree'
+            $wktName=='Degree' ||
+            $wktName=='degree'
             ){
+
+            // SR-ORG:7753 degree=0.081081
 
             $this->to_rads= floatval( array_shift($wktArray));
             if(isset($this->lat_ts)){

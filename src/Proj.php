@@ -602,7 +602,7 @@ class Proj
                     case 'OTHER':
 
                     default : 
-                    throw new Exception("Unknown Axis ".$name." Value:  ".$value); 
+                    //throw new Exception("Unknown Axis ".$name." Value:  ".$value); 
                     $value = ' ';
                     
                         break; // FIXME

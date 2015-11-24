@@ -89,3 +89,31 @@ $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
 $pointDest = $proj4->transform($projWGS84,$proj5514,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in S-JTSK<br><br>";
+
+
+
+$proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
+
+$projOSGB36 = new Proj('EPSG:27700',$proj4);
+$pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
+echo "Source : ".$pointSrc->toShortString()." in OSGB36<br>";
+$pointDest = $proj4->transform($projWGS84, $pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
+
+$pointSrc = $pointDest;
+echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
+$pointDest = $proj4->transform($projOSGB36, $pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in OSGB36<br><br>";
+
+
+$projOSGB36_2 = new Proj('PROJCS["OSGB 1936 / British National Grid",GEOGCS["OSGB 1936",DATUM["OSGB_1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],AUTHORITY["EPSG","6277"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4277"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",49],PARAMETER["central_meridian",-2],PARAMETER["scale_factor",0.9996012717],PARAMETER["false_easting",400000],PARAMETER["false_northing",-100000],AUTHORITY["EPSG","27700"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]',$proj4);
+$pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36_2);
+echo "Source : ".$pointSrc->toShortString()." in OSGB36 from OGC WKT<br>";
+$pointDest = $proj4->transform($projWGS84, $pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
+
+$pointSrc = $pointDest;
+echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
+$pointDest = $proj4->transform($projOSGB36_2, $pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in OSGB36 from OGC WKT<br><br>";
+

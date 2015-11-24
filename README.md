@@ -40,7 +40,7 @@ $projL93    = new Proj('EPSG:2154', $proj4);
 $projWGS84  = new Proj('EPSG:4326', $proj4);
 
 // Create a point.
-$pointSrc = new Point(652709.401, 6859290.946,$projL93);
+$pointSrc = new Point(652709.401, 6859290.946, $projL93);
 echo "Source: " . $pointSrc->toShortString() . " in L93 <br>";
 
 // Transform the point between datums.
@@ -52,7 +52,22 @@ echo "Conversion: " . $pointDest->toShortString() . " in WGS84<br><br>";
 ```
 
 There are also ways to define inline projections.
+Check http://spatialreference.org/ref/epsg/ and seek for your projection and proj4 or OGC WKT definitions.
 
-## Developing
+Add a new projection from proj4 definition :
+```php
+// add it to proj4
+$proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
+
+// then Create your projections
+$projOSGB36 = new Proj('EPSG:27700',$proj4);
+```
+
+Or directly create your projection from OGC WKT definition :
+```php
+$projOSGB36 = new Proj('PROJCS["OSGB 1936 / British National Grid",GEOGCS["OSGB 1936",DATUM["OSGB_1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],AUTHORITY["EPSG","6277"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4277"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",49],PARAMETER["central_meridian",-2],PARAMETER["scale_factor",0.9996012717],PARAMETER["false_easting",400000],PARAMETER["false_northing",-100000],AUTHORITY["EPSG","27700"],AXIS["Easting",EAST],AXIS["Northing",NORTH]]',$proj4);
+```
+
+## Developing - How to contribute
 
 Feel free to fork us and submit your changes!

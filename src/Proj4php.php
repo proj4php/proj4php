@@ -147,14 +147,17 @@ class Proj4php
 
        // self::$wktProjections['VanDerGrinten']='vandg';
         self::$wktProjections['Orthographic']='ortho'; //SR-ORG:6980
+        self::$wktProjections["Azimuthal_Equidistant"]="aeqd"; //SR-ORG:7238
         
     }
 
     protected function initWKTPEllipsoids(){
     
-      self::$wktEllipsoids["Clarke 1880 (RGS)"] = "clrk80";
+      self::$wktEllipsoids["Clarke 1880 (RGS)"] = "clrk80"; //EPSG:2000
+      self::$wktEllipsoids["Clarke_1880_RGS"]="clrk80"; //SR-ORG:7244
       self::$wktEllipsoids["Clarke_1866"]= "clrk66"; //SR-ORG:11
-      self::$wktEllipsoids["WGS 84"]="WGS84"; //SR-ORG:62
+      //self::$wktEllipsoids["Krasovsky_1940"]="krass"; //SR-ORG:7191
+      //self::$wktEllipsoids["WGS 84"]="WGS84"; //SR-ORG:62
 
     }
 
@@ -164,6 +167,7 @@ class Proj4php
       // self::$wktDatums["D_WGS_1984"] = "WGS84"; //SR-ORG:6917 but breaks SR-ORG:6668
       //self::$wktDatums["World Geodetic System 1984"]="WGS84"; //SR-ORG:29
       self::$wktDatums["North_American_Datum_1983"]="NAD83"; //SR-ORG:10
+      self::$wktDatums["North American Datum 1983"]="NAD83"; //SR-ORG:7220
       self::$wktDatums["North_American_Datum_1927"]="NAD27"; //SR-ORG:11
       self::$wktDatums["Deutsches_Hauptdreiecksnetz"]="potsdam";//EPSG:3068
       self::$wktDatums["New_Zealand_Geodetic_Datum_1949"]="nzgd49";//EPSG:4272
@@ -730,6 +734,7 @@ class Proj4php
      */
     public static function extend($destination, $source)
     {
+
         if ($source != null) {
             foreach ($source as $key => $value) {
                 $destination->$key = $value;

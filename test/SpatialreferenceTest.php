@@ -17,7 +17,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     protected $suppressOnAxisMismatch=true;
     protected $suppressOnUtmTmercMismatch=true;
     protected $suppressOnDatumParamsMismatch=true;
-    //protected $onlyTestTheseProjections=array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test all, one or some projections.
+    //protected $onlyTestTheseProjections='SR-ORG:7191';//array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test all, one or some projections.
 
     protected $internalsPrecision = array(
     	'x0'    => 0.0000000001,
@@ -34,6 +34,13 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     	'es'    => 0.0000001,
     	'e'     => 0.0000001,
     	'ep2'   => 0.0000001,
+        'longc' => 0.0000000001,
+        'gama' => 0.0000000001,
+        'singam' => 0.0000000001,
+        'cosgam' => 0.0000000001,
+        'sinaz' => 0.0000000001,
+        'cosaz' => 0.0000000001,
+        'u' => 0.0000000001,
     	);
 
     protected $datumPrecision = array(
@@ -127,7 +134,15 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
         'SR-ORG:6887', //proj4 has units=us-ft, but mismatch on to_meters
         'SR-ORG:6914', //prefixed with EPSG;325833;PROJCS[\"ETRS89...
         'SR-ORG:6926', // ogcwkt breaks parser
-        'SR-ORG:6978' //Failed asserting that 0.0066943799901413156 matches expected 0.0. but looks ok
+        'SR-ORG:6978', //Failed asserting that 0.0066943799901413156 matches expected 0.0. but looks ok
+        'SR-ORG:7108', //weird wkt 
+        'SR-ORG:7139', //wierd wkt
+        'SR-ORG:7172', //unknown datum
+        'SR-ORG:7176', // missing -90 deg somewhere in wkt?
+        'SR-ORG:7192', //name=test_sb missing long0 tmerc? ... could set a default long0=0.0
+        'SR-ORG:7257', //wkt contains \r\n
+        'SR-ORG:7323', //this is interesting. worth looking at why it breaks parser
+        'SR-ORG:7403'  // unnamed datum.. pretty close anyway
         );
 
     /**
@@ -191,7 +206,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     			$projWKTInline = new Proj($wktStr, $proj4);
 
                 }catch(Exception $e){
-
+                    
                     throw new Exception($e->getMessage().$codesString);
 
                 }

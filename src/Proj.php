@@ -98,7 +98,7 @@ class Proj
     public $srsCode;
 
 
-    public $to_meter = 1;
+    public $to_meter = 1.0;
 
     /**
      * Constructor: initialize
@@ -113,7 +113,7 @@ class Proj
         $this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
 
-        $this->to_rads=COMMON::D2R;
+        
 
 
         // Check to see if $this is a Well Known Text (WKT) string.
@@ -122,7 +122,7 @@ class Proj
         // need to check the string *starts* with these names.
 
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
-            
+            $this->to_rads=COMMON::D2R;
             $this->parseWKT($srsCode);
 
             // this is useful for a bunch of projections that are using tmerc while the proj4code uses utm+zone
@@ -566,6 +566,7 @@ class Proj
                         if(!isset($this->alpha)){
                             //I'm not sure if this should be set here. 
                             //EPSG:3167 defineds azimuth and rectified_grid_angle. both are similar (azimuth is closer)
+                            //SR-ORG:7172 defines both, and both are 90.
                             $this->alpha=$value * $this->to_rads;
                         }
                         break;
@@ -721,9 +722,10 @@ class Proj
     }
 
     protected function parseWKTToRads($wktName, &$wktArray){
-        if($wktName=='Radian'
+        if($wktName=='Radian'||
+            $wktName=='Degree'
             ){
-/*
+
             $this->to_rads= floatval( array_shift($wktArray));
             if(isset($this->lat_ts)){
                 $this->lat_ts=$this->to_rads*$this->lat_ts;
@@ -742,19 +744,26 @@ class Proj
             }
 
 
-            if(isset($this->longc)){
-                $this->longc=$this->to_rads*$this->longc;
+            if(isset($this->long0)){
+                $this->long0=$this->to_rads*$this->long0;
             }
 
+            if(isset($this->lat0)){
+                $this->lat0=$this->to_rads*$this->lat0;
+            }
 
+            if(isset($this->lat1)){
+                $this->lat1=$this->to_rads*$this->lat1;
+            }
 
+            if(isset($this->lat2)){
+                $this->lat2=$this->to_rads*$this->lat2;
+            }
+
+            if(isset($this->alpha)){
+                $this->alpha=$this->to_rads*$this->alpha;
+            }
             
-            $this->long0
-            $this->lat0
-            $this->lat1
-            $this->lat2
-            $this->alpha
-            */
             
         }
 
@@ -860,23 +869,23 @@ class Proj
                     break;
                 case "lat_0":
                     // phi0, central latitude
-                    $this->lat0 = $paramVal * Common::D2R;
+                    $this->lat0 = floatval($paramVal) * Common::D2R;
                     break;
                 case "lat_1":
                     //standard parallel 1
-                    $this->lat1 = $paramVal * Common::D2R;
+                    $this->lat1 = floatval($paramVal) * Common::D2R;
                     break;
                 case "lat_2":
                     //standard parallel 2
-                    $this->lat2 = $paramVal * Common::D2R;
+                    $this->lat2 = floatval($paramVal) * Common::D2R;
                     break;
                 case "lat_ts":
                     // used in merc and eqc
-                    $this->lat_ts = $paramVal * Common::D2R;
+                    $this->lat_ts = floatval($paramVal) * Common::D2R;
                     break;
                 case "lon_0":
                     // lam0, central longitude
-                    $this->long0 = $paramVal * Common::D2R;
+                    $this->long0 = floatval($paramVal) * Common::D2R;
                     break;
                 case "alpha":
                     $this->alpha = floatval($paramVal) * Common::D2R;
@@ -884,7 +893,7 @@ class Proj
                     break;
                 case "lonc":
                     //for somerc projection
-                    $this->longc = $paramVal * Common::D2R;
+                    $this->longc = floatval($paramVal) * Common::D2R;
                     break;
                 case "x_0":
                     // false easting
@@ -922,7 +931,7 @@ class Proj
                     $this->to_meter = floatval($paramVal);
                     break;
                 case "from_greenwich":
-                    $this->from_greenwich = $paramVal * Common::D2R;
+                    $this->from_greenwich = floatval($paramVal) * Common::D2R;
                     break;
                 case "pm":
                     // DGR 2008-07-09 : if pm is not a well-known prime meridian take
@@ -972,10 +981,13 @@ class Proj
 
         if (isset($this->datumCode) && $this->datumCode != 'none') {
             $datumDef = $this->proj4php->getDatum($this->datumCode);
-
             if (is_array($datumDef)) {
                 $this->datum_params = array_key_exists('towgs84', $datumDef) ? explode(',', $datumDef['towgs84']) : null;
-                $this->ellps = $datumDef['ellipse'];
+               
+               if(!isset($this->ellps)){ 
+                    //in the case of SR-ORG:7191, proj for defines  +datum=wgs84, but also +ellps=krass. this would have overwriten that ellipsoid
+                    $this->ellps = $datumDef['ellipse'];
+                }
                 $this->datumName = array_key_exists('name', $datumDef) ? $datumDef['name'] : $this->datumCode;
             }
         }
@@ -992,6 +1004,7 @@ class Proj
         }
 
         if (isset($this->rf) && !isset($this->b)&&$this->rf!=0) { // SR-ORG:28 division by 0
+
             $this->b = (1.0 - 1.0 / $this->rf) * $this->a;
         }
 

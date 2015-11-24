@@ -45,7 +45,7 @@ class Tmerc
         
         if(!isset($this->lat0)){
             // SR-ORG:6696 does not define lat0 param in wkt
-            $this->lat0=0;
+            $this->lat0=0.0;
         }
 
         $this->e0 = Common::e0fn( $this->es );

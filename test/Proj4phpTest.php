@@ -161,8 +161,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 //        Proj4php::setDebug(true);
         $pointWGS84 = new Point(-96,28.5, $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
-        $this->assertEquals($pointNAD27->x,2963503.91,'',20);
-       // $this->assertEquals($pointNAD27->y,254759.80,'', 20);
+        $this->assertEquals($pointNAD27->x,2963503.91,'',0.1);
+        $this->assertEquals($pointNAD27->y,254759.80,'', 0.1 );
 //        Proj4php::setDebug(false);
 
         $pointWGS84 = $proj4->transform($projWGS84,$pointNAD27);
@@ -176,8 +176,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointSrc = $pointDest;
         $pointDest = $proj4->transform($projOSGB36, $pointSrc);
-        $this->assertEquals(671196.3657, $pointDest->x, '', 20);
-        $this->assertEquals(1230275.0454, $pointDest->y, '', 20);
+        $this->assertEquals(671196.3657, $pointDest->x, '', 0.1);
+        $this->assertEquals(1230275.0454, $pointDest->y, '', 0.1);
 
 //from @coreation
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
@@ -210,8 +210,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84 = new Point(rad2deg(-1.67551608),rad2deg(0.49741884),  $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
  
-        $this->assertEquals($pointNAD27->x,2963503.91,'', 20);
-       // $this->assertEquals($pointNAD27->y,254759.80,'', 20);
+        $this->assertEquals($pointNAD27->x,2963503.91,'', 0.1);
+        $this->assertEquals($pointNAD27->y,254759.80,'', 0.1);
 //        Proj4php::setDebug(false);
 
         $pointWGS84 = $proj4->transform($projWGS84,$pointNAD27);

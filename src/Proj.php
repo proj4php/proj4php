@@ -621,12 +621,11 @@ class Proj
                     case 'z': $this->axis = substr($this->axis, 0, 2) . $value;
                         break;
 
-                    // from SR-ORG:29 
-                    // "Geodetic longitude", EAST 
-                    // "Geodetic latitude", NORTH
-                    case 'geodetic latitude':
+                    // Here is a list of other axis that exist in wkt definitions. are they useful?
+                    /*
+                    
+                    case 'geodetic latitude': //from SR-ORG:29 
 
-                    //some other ones that i have found
                     case 'latitude':
                     case 'lat':
                     case 'geodetic longitude':
@@ -647,8 +646,9 @@ class Proj
                     case 'easting':
                     case 'northing':
                         break;
+                    */
                     default : 
-                        throw new Exception("Unknown Axis Name: ".$name); //for testing
+                        // throw new Exception("Unknown Axis Name: ".$name); //for testing
                     break;
                 }
 

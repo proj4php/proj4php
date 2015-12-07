@@ -45,8 +45,9 @@ class Eqdc
         
         /* Place parameters in static storage for common use
           ------------------------------------------------- */
-        if( !$this->mode )
+        if( !isset($this->mode)){
             $this->mode = 0; //chosen default mode
+        }
         $this->temp = $this->b / $this->a;
         $this->es = 1.0 - pow( $this->temp, 2 );
         $this->e = sqrt( $this->es );

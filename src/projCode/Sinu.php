@@ -46,7 +46,7 @@ class Sinu
           ------------------------------------------------- */
         #$this->R = 6370997.0; //Radius of earth
 
-        if( !$this->sphere ) {
+        if( isset($this->sphere) ) { //fixes SR-ORG:6965
             $this->en = Common::pj_enfn( $this->es );
         } else {
             $this->n = 1.;

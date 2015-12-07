@@ -43,6 +43,11 @@ class Tmerc
      */
     public function init() {
         
+        if(!isset($this->lat0)){
+            // SR-ORG:6696 does not define lat0 param in wkt
+            $this->lat0=0.0;
+        }
+
         $this->e0 = Common::e0fn( $this->es );
         $this->e1 = Common::e1fn( $this->es );
         $this->e2 = Common::e2fn( $this->es );

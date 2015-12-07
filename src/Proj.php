@@ -5,7 +5,7 @@ namespace proj4php;
  * Author : Julien Moquet
  * 
  * Inspired by Proj4js from Mike Adair madairATdmsolutions.ca
- *                      and Richard Greenwood rich@greenwoodmap.com 
+ * and Richard Greenwood rich@greenwoodmap.com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
 
@@ -178,7 +178,6 @@ class Proj
      *    wait for the readyToUse property is set to true.
      *    To prevent dynamic loading, include the defs through a script tag in
      *    your application.
-     *
      */
     public function loadProjDefinition()
     {
@@ -223,7 +222,6 @@ class Proj
     /**
      * Function: defsLoaded
      * Continues the Proj object initilization once the def file is loaded
-     *
      */
     public function defsLoaded()
     {
@@ -234,8 +232,7 @@ class Proj
 
     /**
      * Function: checkDefsLoaded
-     *    $this is the loadCheck method to see if the def object exists
-     *
+     * $this is the loadCheck method to see if the def object exists
      */
     public function checkDefsLoaded()
     {
@@ -244,8 +241,7 @@ class Proj
 
     /**
      * Function: defsFailed
-     *    Report an error in loading the defs file, but continue on using WGS84
-     *
+     * Report an error in loading the defs file, but continue on using WGS84
      */
     public function defsFailed()
     {
@@ -256,6 +252,7 @@ class Proj
             $this->srsCode,
             $this->proj4php->WGS84
         );
+
         $this->defsLoaded();
     }
 
@@ -289,7 +286,6 @@ class Proj
     /**
      * Function: loadProjCodeSuccess
      * Loads any proj dependencies or continue on to final initialization.
-     *
      */
     public function loadProjCodeSuccess($projName)
     {
@@ -302,9 +298,8 @@ class Proj
 
     /**
      * Function: defsFailed
-     *    Report an error in loading the proj file.  Initialization of the Proj
-     *    object has failed and the readyToUse flag will never be set.
-     *
+     * Report an error in loading the proj file.  Initialization of the Proj
+     * object has failed and the readyToUse flag will never be set.
      */
     public function loadProjCodeFailure($projName)
     {
@@ -315,7 +310,6 @@ class Proj
     /**
      * Function: checkCodeLoaded
      * $this is the loadCheck method to see if the projection code is loaded
-     *
      */
     public function checkCodeLoaded($projName)
     {
@@ -360,7 +354,6 @@ class Proj
     }
 
     /**
-     *
      * @param type $pt
      * @return type 
      */
@@ -511,33 +504,44 @@ class Proj
                 $name = strtolower($wktName);
                 $value = array_shift($wktArray);
                 switch ($value) {
-                    case 'EAST' : $value = 'e';
+                    case 'EAST':
+                        $value = 'e';
                         break;
-                    case 'WEST' : $value = 'w';
+                    case 'WEST':
+                        $value = 'w';
                         break;
-                    case 'NORTH': $value = 'n';
+                    case 'NORTH':
+                        $value = 'n';
                         break;
-                    case 'SOUTH': $value = 's';
+                    case 'SOUTH':
+                        $value = 's';
                         break;
-                    case 'UP' : $value = 'u';
+                    case 'UP':
+                        $value = 'u';
                         break;
-                    case 'DOWN' : $value = 'd';
+                    case 'DOWN':
+                        $value = 'd';
                         break;
                     case 'OTHER':
-                    default : $value = ' ';
+                    default:
+                        $value = ' ';
                         break; // FIXME
                 }
                 if (!$this->axis) {
                     $this->axis = "enu";
                 }
                 switch ($name) {
-                    case 'X': $this->axis = $value . substr($this->axis, 1, 2);
+                    case 'X':
+                        $this->axis = $value . substr($this->axis, 1, 2);
                         break;
-                    case 'Y': $this->axis = substr($this->axis, 0, 1) . $value . substr($this->axis, 2, 1);
+                    case 'Y':
+                        $this->axis = substr($this->axis, 0, 1) . $value . substr($this->axis, 2, 1);
                         break;
-                    case 'Z': $this->axis = substr($this->axis, 0, 2) . $value;
+                    case 'Z':
+                        $this->axis = substr($this->axis, 0, 2) . $value;
                         break;
-                    default : break;
+                    default:
+                        break;
                 }
             case 'MORE_HERE':
                 break;

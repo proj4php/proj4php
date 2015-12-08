@@ -65,7 +65,7 @@ class Somerc
         $S = -$this->alpha * ($Sa1 + $Sa2) + $this->K;
 
         // spheric latitude
-        $b = 2.0 * (atan( exp( $S ) ) - proj4phpCommon::PI / 4.0);
+        $b = 2.0 * (atan( exp( $S ) ) - Common::PI / 4.0);
 
         // spheric longitude
         $I = $this->alpha * ($p->x - $this->lambda0);

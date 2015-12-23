@@ -56,9 +56,12 @@ class Omerc
         if(!isset($this->lat2)){
             $this->lat2 = 0;
         }
-        // if(!isset($this->longc)){
-        //     $this->longc = 0;
-        // }
+        if(!isset($this->alpha)){
+            $this->alpha=0;
+        }
+         if(!isset($this->longc)){
+             $this->longc = 0;
+        }
         // $this->f=1.0;
 
         /* Place parameters in static storage for common use

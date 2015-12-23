@@ -541,14 +541,14 @@ class Proj
                         $this->k0 = $value;
                         break;
                     case 'central_meridian':
-                    case 'longitude_of_center'; // SR-ORG:10
+                    case 'longitude_of_center': // SR-ORG:10
                         $this->longc = $value * $this->to_rads;
-                    case 'longitude_of_origin'; // SR-ORG:118
+                    case 'longitude_of_origin': // SR-ORG:118
                         $this->long0 = $value * $this->to_rads;
 
                         break;
                     case 'latitude_of_origin':
-                    case 'latitude_of_center'; // SR-ORG:10
+                    case 'latitude_of_center': // SR-ORG:10
                         $this->lat0 = $value * $this->to_rads;
                         if($this->projName=='merc'||$this->projName=='eqc'
                             ){
@@ -648,6 +648,7 @@ class Proj
 
                     case 'easting':
                     case 'northing':
+                    case 'southing': //SR-ORG:8262
                         break;
                     
                     default : 
@@ -698,7 +699,12 @@ class Proj
             $wktName=="Kilometer" ||
             $wktName=="international_feet" ||
             $wktName=="m" ||
-            $wktName=="Mile_US"
+            $wktName=="Mile_US" ||
+            $wktName=="Coord" ||
+            $wktName=="Indian yard"||
+            $wktName=="British yard (Sears 1922)" ||
+            $wktName=="British chain (Sears 1922)" ||
+            $wktName=="British foot (Sears 1922)"
             ){
 
             //$wktName=="1/32meter" = 0.03125 SR-ORG:98 ? should we support this?
@@ -722,7 +728,11 @@ class Proj
             // SR-ORG:7677 Foot
             // SR-ORG:7753 m = 9000.0
             // SR-ORG:7889 Mile_US
-
+            // SR-ORG:8262 Coord = 0.0746379
+            // EPSG:24370 Indian yard 0.9143985307444408
+            // EPSG:27291 British yard (Sears 1922) 0.9143984146160287
+            // EPSG:29871 British chain (Sears 1922) 20.11676512155263,
+            // EPSG:29872 British foot (Sears 1922) 0.3047994715386762,
             $this->to_meter= floatval( array_shift($wktArray));
             if(isset($this->x0)){
                     $this->x0=$this->to_meter*$this->x0;
@@ -737,10 +747,12 @@ class Proj
     protected function parseWKTToRads($wktName, &$wktArray){
         if($wktName=='Radian'||
             $wktName=='Degree' ||
-            $wktName=='degree'
+            $wktName=='degree' ||
+            $wktName=='grad'
             ){
 
             // SR-ORG:7753 degree=0.081081
+            // SR-ORG:8163 grad=0.01570796326794897,
 
             $this->to_rads= floatval( array_shift($wktArray));
             if(isset($this->lat_ts)){
@@ -1029,6 +1041,7 @@ class Proj
             $this->sphere = true;
             $this->b = $this->a;
         }
+
 
         // used in geocentric
         $this->a2 = $this->a * $this->a;

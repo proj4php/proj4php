@@ -189,11 +189,11 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
 
-        Proj4php::setDebug(true);
+//        Proj4php::setDebug(true);
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
         $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
         $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
-        Proj4php::setDebug(false);
+//        Proj4php::setDebug(false);
     }
 
     public function testInlineProjectionMethod2(){

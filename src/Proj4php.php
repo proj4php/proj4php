@@ -153,6 +153,9 @@ class Proj4php
         self::$wktProjections["Miller_Cylindrical"]="mill"; //SR-ORG:8064
         self::$wktProjections["Equidistant_Conic"]="eqdc"; //SR-ORG:8159
 
+        self::$wktProjections['Hotine_Oblique_Mercator_Two_Point_Natural_Origin']='omerc'; //ESRI:53025
+        self::$wktProjections['VanDerGrinten']='vandg'; //ESRI:53029
+
         
     }
 
@@ -161,6 +164,7 @@ class Proj4php
       self::$wktEllipsoids["Clarke 1880 (RGS)"] = "clrk80"; //EPSG:2000
       self::$wktEllipsoids["Clarke_1880_RGS"]="clrk80"; //SR-ORG:7244
       self::$wktEllipsoids["Clarke_1866"]= "clrk66"; //SR-ORG:11
+      self::$wktEllipsoids['Clarke 1880']="clrk80"; //EPSG:62416405
       //self::$wktEllipsoids["Krasovsky_1940"]="krass"; //SR-ORG:7191
       //self::$wktEllipsoids["WGS 84"]="WGS84"; //SR-ORG:62
 
@@ -177,7 +181,10 @@ class Proj4php
       self::$wktDatums["North American Datum 1927"]="NAD27";
       self::$wktDatums["Deutsches_Hauptdreiecksnetz"]="potsdam";//EPSG:3068
       self::$wktDatums["New_Zealand_Geodetic_Datum_1949"]="nzgd49";//EPSG:4272
-      self::$wktDatums["OSGB_1936"]="OSGB36"; //EPSG:4277
+      self::$wktDatums["OSGB_1936"]="OSGB36"; // EPSG:4277
+      self::$wktDatums["New Zealand Geodetic Datum 1949"]="nzgd49"; //EPSG:62726405
+      self::$wktDatums["OSGB 1936"]="OSGB36"; // EPSG:62776405
+      self::$wktDatums["Deutsches Hauptdreiecksnetz"]="potsdam"; // EPSG:63146405
 
 
     }

@@ -157,17 +157,14 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $projLCC2SP = new Proj('EPSG:31370',$proj4);
         $projNAD27  = new Proj('EPSG:32040',$proj4);
 
-      //  $pointWGS84 = new Point(0.49741884,-1.67551608, $projWGS84);
-//        Proj4php::setDebug(true);
         $pointWGS84 = new Point(-96,28.5, $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
-        $this->assertEquals($pointNAD27->x,2963503.91,'',0.1);
-        $this->assertEquals($pointNAD27->y,254759.80,'', 0.1 );
-//        Proj4php::setDebug(false);
+        $this->assertEquals($pointNAD27->x,2963487.15,'',0.1);
+        $this->assertEquals($pointNAD27->y,255412.99,'', 0.1 );
 
         $pointWGS84 = $proj4->transform($projWGS84,$pointNAD27);
-        $this->assertEquals($pointWGS84->y,rad2deg(0.49741884),'',0.1);
-        $this->assertEquals($pointWGS84->x,rad2deg(-1.67551608),'',0.1);
+        $this->assertEquals($pointWGS84->x,-96,'',0.1);
+        $this->assertEquals($pointWGS84->y,28.5,'',0.1);
 
         $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
         $pointDest = $proj4->transform($projWGS84, $pointSrc);
@@ -192,9 +189,11 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
 
+        Proj4php::setDebug(true);
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
         $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
         $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
+        Proj4php::setDebug(false);
     }
 
     public function testInlineProjectionMethod2(){

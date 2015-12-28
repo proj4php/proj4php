@@ -880,7 +880,10 @@ class Proj
                     break;
                 case "nadgrids": $this->nagrids = trim($paramVal);
                     break;
-                case "ellps": $this->ellps = trim($paramVal);
+                case "ellps": 
+                    $this->ellps = trim($paramVal);
+                    if ($this->ellps=='WGS84' && !isset($this->datumCode))
+                       $this->datumCode = trim($paramVal);
                     break;
                 case "a":
                     // semi-major radius

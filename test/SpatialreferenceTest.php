@@ -141,7 +141,6 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
      */
 
     protected $skipAllTestsForCode = array(
-
         'SR-ORG:21', // proj4 is utm, wkt is tmerc but how to tell from wkt?
         'SR-ORG:30', // UNIT["unknown" ft->meters]
         'SR-ORG:81',
@@ -253,19 +252,20 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     /**
      * @runInSeparateProcess
      */
+
+    /**
+    *
+    */
     public function testEveryTransformKnownToMan()
     {
-
     	$proj4 = new Proj4php();
 
     
 
     	$codes = get_object_vars(json_decode(file_get_contents(__DIR__ . '/codes.json')));
     	foreach ($codes as $code => $defs) {
-
     		$this->defs = $defs;
     		$this->code = $code;
-
 
     		if (isset($this->onlyTestTheseProjections)&&(!empty($this->onlyTestTheseProjections))){
 
@@ -281,8 +281,6 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     		if (in_array($code, $this->skipAllTestsForCode)) {
     			continue;
     		}
-
-    		
 
     		if (key_exists('proj4', $defs) && (!empty($defs->proj4)) && key_exists($this->wkt, $defs) && (!empty($defs->{$this->wkt}))) {
 
@@ -392,10 +390,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
 
     public function compareDatums($expected, $actual)
     {
-
     	if (key_exists('datum', $expected)) {
-
-   
             if(!($expected['datumCode']=='WGS84'&&is_null($actual['datumCode']))){
               // because datum wgs84 defines tow84=0,0,0
               
@@ -410,11 +405,10 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     		if(!$this->suppressOnDatumParamsMismatch){
     			$this->assertEquals($expected['datum_params'], $actual['datum_params'],$this->projectionString().json_encode($expected['datum_params']));
     		}
-    		
 
     		$this->assertEquals(
-    			array_diff_key(get_object_vars($expected['datum']), $this->datumPrecision, array('datum_params'=>'', 'datum_type'=>'')),
-    			array_diff_key(get_object_vars($actual['datum']), $this->datumPrecision, array('datum_params'=>'', 'datum_type'=>''))
+    			array_diff_key(get_object_vars($expected['datum']), $this->datumPrecision, array('datum_code'=>'','datum_params'=>'', 'datum_type'=>'')),
+    			array_diff_key(get_object_vars($actual['datum']), $this->datumPrecision, array('datum_code'=>'','datum_params'=>'', 'datum_type'=>''))
     			);
 
     		foreach ($this->datumPrecision as $key => $precision) {
@@ -423,7 +417,6 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     				$this->assertWithin($expected['datum']->$key, $actual['datum']->$key, 'AssertEquals Failed: datum->' . $key . ' (' . $precision . '): ' . $this->projectionString(), $precision);
     			}
     		}
-
     	}
     }
 

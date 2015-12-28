@@ -172,8 +172,9 @@ class Proj4php
 
     protected function initWKTPDatums(){
     
-      //self::$wktDatums["WGS_1984"] = "WGS84";
-      // self::$wktDatums["D_WGS_1984"] = "WGS84"; //SR-ORG:6917 but breaks SR-ORG:6668
+      self::$wktDatums["WGS_1984"] = "WGS84"; // SR-ORG:3 and 4, etc
+      self::$wktDatums["World Geodetic System 1984"] = "WGS84"; // SR-ORG:29
+      self::$wktDatums["D_WGS_1984"] = "WGS84"; //SR-ORG:6917 but breaks SR-ORG:6668
       //self::$wktDatums["World Geodetic System 1984"]="WGS84"; //SR-ORG:29
       self::$wktDatums["North_American_Datum_1983"]="NAD83"; //SR-ORG:10
       self::$wktDatums["North American Datum 1983"]="NAD83"; //SR-ORG:7220
@@ -463,11 +464,13 @@ class Proj4php
         {
            if ($point->getProjection()===null)
            {
-              self::reportError("No projection for point");
+              self::reportError("No projection for point\r\n");
               return $point;
            }
            $source = $point->getProjection();
         }
+
+        self::reportDebug("transform point ".$point->x.",".$point->y."\r\n");
 
         $this->msg = '';
 
@@ -493,19 +496,24 @@ class Proj4php
             // Convert degrees to radians
             $point->x *= Common::D2R;
             $point->y *= Common::D2R;
+
+            self::reportDebug("convert to longlat => ".$point->x.",".$point->y."\r\n");
         } else {
             if (isset($source->to_meter)) {
                 $point->x *= $source->to_meter;
                 $point->y *= $source->to_meter;
+                self::reportDebug("convert to_meter => ".$point->x.",".$point->y."\r\n");
             }
 
             // Convert Cartesian to longlat
             $source->inverse($point);
+            self::reportDebug("inverse => ".$point->x.",".$point->y."\r\n");
         }
 
         // Adjust for the prime meridian if necessary
         if (isset($source->from_greenwich)) {
             $point->x += $source->from_greenwich;
+            self::reportDebug("from_greenwich => ".$point->x.",".$point->y."\r\n");
         }
 
         // Convert datums if needed, and if possible.
@@ -513,27 +521,32 @@ class Proj4php
         // $point (after it has been changed. $point really needs to be made
         // immutable so it is clear what is happening.
         $point = $this->datum_transform($source->datum, $dest->datum, $point);
+        self::reportDebug("datum_transform => ".$point->x.",".$point->y."\r\n");
         // Adjust for the prime meridian if necessary
         if (isset($dest->from_greenwich)) {
             $point->x -= $dest->from_greenwich;
+            self::reportDebug("from_greenwich => ".$point->x.",".$point->y."\r\n");
         }
 
         if ($dest->projName == "longlat") {
             // convert radians to decimal degrees
             $point->x *= Common::R2D;
             $point->y *= Common::R2D;
+            self::reportDebug("convert to longlat => ".$point->x.",".$point->y."\r\n");
         } else {
             // else project
             $dest->forward($point);
             if (isset($dest->to_meter)) {
                 $point->x /= $dest->to_meter;
                 $point->y /= $dest->to_meter;
+                self::reportDebug("convert to_meter => ".$point->x.",".$point->y."\r\n");
             }
         }
 
         // DGR, 2010/11/12
         if ($dest->axis != "enu") {
             $this->adjust_axis($dest, true, $point);
+            self::reportDebug("adjust axis => ".$point->x.",".$point->y."\r\n");
         }
 
         $point->setProjection($dest);
@@ -564,16 +577,16 @@ class Proj4php
             return $point;
         }
 
-        /*
         // If this datum requires grid shifts, then apply it to geodetic coordinates.
         if ($source->datum_type == Common::PJD_GRIDSHIFT) {
+            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
             throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
 
         if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
+            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
             throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
-        */
 
         // Do we need to go through geocentric coordinates?
         if ($source->es != $dest->es || $source->a != $dest->a
@@ -603,13 +616,12 @@ class Proj4php
         }
 
         // Apply grid shift to destination if required
-        /*
         if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
-            throw new Exception("ERROR: Grid shift transformations are not implemented yet."));
+            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
+            throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
             // pj_apply_gridshift(pj_param(dest.params,"snadgrids").s, 1, point);
             // CHECK_RETURN;
         }
-        */
 
         return $point;
     }

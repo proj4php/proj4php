@@ -110,7 +110,7 @@ class Proj
      */
     public function __construct($srsCode, Proj4php $proj4php)
     {
-        $this->srsCodeInput = $srsCode;
+        //$this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
 
         

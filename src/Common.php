@@ -353,7 +353,7 @@ class Common
     {
         $en = array( );
         $en[0] = static::C00 - $es * (static::C02 + $es * (static::C04 + $es * (static::C06 + $es * static::C08)));
-        $en[1] = es * (static::C22 - $es * (static::C04 + $es * (static::C06 + $es * static::C08)));
+        $en[1] = $es * (static::C22 - $es * (static::C04 + $es * (static::C06 + $es * static::C08)));
         $t = $es * $es;
         $en[2] = $t * (static::C44 - $es * (static::C46 + $es * static::C48));
         $t *= $es;

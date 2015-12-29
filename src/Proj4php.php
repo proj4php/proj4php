@@ -13,6 +13,8 @@ use Exception;
 
 class Proj4php
 {
+    public static $debugOn = false;
+
     protected $defaultDatum = 'WGS84';
 
     // FIXME: (https://github.com/proj4php/proj4php/issues/4)
@@ -28,6 +30,8 @@ class Proj4php
     protected $primeMeridians = [];
 
     public static $wktProjections = [];
+    public static $wktEllipsoids = [];
+    public static $wktDatums=[];
     public static $proj = [];
 
     // Default projection always created on instantiation.
@@ -113,13 +117,79 @@ class Proj4php
     protected function initWKTProjections()
     {
         self::$wktProjections["Lambert Tangential Conformal Conic Projection"] = "lcc";
+        self::$wktProjections["Lambert_Conformal_Conic_1SP"]="lcc"; //SR-ORG:91
+        self::$wktProjections["Lambert_Conformal_Conic_2SP"] = "lcc";
+        self::$wktProjections["Lambert_Conformal_Conic_2SP_Belgium"]="lcc"; //SR-ORG:49
         self::$wktProjections["Mercator"] = "merc";
         self::$wktProjections["Mercator_1SP"] = "merc";
+        self::$wktProjections["Mercator_2SP"] = "merc";
         self::$wktProjections["Transverse_Mercator"] = "tmerc";
         self::$wktProjections["Transverse Mercator"] = "tmerc";
         self::$wktProjections["Lambert Azimuthal Equal Area"] = "laea";
         self::$wktProjections["Universal Transverse Mercator System"] = "utm";
+
+        self::$wktProjections["Mollweide"]='moll'; //SR-ORG:7
+        self::$wktProjections["Albers_Conic_Equal_Area"]='aea'; //SR-ORG:10
+        self::$wktProjections['Albers_conic_equal_area']='aea'; //SR-ORG:6952
+
+        self::$wktProjections["Cylindrical_Equal_Area"]="cea"; //SR-ORG:22
+        self::$wktProjections["Lambert_Azimuthal_Equal_Area"]="laea";//SR-ORG:28
+        self::$wktProjections["Krovak"]="krovak";//SR-ORG:36
+        self::$wktProjections["Oblique_Stereographic"]="sterea";//SR-ORG:43
+        self::$wktProjections["Polyconic"]="poly";//SR-ORG:86
+        self::$wktProjections["New_Zealand_Map_Grid"]="nzmg";//SR-ORG:118
+        self::$wktProjections["Hotine_Oblique_Mercator"]="omerc"; //EPSG:2057
+        self::$wktProjections["hotine_oblique_mercator"]="omerc"; //SR-ORG:7531
+
+        self::$wktProjections["Cassini_Soldner"]="cass"; //EPSG:2066
+        self::$wktProjections["Polar_Stereographic"]="stere"; //EPSG:3031
+        self::$wktProjections['Equirectangular']="eqc"; //EPSG:3786
+        self::$wktProjections["Sinusoidal"]="sinu"; //SR-ORG:4741
+        self::$wktProjections["Stereographic"]="stere"; //SR-ORG:6647
+
+       // self::$wktProjections['VanDerGrinten']='vandg';
+        self::$wktProjections['Orthographic']='ortho'; //SR-ORG:6980
+        self::$wktProjections["Azimuthal_Equidistant"]="aeqd"; //SR-ORG:7238
+        self::$wktProjections["Miller_Cylindrical"]="mill"; //SR-ORG:8064
+        self::$wktProjections["Equidistant_Conic"]="eqdc"; //SR-ORG:8159
+
+        self::$wktProjections['Hotine_Oblique_Mercator_Two_Point_Natural_Origin']='omerc'; //ESRI:53025
+        self::$wktProjections['VanDerGrinten']='vandg'; //ESRI:53029
+
+        
     }
+
+    protected function initWKTPEllipsoids(){
+    
+      self::$wktEllipsoids["Clarke 1880 (RGS)"] = "clrk80"; //EPSG:2000
+      self::$wktEllipsoids["Clarke_1880_RGS"]="clrk80"; //SR-ORG:7244
+      self::$wktEllipsoids["Clarke_1866"]= "clrk66"; //SR-ORG:11
+      self::$wktEllipsoids['Clarke 1880']="clrk80"; //EPSG:62416405
+      //self::$wktEllipsoids["Krasovsky_1940"]="krass"; //SR-ORG:7191
+      //self::$wktEllipsoids["WGS 84"]="WGS84"; //SR-ORG:62
+
+    }
+
+    protected function initWKTPDatums(){
+    
+      self::$wktDatums["WGS_1984"] = "WGS84"; // SR-ORG:3 and 4, etc
+      self::$wktDatums["World Geodetic System 1984"] = "WGS84"; // SR-ORG:29
+      self::$wktDatums["D_WGS_1984"] = "WGS84"; //SR-ORG:6917 but breaks SR-ORG:6668
+      //self::$wktDatums["World Geodetic System 1984"]="WGS84"; //SR-ORG:29
+      self::$wktDatums["North_American_Datum_1983"]="NAD83"; //SR-ORG:10
+      self::$wktDatums["North American Datum 1983"]="NAD83"; //SR-ORG:7220
+      self::$wktDatums["North_American_Datum_1927"]="NAD27"; //SR-ORG:11
+      self::$wktDatums["North American Datum 1927"]="NAD27";
+      self::$wktDatums["Deutsches_Hauptdreiecksnetz"]="potsdam";//EPSG:3068
+      self::$wktDatums["New_Zealand_Geodetic_Datum_1949"]="nzgd49";//EPSG:4272
+      self::$wktDatums["OSGB_1936"]="OSGB36"; // EPSG:4277
+      self::$wktDatums["New Zealand Geodetic Datum 1949"]="nzgd49"; //EPSG:62726405
+      self::$wktDatums["OSGB 1936"]="OSGB36"; // EPSG:62776405
+      self::$wktDatums["Deutsches Hauptdreiecksnetz"]="potsdam"; // EPSG:63146405
+
+
+    }
+    
 
     protected function initDatum()
     {
@@ -349,6 +419,8 @@ class Proj4php
     public function __construct()
     {
         $this->initWKTProjections();
+        $this->initWKTPEllipsoids();
+        $this->initWKTPDatums();
         $this->initDefs();
         $this->initDatum();
         $this->initEllipsoid();
@@ -392,11 +464,15 @@ class Proj4php
         {
            if ($point->getProjection()===null)
            {
-              self::reportError("No projection for point");
+              self::reportError("No projection for point\r\n");
               return $point;
            }
            $source = $point->getProjection();
         }
+
+        self::reportDebug("transform point ".$point->x.",".$point->y."\r\n");
+        self::reportDebug("from ".$source->srsCode."\r\n");
+        self::reportDebug("to ".$dest->srsCode."\r\n");
 
         $this->msg = '';
 
@@ -422,19 +498,24 @@ class Proj4php
             // Convert degrees to radians
             $point->x *= Common::D2R;
             $point->y *= Common::D2R;
+
+            self::reportDebug("convert to longlat => ".$point->x.",".$point->y."\r\n");
         } else {
             if (isset($source->to_meter)) {
                 $point->x *= $source->to_meter;
                 $point->y *= $source->to_meter;
+                self::reportDebug("convert to_meter => ".$point->x.",".$point->y."\r\n");
             }
 
             // Convert Cartesian to longlat
             $source->inverse($point);
+            self::reportDebug("inverse => ".$point->x.",".$point->y."\r\n");
         }
 
         // Adjust for the prime meridian if necessary
         if (isset($source->from_greenwich)) {
             $point->x += $source->from_greenwich;
+            self::reportDebug("from_greenwich => ".$point->x.",".$point->y."\r\n");
         }
 
         // Convert datums if needed, and if possible.
@@ -442,31 +523,37 @@ class Proj4php
         // $point (after it has been changed. $point really needs to be made
         // immutable so it is clear what is happening.
         $point = $this->datum_transform($source->datum, $dest->datum, $point);
-
+        self::reportDebug("datum_transform => ".$point->x.",".$point->y."\r\n");
         // Adjust for the prime meridian if necessary
         if (isset($dest->from_greenwich)) {
             $point->x -= $dest->from_greenwich;
+            self::reportDebug("from_greenwich => ".$point->x.",".$point->y."\r\n");
         }
 
         if ($dest->projName == "longlat") {
             // convert radians to decimal degrees
             $point->x *= Common::R2D;
             $point->y *= Common::R2D;
+            self::reportDebug("convert to longlat => ".$point->x.",".$point->y."\r\n");
         } else {
             // else project
             $dest->forward($point);
             if (isset($dest->to_meter)) {
                 $point->x /= $dest->to_meter;
                 $point->y /= $dest->to_meter;
+                self::reportDebug("convert to_meter => ".$point->x.",".$point->y."\r\n");
             }
         }
 
         // DGR, 2010/11/12
         if ($dest->axis != "enu") {
             $this->adjust_axis($dest, true, $point);
+            self::reportDebug("adjust axis => ".$point->x.",".$point->y."\r\n");
         }
 
         $point->setProjection($dest);
+
+        self::reportDebug("Transform result $point->x $point->y\r\n");
 
         // Nov 2014 - changed Werner Schäffer
         // Clone point to avoid a lot of problems
@@ -494,16 +581,16 @@ class Proj4php
             return $point;
         }
 
-        /*
         // If this datum requires grid shifts, then apply it to geodetic coordinates.
         if ($source->datum_type == Common::PJD_GRIDSHIFT) {
+            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
             throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
 
         if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
+            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
             throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
         }
-        */
 
         // Do we need to go through geocentric coordinates?
         if ($source->es != $dest->es || $source->a != $dest->a
@@ -533,13 +620,12 @@ class Proj4php
         }
 
         // Apply grid shift to destination if required
-        /*
         if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
-            throw new Exception("ERROR: Grid shift transformations are not implemented yet."));
+            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
+            throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
             // pj_apply_gridshift(pj_param(dest.params,"snadgrids").s, 1, point);
             // CHECK_RETURN;
         }
-        */
 
         return $point;
     }
@@ -600,7 +686,7 @@ class Proj4php
                     }
                     break;
                 default :
-                    throw(new Exception("ERROR: unknow axis (" . $crs->axis[$i] . ") - check definition of " . $crs->projName));
+                    throw(new Exception("ERROR: unknown axis (" . $crs->axis[$i] . ") - check definition of " . $crs->projName));
                     return null;
             }
         }
@@ -616,6 +702,17 @@ class Proj4php
     public static function reportError($msg)
     {
         throw(new Exception($msg));
+    }
+
+    public static function setDebug($debug)
+    {
+        self::$debugOn = $debug;
+    }
+
+    public static function reportDebug($msg)
+    {
+        if (self::$debugOn)
+          echo $msg;
     }
 
     /**
@@ -666,6 +763,7 @@ class Proj4php
      */
     public static function extend($destination, $source)
     {
+
         if ($source != null) {
             foreach ($source as $key => $value) {
                 $destination->$key = $value;

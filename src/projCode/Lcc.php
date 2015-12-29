@@ -59,6 +59,8 @@ class Lcc
     protected $f0;
     protected $rh;
 
+    public $to_meter;
+
     public function init()
     {
         // array of:  r_maj,r_min,lat1,lat2,c_lon,c_lat,false_east,false_north
@@ -71,9 +73,19 @@ class Lcc
         //double false_east;              /* x offset in meters                   */
         //double false_north;             /* y offset in meters                   */
 
+        // SR-ORG:123
+        if ( ! isset($this->lat0)) {
+            $this->lat0=0.0;
+        }
+
         // If lat2 is not defined
         if ( ! isset($this->lat2)) {
             $this->lat2 = $this->lat0;
+        }
+
+        // SR-ORG:113
+        if ( ! isset($this->lat1)) {
+            $this->lat1 = $this->lat0;
         }
 
         if ( ! isset($this->k0)) {
@@ -108,7 +120,7 @@ class Lcc
         }
 
         $this->f0 = $ms1 / ($this->ns * pow($ts1, $this->ns));
-        $this->rh = $this->a * $this->f0 * pow($ts0, $this->ns);
+        $this->rh = ($this->a * $this->f0 * pow($ts0, $this->ns));///$this->to_meter;
 
         if ( ! isset($this->title)) {
             $this->title = 'Lambert Conformal Conic';
@@ -135,10 +147,9 @@ class Lcc
 
         if ($con > Common::EPSLN) {
             $ts = Common::tsfnz($this->e, $lat, sin($lat));
-            $rh1 = $this->a * $this->f0 * pow($ts, $this->ns);
+            $rh1 = ($this->a * $this->f0 * pow($ts, $this->ns));///$this->to_meter;
         } else {
             $con = $lat * $this->ns;
-
             if ($con <= 0) {
                 Proj4php::reportError('lcc:forward: No Projection');
                 return;
@@ -148,10 +159,41 @@ class Lcc
         }
 
         $theta = $this->ns * Common::adjust_lon($lon - $this->long0);
-        $p->x = $this->k0 * ($rh1 * sin($theta)) + $this->x0;
-        $p->y = $this->k0 * ($this->rh - $rh1 * cos($theta)) + $this->y0;
+        $p->x = /*$this->to_meter **/ ($this->k0 * ($rh1 * sin($theta)) + $this->x0);
+        $p->y = /*$this->to_meter **/ ($this->k0 * ($this->rh - $rh1 * cos($theta)) + $this->y0);
+
+        Proj4php::reportDebug($this->debugString());
+        Proj4php::reportDebug("lon=$lon lat=$lat\n");
+        Proj4php::reportDebug("t=$ts\n");
+        Proj4php::reportDebug("r=$rh1\n");
+        Proj4php::reportDebug("theta=$theta\n");
+        Proj4php::reportDebug("east=".$p->x/($this->to_meter)." north=".$p->y/($this->to_meter)."\n");
 
         return $p;
+    }
+
+    public function debugString()
+    {
+      $str = "title= $this->title\n";
+      $str.= "k0=$this->k0\n";
+      $str.= "to_meter=$this->to_meter\n";
+      $str.= "phiF = $this->lat0\n";
+      $str.= "lamF = $this->long0\n";
+      $str.= "phi1 = $this->lat1\n";
+      $str.= "phi2 = $this->lat2\n";
+      $str.= "EF = $this->x0\n";
+      $str.= "NF = $this->y0\n";
+      $str.= "a=$this->a\n";
+      $str.= "e=$this->e\n";
+      $str.= "m1=".Common::msfnz($this->e, sin($this->lat1), cos($this->lat1))."\n";
+      $str.= "m2=".Common::msfnz($this->e, sin($this->lat2), cos($this->lat2))."\n";
+      $str.= "n=$this->ns\n";
+      $str.= "F=$this->f0\n";
+      $str.= "tF=".Common::tsfnz($this->e, $this->lat0, sin($this->lat0))."\n";
+      $str.= "t1=".Common::tsfnz($this->e, $this->lat1, sin($this->lat1))."\n";
+      $str.= "t2=".Common::tsfnz($this->e, $this->lat2, sin($this->lat2))."\n";
+      $str.= "rF=$this->rh\n";
+      return $str;
     }
 
     /**

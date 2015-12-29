@@ -55,8 +55,12 @@ class Merc
         //$this->e = sqrt( $this->es );
         //?$this->m1 = cos($this->lat_origin) / (sqrt( 1.0 - $this->es * sin($this->lat_origin) * sin($this->lat_origin)));
         //$this->m1 = cos(0.0) / (sqrt( 1.0 - $this->es * sin(0.0) * sin(0.0)));
+        if(!isset($this->lat_ts)){
+            //SR-ORG:16 proj4 does not declare lat_ts;
+            $this->lat_ts=0;
+        }
         if ($this->lat_ts) {
-            if ($this->sphere) {
+            if (isset($this->sphere)) { //EPSG:3752 does not define sphere
                 $this->k0 = cos( $this->lat_ts );
             } else {
                 $this->k0 = Common::msfnz($this->es, sin($this->lat_ts), cos($this->lat_ts));

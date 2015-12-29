@@ -261,12 +261,12 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         // Chapter 2.3.2
         // 53°48'33.82"N
         // 2°07'46.38"E
-        $pointWGS84 = new Point(53.809189444,2.129455, $projWGS84);
+        $pointWGS84 = new Point(deg2rad(53.809189444),deg2rad(2.129455), $projWGS84);
 
         $proj4->datum_transform($projWGS84->datum,$projED50->datum,$pointWGS84);
 
-        $this->assertEquals(53.809189444,$pointWGS84->x,'',0.1);
-        $this->assertEquals(2.129455,$pointWGS84->y,'',0.1);
+        $this->assertEquals(deg2rad(53.809189444),$pointWGS84->x,'',0.1);
+        $this->assertEquals(deg2rad(2.129455),$pointWGS84->y,'',0.1);
     }
 
     public function testProjFour()

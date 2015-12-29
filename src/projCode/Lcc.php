@@ -172,7 +172,7 @@ class Lcc
         return $p;
     }
 
-    protected function debugString()
+    public function debugString()
     {
       $str = "title= $this->title\n";
       $str.= "k0=$this->k0\n";

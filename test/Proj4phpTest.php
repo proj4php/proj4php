@@ -178,22 +178,44 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
 //from @coreation
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
-        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+        $pointWGS84=new Point(3.3500208637038, 50.803896326566, $projWGS84);
 
+        //Proj4php::setDebug(true);
         $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
         $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
         $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.1);
+        //Proj4php::setDebug(false);
 
 
-
-        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+        $pointWGS84=new Point(3.3500208637038, 50.803896326566, $projWGS84);
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
 
-//        Proj4php::setDebug(true);
+        //Proj4php::setDebug(true);
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
         $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
         $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
-//        Proj4php::setDebug(false);
+        //Proj4php::setDebug(false);
+
+// from spatialreference.org (EPSG:31370 page)
+        $pointLCC2SP=new Point(157361.845373, 132751.380618, $projLCC2SP);
+        $pointWGS84=new Point(4.47, 50.505, $projWGS84);
+
+        //Proj4php::setDebug(true);
+        $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
+        $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.0001);
+        $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.0001);
+        //Proj4php::setDebug(false);
+
+
+        $pointWGS84=new Point(4.47, 50.505, $projWGS84);
+        $pointLCC2SP=new Point(157361.845373, 132751.380618, $projLCC2SP);
+
+        //Proj4php::setDebug(true);
+        $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
+        $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
+        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
+        //Proj4php::setDebug(false);
+
     }
 
     public function testInlineProjectionMethod2(){
@@ -207,16 +229,16 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $projLCC2SP = new Proj('PROJCS["Belge 1972 / Belgian Lambert 72",GEOGCS["Belge 1972",DATUM["Reseau_National_Belge_1972",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],TOWGS84[106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1],AUTHORITY["EPSG","6313"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4313"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",51.16666723333333],PARAMETER["standard_parallel_2",49.8333339],PARAMETER["latitude_of_origin",90],PARAMETER["central_meridian",4.367486666666666],PARAMETER["false_easting",150000.013],PARAMETER["false_northing",5400088.438],AUTHORITY["EPSG","31370"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
 
 //        Proj4php::setDebug(true);
-        $pointWGS84 = new Point(rad2deg(-1.67551608),rad2deg(0.49741884),  $projWGS84);
+        $pointWGS84 = new Point(-96,28.5,  $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
  
-        $this->assertEquals($pointNAD27->x,2963503.91,'', 0.1);
-        $this->assertEquals($pointNAD27->y,254759.80,'', 0.1);
+        $this->assertEquals($pointNAD27->x,2963487.15,'', 0.1);
+        $this->assertEquals($pointNAD27->y,255412.99,'', 0.1);
 //        Proj4php::setDebug(false);
 
         $pointWGS84 = $proj4->transform($projWGS84,$pointNAD27);
-        $this->assertEquals($pointWGS84->y,rad2deg(0.49741884),'',0.1);
-        $this->assertEquals($pointWGS84->x,rad2deg(-1.67551608),'',0.1);
+        $this->assertEquals($pointWGS84->x,-96,'',0.1);
+        $this->assertEquals($pointWGS84->y,28.5,'',0.1);
 
 
         //from @coreation
@@ -231,7 +253,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         // output projection:
         // WWGS 84 (SRID=4326)
         // +proj=longlat +datum=WGS84 +no_defs 
-        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+        $pointWGS84=new Point(3.3500208637038, 50.803896326566, $projWGS84);
 
         $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
         $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
@@ -240,7 +262,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         // reverse transform.
         // I have to redefine the input/output expected points because above they 
         // are altered. (is that really the desired behavior?)
-        $pointWGS84=new Point(3.35249345076, 50.8044261264, $projWGS84);
+        $pointWGS84=new Point(3.3500208637038, 50.803896326566, $projWGS84);
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
 
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);

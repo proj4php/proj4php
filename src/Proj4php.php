@@ -471,6 +471,8 @@ class Proj4php
         }
 
         self::reportDebug("transform point ".$point->x.",".$point->y."\r\n");
+        self::reportDebug("from ".$source->srsCode."\r\n");
+        self::reportDebug("to ".$dest->srsCode."\r\n");
 
         $this->msg = '';
 
@@ -550,6 +552,8 @@ class Proj4php
         }
 
         $point->setProjection($dest);
+
+        self::reportDebug("Transform result $point->x $point->y\r\n");
 
         // Nov 2014 - changed Werner Schäffer
         // Clone point to avoid a lot of problems

@@ -417,10 +417,20 @@ class Datum
         Proj4php::reportDebug('geocentric_to_wgs84('.$p->x.','.$p->y.")\n");
 
         if ($this->datum_type == Common::PJD_3PARAM) {
+            Proj4php::reportDebug("+x=".$this->datum_params[0]."\n");
+            Proj4php::reportDebug("+y=".$this->datum_params[1]."\n");
+            Proj4php::reportDebug("+z=".$this->datum_params[2]."\n");
             $p->x += $this->datum_params[0];
             $p->y += $this->datum_params[1];
             $p->z += $this->datum_params[2];
         } elseif ($this->datum_type == Common::PJD_7PARAM) {
+            Proj4php::reportDebug("Dx=".$this->datum_params[0]."\n");
+            Proj4php::reportDebug("Dy=".$this->datum_params[1]."\n");
+            Proj4php::reportDebug("Dz=".$this->datum_params[2]."\n");
+            Proj4php::reportDebug("Rx=".$this->datum_params[3]."\n");
+            Proj4php::reportDebug("Ry=".$this->datum_params[4]."\n");
+            Proj4php::reportDebug("Rz=".$this->datum_params[5]."\n");
+            Proj4php::reportDebug("M=".$this->datum_params[6]."\n"); 
             $Dx_BF = $this->datum_params[0];
             $Dy_BF = $this->datum_params[1];
             $Dz_BF = $this->datum_params[2];
@@ -445,10 +455,21 @@ class Datum
         Proj4php::reportDebug('geocentric_from_wgs84('.$p->x.','.$p->y.")\n");
 
         if ($this->datum_type == Common::PJD_3PARAM) {
+            Proj4php::reportDebug("+x=".$this->datum_params[0]."\n");
+            Proj4php::reportDebug("+y=".$this->datum_params[1]."\n");
+            Proj4php::reportDebug("+z=".$this->datum_params[2]."\n");
             $p->x -= $this->datum_params[0];
             $p->y -= $this->datum_params[1];
             $p->z -= $this->datum_params[2];
         } elseif ($this->datum_type == Common::PJD_7PARAM) {
+            Proj4php::reportDebug("Dx=".$this->datum_params[0]."\n");
+            Proj4php::reportDebug("Dy=".$this->datum_params[1]."\n");
+            Proj4php::reportDebug("Dz=".$this->datum_params[2]."\n");
+            Proj4php::reportDebug("Rx=".$this->datum_params[3]."\n");
+            Proj4php::reportDebug("Ry=".$this->datum_params[4]."\n");
+            Proj4php::reportDebug("Rz=".$this->datum_params[5]."\n");
+            Proj4php::reportDebug("M=".$this->datum_params[6]."\n");
+
             $Dx_BF = $this->datum_params[0];
             $Dy_BF = $this->datum_params[1];
             $Dz_BF = $this->datum_params[2];

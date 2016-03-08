@@ -1,5 +1,5 @@
 <?php
-include_once("../src/proj4php/proj4php.php");
+include_once("src/proj4php/proj4php.php");
 
 class Proj4phpTest extends PHPUnit_Framework_TestCase
 {

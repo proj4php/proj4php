@@ -433,6 +433,13 @@ class Proj4php
         $this->WGS84 = new Proj('WGS84', $this);
     }
 
+  
+    private function notWGS($a, $b ) {
+
+    return (($a->datum->datum_type === Common::PJD_3PARAM || $a->datum->datum_type === Common::PJD_7PARAM) && $b->datum->datum_code !== "WGS84");
+    
+  }
+
 
     /**
      * Method: transform(source, dest, point)
@@ -485,6 +492,18 @@ class Proj4php
             self::reportError("Proj4php initialization for: " . $dest->srsCode . " not yet complete");
             return $point;
         }
+
+        if (isset($source->datum) && isset($dest->datum) && ($this->notWGS($source, $dest) || $this->notWGS($dest, $source))) {
+
+            
+
+
+            $wgs84 = new Proj('WGS84', $this);
+            $this->transform($source, $wgs84, $point);
+            $source = $wgs84;
+      
+        }
+
 
         // DGR, 2010/11/12
         if ($source->axis != "enu") {

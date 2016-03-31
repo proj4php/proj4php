@@ -123,15 +123,16 @@ class Proj
 
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
             $this->to_rads=COMMON::D2R;
-            //$this->parseWKT($srsCode);
-            include_once 'Wkt.php';
+           
+
+            //include_once 'Wkt.php';
             $params=Wkt::Parse($srsCode);
+
+            // TODO: find a better way to apply wkt params to this instance
             foreach($params as $k=>$v){
                 $this->$k=$v;
             }
-            // this is useful for a bunch of projections that are using tmerc while the proj4code uses utm+zone
-            // however I would like to remove it if I can compare tmerc to utm 
-            //$this->applyWKTUtmFromTmerc(); 
+
 
             if(isset($this->defData)){
                 // wkt codes can contain EXTENSION["PROJ4", "..."]

@@ -147,8 +147,17 @@ class Proj
             return;
         }
 
-        // DGR 2008-08-03 : support urn and url
-        if (strpos($srsCode, 'urn:') === 0) {
+        if(strpos($srsCode,'+proj')===0){
+
+            $this->defData=$srsCode;
+            $this->parseDefs();
+            $this->loadProjCode($this->projName);
+            $this->initTransforms();
+            
+            return;
+
+        }elseif (strpos($srsCode, 'urn:') === 0) {
+            // DGR 2008-08-03 : support urn and url
             //urn:ORIGINATOR:def:crs:CODESPACE:VERSION:ID
             $urn = explode(':', $srsCode);
 

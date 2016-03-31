@@ -83,15 +83,6 @@ class Proj
     protected $proj4php;
 
     /**
-     * RE to split an SRS code in WKT format.
-     * Given "Alphanum123[something,or,nothing]" would give:
-     * match 1: "Alphanum123"
-     * match 2: "something,or,nothing"
-     * @var type
-     */
-    const WKT_RE = '/^(\w+)\[(.*)\]$/';
-
-    /**
      * The supplied Spatial Reference System (SRS) code supplied
      * on creation of the projection.
      */
@@ -153,7 +144,7 @@ class Proj
             $this->parseDefs();
             $this->loadProjCode($this->projName);
             $this->initTransforms();
-            
+
             return;
 
         }elseif (strpos($srsCode, 'urn:') === 0) {

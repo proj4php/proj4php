@@ -125,7 +125,7 @@ class Proj
             $this->to_rads=COMMON::D2R;
            
 
-            //include_once 'Wkt.php';
+            
             $params=Wkt::Parse($srsCode);
 
             // TODO: find a better way to apply wkt params to this instance

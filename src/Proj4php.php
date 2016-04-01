@@ -602,24 +602,24 @@ class Proj4php
 
             switch ($crs->axis[$i]) {
                 case 'e':
-                    $point[$t] = $v;
+                    $point->$t = $v;
                     break;
                 case 'w':
-                    $point[$t] = -$v;
+                    $point->$t = -$v;
                     break;
                 case 'n':
-                    $point[$t] = $v;
+                    $point->$t = $v;
                     break;
                 case 's':
-                    $point[$t] = -$v;
+                    $point->$t = -$v;
                     break;
                 case 'u':
-                    if (isset( $point[$t])) {
+                    if (isset( $point->$t)) {
                         $point->z = $v;
                     }
                     break;
                 case 'd':
-                    if (isset( $point[$t])) {
+                    if (isset( $point->$t)) {
                         $point->z = -$v;
                     }
                     break;
@@ -655,7 +655,7 @@ class Proj4php
 
     /**
      * Function : loadScript
-     * adapted from original. PHP is simplier.
+     * adapted from original. PHP is simpler.
      */
     public function loadScript($filename)
     {

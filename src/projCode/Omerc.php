@@ -221,7 +221,7 @@ class Omerc
             $t = .5 * ($q + 1.0 / $q);
             $ul = ($s * $this->singam - $vl * $this->cosgam) / $t;
             $con = cos( $this->bl * $dlon );
-            if( abs( con ) < .0000001 ) {
+            if( abs( $con ) < .0000001 ) {
                 $us = $this->al * $this->bl * $dlon;
             } else {
                 $us = $this->al * atan( ($s * $this->cosgam + $vl * $this->singam) / $con ) / $this->bl;

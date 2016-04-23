@@ -15,7 +15,7 @@ features are being implemented on this package:
 * [ ] PHP5.4+ syntax (not aiming to be bleeding edge here, just yet)
 * [ ] [PSR-2 styling](http://www.php-fig.org/psr/psr-2/)
 * [x] [PSR-4 autoloader](http://www.php-fig.org/psr/psr-4/)
-* [x] [semver](http://semver.org/) relase numbers to packagist.org
+* [x] [semver](http://semver.org/) release numbers to packagist.org
 * [x] Full compatibility with [composer](https://getcomposer.org/)
 * [ ] Tests to come once the above is implemented.
 

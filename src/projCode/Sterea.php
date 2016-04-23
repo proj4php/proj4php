@@ -88,7 +88,8 @@ class Sterea extends Gauss
 
         $p->x = $lon;
         $p->y = $lat;
-        $p = Proj4php::$proj['gauss']->inverse($p);
+        //$p = Proj4php::$proj['gauss']->inverse($p);
+        $p = parent::forward($p);
         // adjust longitude to CM
         $p->x = Common::adjust_lon($p->x + $this->long0);
 

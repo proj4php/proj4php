@@ -20,6 +20,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $proj25833 = new Proj('EPSG:25833', $proj4);
         $proj31468 = new Proj('EPSG:31468', $proj4);
         $proj5514  = new Proj('EPSG:5514', $proj4);
+        $proj28992 = new Proj('EPSG:28992', $proj4);
 
 // GPS
 // latitude        longitude
@@ -70,6 +71,12 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointSrc  = $pointDest;
         $pointDest = $proj4->transform($projWGS84, $proj5514, $pointSrc);
+
+        $pointSrc = new Point('148312.237261','457869.280549');
+        $pointDest = $proj4->transform($proj28992,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj28992,$pointSrc);
     }
 
     /**

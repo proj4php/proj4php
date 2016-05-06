@@ -535,7 +535,7 @@ class Proj
                     // DGR 2010-11-12: axis
                     $paramVal = trim($paramVal);
                     $legalAxis = "ewnsud";
-                    if (strlen(paramVal) == 3 &&
+                    if (strlen($paramVal) == 3 &&
                         strpos($legalAxis, substr($paramVal, 0, 1)) !== false &&
                         strpos($legalAxis, substr($paramVal, 1, 1)) !== false &&
                         strpos($legalAxis, substr($paramVal, 2, 1)) !== false

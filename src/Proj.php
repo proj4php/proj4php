@@ -3,10 +3,10 @@ namespace proj4php;
 
 /**
  * Author : Julien Moquet
- * 
+ *
  * Inspired by Proj4js from Mike Adair madairATdmsolutions.ca
- * and Richard Greenwood rich@greenwoodmap.com 
- * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
+ * and Richard Greenwood rich@greenwoodmap.com
+ * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html
  */
 
 use Exception;
@@ -32,7 +32,7 @@ class Proj
      * counterparts.
      */
     public $projName = null;
-    
+
     /**
      * Property: projection
      * The projection object for $this projection. */
@@ -104,7 +104,7 @@ class Proj
         //$this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
 
-        
+
 
 
         // Check to see if $this is a Well Known Text (WKT) string.
@@ -114,9 +114,9 @@ class Proj
 
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
             $this->to_rads=COMMON::D2R;
-           
 
-            
+
+
             $params=Wkt::Parse($srsCode);
 
             // TODO: find a better way to apply wkt params to this instance
@@ -371,7 +371,7 @@ class Proj
 
     /**
      * @param type $pt
-     * @return type 
+     * @return type
      */
     public function forward(Point $pt)
     {
@@ -380,7 +380,7 @@ class Proj
 
     /**
      * @param type $pt
-     * @return type 
+     * @return type
      */
     public function inverse(Point $pt)
     {
@@ -435,7 +435,7 @@ class Proj
                     break;
                 case "nadgrids": $this->nagrids = trim($paramVal);
                     break;
-                case "ellps": 
+                case "ellps":
                     $this->ellps = trim($paramVal);
                     if ($this->ellps=='WGS84' && !isset($this->datumCode))
                        $this->datumCode = trim($paramVal);
@@ -451,7 +451,7 @@ class Proj
                 case "rf":
                     // DGR 2007-11-20
                     // inverse flattening rf= a/(a-b)
-                    $this->rf = floatval( paramVal);
+                    $this->rf = floatval($paramVal);
                     break;
                 case "lat_0":
                     // phi0, central latitude
@@ -524,12 +524,12 @@ class Proj
                     // the value instead of 0.0, then convert to radians
                     $paramVal = trim($paramVal);
 
-                    $this->from_greenwich = 
+                    $this->from_greenwich =
                         $this->proj4php->hasPrimeMeridian($paramVal)
                         ? $this->proj4php->getPrimeMeridian($paramVal)
                         : floatval($paramVal);
 
-                    $this->from_greenwich *= Common::D2R; 
+                    $this->from_greenwich *= Common::D2R;
                     break;
                 case "axis":
                     // DGR 2010-11-12: axis
@@ -569,8 +569,8 @@ class Proj
             $datumDef = $this->proj4php->getDatum($this->datumCode);
             if (is_array($datumDef)) {
                 $this->datum_params = array_key_exists('towgs84', $datumDef) ? explode(',', $datumDef['towgs84']) : null;
-               
-               if(!isset($this->ellps)){ 
+
+               if(!isset($this->ellps)){
                     //in the case of SR-ORG:7191, proj for defines  +datum=wgs84, but also +ellps=krass. this would have overwriten that ellipsoid
                     $this->ellps = $datumDef['ellipse'];
                 }

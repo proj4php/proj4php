@@ -114,7 +114,7 @@ class Laea
         $phi = $p->y;
         $lam = Common::adjust_lon($lam - $this->long0);
 
-        if (isset($this->sphere)) {
+        if ($this->sphere) {
             /*
             $coslam;
             $cosphi;
@@ -247,7 +247,7 @@ class Laea
         $x = $p->x / $this->a;
         $y = $p->y / $this->a;
 
-        if( isset($this->sphere) ) {
+        if( $this->sphere ) {
             $cosz = 0.0;
             #$rh;
             $sinz = 0.0;

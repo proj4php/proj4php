@@ -60,7 +60,7 @@ class Cass
         $phi = $p->y;
         $lam = Common::adjust_lon($lam - $this->long0);
 
-        if( isset($this->sphere)) {
+        if( $this->sphere) {
             $x = asin(cos($phi) * sin($lam));
             $y = atan2(tan($phi), cos($lam)) - $this->phi0;
         } else {
@@ -92,7 +92,7 @@ class Cass
         $x = $p->x / $this->a;
         $y = $p->y / $this->a;
 
-        if (isset($this->sphere)) {
+        if ($this->sphere) {
             $this->dd = $y + $this->lat0;
             $phi = asin(sin($this->dd) * cos($x));
             $lam = atan2(tan($x), cos($this->dd));

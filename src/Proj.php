@@ -90,6 +90,8 @@ class Proj
 
 
     public $to_meter = 1.0;
+    
+    public $sphere = false;
 
     /**
      * Constructor: initialize

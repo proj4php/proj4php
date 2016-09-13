@@ -308,13 +308,6 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $projLI          = new Proj('EPSG:27571', $proj4);
         $projLSud        = new Proj('EPSG:27563', $proj4);
         $projLSeventyTwo = new Proj('EPSG:31370', $proj4);
-        $projAmersfoort2 = new Proj('EPSG:28992', $proj4);
-
-
-        $pointRijksdriehoeksmetingSrc = new Point(5.0794047264607, 52.642987820124);
-        $pointRijksdriehoeksmeting = $proj4->transform($projWGS84, $projAmersfoort2, $pointRijksdriehoeksmetingSrc);
-        $this->assertEquals(134166, $pointRijksdriehoeksmeting->x, '', 1.0);
-        $this->assertEquals(517321, $pointRijksdriehoeksmeting->y, '', 1.0);
 
 
         $pointSrc = new Point('652709.401', '6859290.946');

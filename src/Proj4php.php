@@ -414,9 +414,6 @@ class Proj4php
 
         if (isset($source->datum) && isset($dest->datum) && ($this->notWGS($source, $dest) || $this->notWGS($dest, $source))) {
 
-            
-
-
             $wgs84 = new Proj('WGS84', $this);
             $this->transform($source, $wgs84, $point);
             $source = $wgs84;
@@ -456,12 +453,26 @@ class Proj4php
             self::reportDebug("from_greenwich => ".$point->x.",".$point->y."\r\n");
         }
 
+        // Adjust along the vertical axis
+        if (isset($source->geoidgrids)) {
+            $point = $source->apply_vgridshift($source->geoidgrids,$point);
+            self::reportDebug("vgridshift => ".$point->x.",".$point->y."\r\n");
+        }
+
         // Convert datums if needed, and if possible.
         // Note: this updates $point by reference, as well as returning
         // $point (after it has been changed. $point really needs to be made
         // immutable so it is clear what is happening.
         $point = $this->datum_transform($source->datum, $dest->datum, $point);
         self::reportDebug("datum_transform => ".$point->x.",".$point->y."\r\n");
+
+        // Adjust along the vertical axis
+        if (isset($dest->geoidgrids))
+        {
+           $point = $dest->apply_vgridshift($dest->geoidgrids,$point);
+           self::reportDebug("vgridshift => ".$point->x.",".$point->y."\r\n");
+        }
+
         // Adjust for the prime meridian if necessary
         if (isset($dest->from_greenwich)) {
             $point->x -= $dest->from_greenwich;
@@ -505,6 +516,11 @@ class Proj4php
      */
     public function datum_transform(Datum $source, Datum $dest, Point $point)
     {
+        $src_a = $source->a;
+        $src_es = $source->es;
+        $dst_a = $dest->a;
+        $dst_es = $dest->es;
+
         // Short cut if the datums are identical.
         if ($source->compare_datums($dest)) {
             // In this case, zero is sucess,
@@ -521,17 +537,18 @@ class Proj4php
 
         // If this datum requires grid shifts, then apply it to geodetic coordinates.
         if ($source->datum_type == Common::PJD_GRIDSHIFT) {
-            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
-            throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
+            $point = $source->apply_gridshift_2($point);
+            $src_a = Common::SRS_WGS84_SEMIMAJOR;
+            $src_es = Common::SRS_WGS84_ESQUARED;
         }
 
         if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
-            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
-            throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
+            $dst_a = Common::SRS_WGS84_SEMIMAJOR;
+            $dst_es = Common::SRS_WGS84_ESQUARED;
         }
 
         // Do we need to go through geocentric coordinates?
-        if ($source->es != $dest->es || $source->a != $dest->a
+        if ($src_es != $dst_es || $src_a != $dst_a
             || $source->datum_type == Common::PJD_3PARAM
             || $source->datum_type == Common::PJD_7PARAM
             || $dest->datum_type == Common::PJD_3PARAM
@@ -559,10 +576,7 @@ class Proj4php
 
         // Apply grid shift to destination if required
         if ($dest->datum_type == Common::PJD_GRIDSHIFT) {
-            Proj4php::reportError("Grid shift transformations are not implemented yet.\r\n");
-            throw(new Exception("ERROR: Grid shift transformations are not implemented yet."));
-            // pj_apply_gridshift(pj_param(dest.params,"snadgrids").s, 1, point);
-            // CHECK_RETURN;
+            $point = dest->apply_gridshift_2($point);
         }
 
         return $point;

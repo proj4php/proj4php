@@ -435,6 +435,9 @@ class Proj
                     break;
                 case "datum": $this->datumCode = trim($paramVal);
                     break;
+                case "geoidgrids":
+                    $this->geoidgrids = trim($paramVal);
+                    break;
                 case "nadgrids": $this->nagrids = trim($paramVal);
                     break;
                 case "ellps":
@@ -633,5 +636,196 @@ class Proj
         }
 
         $this->datum = new Datum($this);
+    }
+
+/************************************************************************/
+/*                          pj_gridinfo_load()                          */
+/*                                                                      */
+/*      This function is intended to implement delayed loading of       */
+/*      the data contents of a grid file.  The header and related       */
+/*      stuff are loaded by pj_gridinfo_init().                         */
+/************************************************************************/
+
+    public function gridinfo_load( $name )
+    {
+        
+    }
+
+/************************************************************************/
+/*                          pj_gridinfo_init()                          */
+/*                                                                      */
+/*      Open and parse header details from a datum gridshift file       */
+/*      returning a list of PJ_GRIDINFOs for the grids in that          */
+/*      file.  This superceeds use of nad_init() for modern             */
+/*      applications.                                                   */
+/************************************************************************/
+    public function gridinfo_init($gridname)
+    {
+        // open the file
+        // look for a header to determine file type
+        // determine file type (ntv1 ntv2 gtx ctablev2 ctable)
+        // return result
+    }
+
+/************************************************************************/
+/*                       pj_gridlist_merge_grid()                       */
+/*                                                                      */
+/*      Find/load the named gridfile and merge it into the              */
+/*      last_nadgrids_list.                                             */
+/************************************************************************/
+    public function gridlist_merge_gridfile($gridfile)
+    {
+        return gridinfo_init($gridfile);
+    }
+
+/************************************************************************/
+/*                     pj_gridlist_from_nadgrids()                      */
+/*                                                                      */
+/*      This functions loads the list of grids corresponding to a       */
+/*      particular nadgrids string into a list, and returns it.  The    */
+/*      list is kept around till a request is made with a different     */
+/*      string in order to cut down on the string parsing cost, and     */
+/*      the cost of building the list of tables each time.              */
+/************************************************************************/
+    public function gridlist_from_nadgrids($nadgrid)
+    {
+        $list = array();
+        $grids = split($nadgrid,",");
+        foreach($grids as $grid)
+        {
+           //$list[] = gridlist_merge_gridfile($grid);
+        }
+        return $list;
+    }
+
+/************************************************************************/
+/*                        pj_apply_vgridshift()                         */
+/*                                                                      */
+/*      This implmentation takes uses the gridlist from a coordinate    */
+/*      system definition.  If the gridlist has not yet been            */
+/*      populated in the coordinate system definition we set it up      */
+/*      now.                                                            */
+/* Parameters :                                                         */
+/*    listname : nadgrid filename                                       */
+/* Return : Point                                                       */
+/************************************************************************/
+    public function apply_vgridshift($listname,$inverse,Point $point)
+    {
+        $gridlist = gridlist_from_nadgrids($listname);
+
+        foreach($gridlist as $grid)
+        {
+          // skip tables that don't match our point at all
+
+          // check if a child apply
+
+          // load the grid shift info if we dont have it
+
+          // interpolation within the grid
+
+          // nodata ?
+
+          // error cases
+        }
+
+        return $point;
+    }
+
+/************************************************************************/
+/*                        pj_apply_gridshift_2()                        */
+/*                                                                      */
+/*      This implmentation takes uses the gridlist from a coordinate    */
+/*      system definition.  If the gridlist has not yet been            */
+/*      populated in the coordinate system definition we set it up      */
+/*      now.                                                            */
+/* Parameters :                                                         */
+/*    listname : nadgrid filename                                       */
+/* Return : Point or null in case of error                              */
+/************************************************************************/    
+    public apply_gridshift_2($listname,$inverse,$point)
+    {
+      if (isset($this->catalog_name))
+      {
+        throw(new Exception("Catalog Name is not implemented for now"));
+        return $this->gc_apply_gridshift($inverse,$point);
+      }
+      if (!isset($this->gridlist))
+      {
+        $this->gridlist = $this->gridlist_from_nadgrids($listname);
+        if ($this->gridlist == null || sizeof($this->gridlist)==0)
+          return null;
+      }
+
+      $point = $this->apply_gridshift_3($point);
+
+      return $point;
+    }
+
+/************************************************************************/
+/*                        pj_apply_gridshift_3()                        */
+/*                                                                      */
+/*      This is the real workhorse, given a gridlist.                   */
+/************************************************************************/
+    public apply_gridshift_3($point)
+    {
+      foreach($this->gridlist as $grid)
+      {
+        // skip tables that don't match
+
+        // check childs
+
+        // load the grid shift
+
+        // calculate output
+        // $point = $this->nad_cvt($point,$inverse,$grid);
+
+        // check errors
+      }
+      return $point;
+    }
+
+    public function nad_intr($point,$grid)
+    {
+      return $point;
+    }
+
+    public function nad_cvt($point,$inverse,$grid)
+    {
+      // TODO using nad_intr
+
+      return $point;
+    }
+
+    public function gc_apply_gridshift($inverse,$point)
+    {
+      // catalog grid shift to do
+      return $point;
+    }
+
+    public function gc_apply_gridshift($inverse,$point)
+    {
+      if (!isset($this->catalog)) {
+        $this->catalog = $this->gc_findcatalog($this->catalog_name);
+      }
+      // make sure we have appropriate "after" shift file available
+      // using $this->gc_findgrid($point);
+      // using $this->gridinfo_load($name)
+      // $this->nad_cvt($point,$inverse,$grid)
+      // check errors
+
+      // make sure we have appropriate "before" shift file available
+      // using $this->gc_findgrid($point) again
+      // $this->gridinfo_load($name)
+      // $this->nad_cvt($point,$inverse,$grid)
+      // check errors
+
+      // maths
+      return $point;
+    }
+
+    public function gc_findgrid($point)
+    {
+      // using $this->gridlist_from_nadgrids($grid_definition);
+      // return grid;
     }
 }

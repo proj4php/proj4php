@@ -375,4 +375,18 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(array(1508344.3777571, 5032839.2985009), array($pointMinTr->x, $pointMinTr->y), '', 0.0001);
 
     }
+
+    public function testNad272Nad83()
+    {
+        $proj4 = new Proj4php();
+
+        $projTO = new Proj('EPSG:4269', $proj4);
+        $projFROM = new Proj('+proj=longlat +ellps=clrk66 +datum=NAD27 +no_defs', $proj4);
+
+        $pointMin = new Point(-104.701166,38.800945);
+        $pointMinTr = $proj4->transform($projFROM, $projTO, $pointMin);
+
+
+        $this->assertEquals(array(-104.7016936, 38.8009403), array($pointMinTr->x, $pointMinTr->y), '', 0.0001);
+    }
 }

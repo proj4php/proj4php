@@ -1,13 +1,13 @@
 <?php
+
 include(__DIR__ . "/../vendor/autoload.php");
 
-use proj4php\Proj4php;
 use proj4php\Common;
-use proj4php\Proj;
 use proj4php\Point;
+use proj4php\Proj;
+use proj4php\Proj4php;
 
-class CommonTest
-    extends PHPUnit_Framework_TestCase
+class CommonTest extends PHPUnit_Framework_TestCase
 {
 
     public function testSign()

@@ -25,6 +25,10 @@ class Proj4phpTest extends \PHPUnit_Framework_TestCase
         $proj31468 = new Proj('EPSG:31468', $proj4);
         $proj5514  = new Proj('EPSG:5514', $proj4);
         $proj28992 = new Proj('EPSG:28992', $proj4);
+        $proj3825 = new Proj('EPSG:3825', $proj4); //TWD97 / TM2 zone 119
+        $proj3826 = new Proj('EPSG:3826', $proj4); //TWD97 / TM2 zone 121
+        $proj3827 = new Proj('EPSG:3827', $proj4); //TWD67 / TM2 zone 119
+        $proj3828 = new Proj('EPSG:3828', $proj4); //TWD67 / TM2 zone 121
 
 // GPS
 // latitude        longitude
@@ -81,6 +85,35 @@ class Proj4phpTest extends \PHPUnit_Framework_TestCase
 
         $pointSrc = $pointDest;
         $pointDest = $proj4->transform($projWGS84,$proj28992,$pointSrc);
+        
+        // TWD97 / TM2 zone 119
+        $pointSrc = new Point('181688.209','2705952.753');
+        $pointDest = $proj4->transform($proj3825,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3825,$pointSrc);
+        
+        // TWD97 / TM2 zone 121
+        $pointSrc = new Point('248170.787','2652129.936');
+        $pointDest = $proj4->transform($proj3826,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3826,$pointSrc);
+        
+        // TWD67 / TM2 zone 119
+        $pointSrc = new Point('170900', '2701500');
+        $pointDest = $proj4->transform($proj3827,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3827,$pointSrc);
+        
+        // TWD67 / TM2 zone 121
+        $pointSrc = new Point('247342.198','2652335.851');
+        $pointDest = $proj4->transform($proj3828,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3828,$pointSrc);
+
     }
 
     /**

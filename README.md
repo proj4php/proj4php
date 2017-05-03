@@ -77,3 +77,9 @@ $projOSGB36 = new Proj('PROJCS["OSGB 1936 / British National Grid",GEOGCS["OSGB 
 ## Developing - How to contribute
 
 Feel free to fork us and submit your changes!
+
+## OSGeo community project
+
+![ScreenShot](https://wiki.osgeo.org/images/8/80/OSGeo_community.png)
+
+Proj4php is also an OSGeo community project. See [here](https://wiki.osgeo.org/wiki/OSGeo_Community_Projects) for further details.

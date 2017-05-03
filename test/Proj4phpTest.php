@@ -5,7 +5,11 @@ use proj4php\Proj4php;
 use proj4php\Proj;
 use proj4php\Point;
 
-class Proj4phpTest extends PHPUnit_Framework_TestCase
+if (!class_exists('\PHPUnit_Framework_TestCase') && class_exists('\PHPUnit\Framework\TestCase')) {
+    class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
+}
+
+class Proj4phpTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testTransform()
@@ -23,6 +27,10 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $proj28992 = new Proj('EPSG:28992', $proj4);
         $projCassini = new Proj('EPSG:28191', $proj4);
         $projlaea  = new Proj('+proj=laea +lat_0=90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs', $proj4);
+        $proj3825 = new Proj('EPSG:3825', $proj4); //TWD97 / TM2 zone 119
+        $proj3826 = new Proj('EPSG:3826', $proj4); //TWD97 / TM2 zone 121
+        $proj3827 = new Proj('EPSG:3827', $proj4); //TWD67 / TM2 zone 119
+        $proj3828 = new Proj('EPSG:3828', $proj4); //TWD67 / TM2 zone 121
 
 // GPS
 // latitude        longitude
@@ -85,6 +93,35 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointSrc = new Point('-755703.994303','-704542.847453');
         $pointDest = $proj4->transform($projlaea,$projWGS84,$pointSrc);
+        
+        // TWD97 / TM2 zone 119
+        $pointSrc = new Point('181688.209','2705952.753');
+        $pointDest = $proj4->transform($proj3825,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3825,$pointSrc);
+        
+        // TWD97 / TM2 zone 121
+        $pointSrc = new Point('248170.787','2652129.936');
+        $pointDest = $proj4->transform($proj3826,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3826,$pointSrc);
+        
+        // TWD67 / TM2 zone 119
+        $pointSrc = new Point('170900', '2701500');
+        $pointDest = $proj4->transform($proj3827,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3827,$pointSrc);
+        
+        // TWD67 / TM2 zone 121
+        $pointSrc = new Point('247342.198','2652335.851');
+        $pointDest = $proj4->transform($proj3828,$projWGS84,$pointSrc);
+
+        $pointSrc = $pointDest;
+        $pointDest = $proj4->transform($projWGS84,$proj3828,$pointSrc);
+
     }
 
     /**

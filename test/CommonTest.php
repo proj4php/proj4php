@@ -1,10 +1,11 @@
 <?php
 include(__DIR__ . "/../vendor/autoload.php");
 
-use proj4php\Proj4php;
 use proj4php\Common;
-use proj4php\Proj;
-use proj4php\Point;
+
+if (!class_exists('\PHPUnit_Framework_TestCase') && class_exists('\PHPUnit\Framework\TestCase')) {
+    class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
+}
 
 class CommonTest
     extends PHPUnit_Framework_TestCase

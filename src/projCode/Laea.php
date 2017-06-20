@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -53,9 +54,32 @@ class Laea
     protected $P10 = .06388888888888888888;
     protected $P11 = .06640211640211640211;
     protected $P20 = .01641501294219154443;
-    
-    /* Initialize the Lambert Azimuthal Equal Area projection
-      ------------------------------------------------------ */
+
+    public $lat0;
+    public $mode;
+    public $es;
+    public $qp;
+    public $e;
+    public $mmf;
+    public $apa;
+    public $dd;
+    public $rq;
+    public $xmf;
+    public $ymf;
+    public $sinb1;
+    public $cosb1;
+    public $sinph0;
+    public $cosph0;
+    public $long0;
+    public $sphere;
+    public $a;
+    public $x0;
+    public $y0;
+    public $phi0;
+
+    /**
+     * Initialize the Lambert Azimuthal Equal Area projection
+     */
     public function init()
     {
         $t = abs($this->lat0);
@@ -95,19 +119,19 @@ class Laea
                     break;
             }
         } else {
-            if( $this->mode == $this->OBLIQ ) {
+            if ($this->mode == $this->OBLIQ) {
                 $this->sinph0 = sin($this->lat0);
                 $this->cosph0 = cos($this->lat0);
             }
         }
     }
 
-    /* Lambert Azimuthal Equal Area forward equations--mapping lat,long to x,y
-      ----------------------------------------------------------------------- */
+    /**
+     * Forward equations
+     * Lambert Azimuthal Equal Area forward equations--mapping lat,long to x,y
+     */
     public function forward($p)
     {
-        /* Forward equations
-          ----------------- */
         #$x;
         #$y;
         $lam = $p->x;
@@ -129,10 +153,11 @@ class Laea
                 case $this->OBLIQ:
                 case $this->EQUIT:
                     $y = ($this->mode == $this->EQUIT) ? 1. + $cosphi * $coslam : 1. + $this->sinph0 * $sinphi + $this->cosph0 * $cosphi * $coslam;
-                    if( y <= Common::EPSLN ) {
+                    if (y <= Common::EPSLN) {
                         Proj4php::reportError( "laea:fwd:y less than eps" );
                         return null;
                     }
+
                     $y = sqrt( 2. / $y );
                     $x = $y * cosphi * sin( $lam );
                     $y *= ($this->mode == $this->EQUIT) ? $sinphi : $this->cosph0 * $sinphi - $this->sinph0 * $cosphi * $coslam;
@@ -144,8 +169,9 @@ class Laea
                         Proj4php::reportError( "laea:fwd:phi < eps" );
                         return;
                     }
+
                     $y = Common::FORTPI - $phi * 0.5;
-                    $y = 2. * (($this->mode == $this->S_POLE) ? cos( $y ) : sin( $y ));
+                    $y = 2. * (($this->mode == $this->S_POLE) ? cos($y) : sin($y));
                     $x = $y * sin($lam);
                     $y *= $coslam;
                     break;
@@ -157,14 +183,15 @@ class Laea
             $sinphi;
             $q;
             */
+
             $sinb = 0.0;
             $cosb = 0.0;
             $b = 0.0;
 
-            $coslam = cos( $lam );
-            $sinlam = sin( $lam );
-            $sinphi = sin( $phi );
-            $q = Common::qsfnz( $this->e, $sinphi );
+            $coslam = cos($lam);
+            $sinlam = sin($lam);
+            $sinphi = sin($phi);
+            $q = Common::qsfnz($this->e, $sinphi);
 
             if ($this->mode == $this->OBLIQ || $this->mode == $this->EQUIT) {
                 $sinb = $q / $this->qp;
@@ -189,7 +216,7 @@ class Laea
             }
 
             if (abs($b) < Common::EPSLN) {
-                Proj4php::reportError( "laea:fwd:b < eps" );
+                Proj4php::reportError('laea:fwd:b < eps');
                 return null;
             }
 
@@ -235,13 +262,14 @@ class Laea
          */
         $p->x = $this->a * $x + $this->x0;
         $p->y = $this->a * $y + $this->y0;
-        
+
         return $p;
     }
-    
-    /* Inverse equations
-      ----------------- */
-    public function inverse( $p ) {
+
+    /**
+     *Inverse equations
+     */
+    public function inverse($p) {
         $p->x -= $this->x0;
         $p->y -= $this->y0;
         $x = $p->x / $this->a;
@@ -252,19 +280,19 @@ class Laea
             #$rh;
             $sinz = 0.0;
 
-            $rh = sqrt( $x * $x + $y * $y );
+            $rh = sqrt(($x * $x) + ($y * $y));
             $phi = $rh * 0.5;
 
             if ($phi > 1.0) {
-                Proj4php::reportError( "laea:Inv:DataError" );
+                Proj4php::reportError('laea:Inv:DataError');
                 return null;
             }
 
             $phi = 2. * asin( $phi );
 
             if ($this->mode == $this->OBLIQ || $this->mode == $this->EQUIT) {
-                $sinz = sin( $phi );
-                $cosz = cos( $phi );
+                $sinz = sin($phi);
+                $cosz = cos($phi);
             }
             switch( $this->mode ) {
                 case $this->EQUIT:
@@ -285,7 +313,8 @@ class Laea
                     $phi -= Common::HALF_PI;
                     break;
             }
-            $lam = ($y == 0. && ($this->mode == $this->EQUIT || $this->mode == $this->OBLIQ)) ? 0. : atan2( $x, $y );
+
+            $lam = ($y == 0.0 && ($this->mode == $this->EQUIT || $this->mode == $this->OBLIQ)) ? 0. : atan2($x, $y);
         } else {
             /*
             $cCe;
@@ -295,7 +324,7 @@ class Laea
             */
             $ab = 0.0;
 
-            switch( $this->mode ) {
+            switch($this->mode) {
                 case $this->EQUIT:
                 case $this->OBLIQ:
                     $x /= $this->dd;
@@ -310,7 +339,7 @@ class Laea
 
                     $sCe = 2. * asin( .5 * $rho / $this->rq );
                     $cCe = cos( $sCe );
-                    $x *= ($sCe = sin( $sCe ));
+                    $x *= ($sCe = sin($sCe));
 
                     if ($this->mode == $this->OBLIQ) {
                         $ab = $cCe * $this->sinb1 + $y * $sCe * $this->cosb1 / $rho;
@@ -376,7 +405,7 @@ class Laea
           }
          */
         //return(OK);
-        $p->x = Common::adjust_lon( $this->long0 + $lam );
+        $p->x = Common::adjust_lon($this->long0 + $lam);
         $p->y = $phi;
         return $p;
     }
@@ -384,12 +413,12 @@ class Laea
     /**
      * determine latitude from authalic latitude
      * 
-     * @param type $es
-     * @return type 
+     * @param float $es
+     * @return float 
      */
-    public function authset( $es ) {
+    public function authset($es) {
         #$t;
-        $APA = array( );
+        $APA = array();
         $APA[0] = $es * $this->P00;
         $t = $es * $es;
         $APA[0] += $t * $this->P01;
@@ -398,18 +427,17 @@ class Laea
         $APA[0] += $t * $this->P02;
         $APA[1] += $t * $this->P11;
         $APA[2] = $t * $this->P20;
+
         return $APA;
     }
 
     /**
-     *
-     * @param type $beta
-     * @param type $APA
-     * @return type 
+     * @param float $beta
+     * @param float $APA
+     * @return float 
      */
-    public function authlat( $beta, $APA ) {
+    public function authlat($beta, $APA) {
         $t = $beta + $beta;
-        return($beta + $APA[0] * sin( $t ) + $APA[1] * sin( $t + $t ) + $APA[2] * sin( $t + $t + $t ));
+        return ($beta + $APA[0] * sin( $t ) + $APA[1] * sin($t + $t) + $APA[2] * sin($t + $t + $t));
     }
-
 }

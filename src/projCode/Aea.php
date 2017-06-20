@@ -93,6 +93,8 @@ class Aea
         $this->sin_phi = sin($lat);
         $this->cos_phi = cos($lat);
 
+        // NOTE: qsfnz() only takes two parameters, so the third will be ignored.
+        // Is this ther correct function to use here?
         $qs = Common::qsfnz($this->e3, $this->sin_phi, $this->cos_phi);
         $rh1 = $this->a * sqrt($this->c - $this->ns0 * $qs) / $this->ns0;
         $theta = $this->ns0 * Common::adjust_lon($lon - $this->long0);

@@ -34,7 +34,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $proj3826 = new Proj('EPSG:3826', $proj4); //TWD97 / TM2 zone 121
         $proj3827 = new Proj('EPSG:3827', $proj4); //TWD67 / TM2 zone 119
         $proj3828 = new Proj('EPSG:3828', $proj4); //TWD67 / TM2 zone 121
-        $proj27200 = new Proj('EPSG:27200', $proj4);
+        $proj27200 = new Proj('EPSG:27200', $proj4); // PR #61
 
         // GPS
         // latitude        longitude
@@ -102,7 +102,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointSrc = $pointDest;
         $pointDest = $proj4->transform($projWGS84,$proj3825,$pointSrc);
-        
+
         // TWD97 / TM2 zone 121
         $pointSrc = new Point('248170.787','2652129.936');
         $pointDest = $proj4->transform($proj3826,$projWGS84,$pointSrc);
@@ -124,7 +124,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointSrc = $pointDest;
         $pointDest = $proj4->transform($projWGS84,$proj3828,$pointSrc);
 
-        // For PR #2
+        // For Issue #61
         $pointSrc = new Point('6409770.613969509', '2701435.4371613124');
         $pointDest = $proj4->transform($proj27200,$projWGS84,$pointSrc);
 

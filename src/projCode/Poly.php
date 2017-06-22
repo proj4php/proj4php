@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -10,64 +11,9 @@ namespace proj4php\projCode;
  */
 
 
-/* Function to compute, phi4, the latitude for the inverse of the
-  Polyconic projection.
-  ------------------------------------------------------------ */
 
 use proj4php\Proj4php;
 use proj4php\Common;
-
-function phi4z( $eccent, $e0, $e1, $e2, $e3, $a, $b, &$c, $phi ) {
-    /*
-    $sinphi;
-    $sin2ph;
-    $tanph;
-    $ml;
-    $mlp;
-    $con1;
-    $con2;
-    $con3;
-    $dphi;
-    $i;
-    */
-
-    $phi = $a;
-    for( $i = 1; $i <= 15; $i++ ) {
-        $sinphi = sin( $phi );
-        $tanphi = tan( $phi );
-        $c = $tanphi * sqrt( 1.0 - $eccent * $sinphi * $sinphi );
-        $sin2ph = sin( 2.0 * $phi );
-        /*
-          ml = e0 * *phi - e1 * sin2ph + e2 * sin (4.0 *  *phi);
-          mlp = e0 - 2.0 * e1 * cos (2.0 *  *phi) + 4.0 * e2 *  cos (4.0 *  *phi);
-         */
-        $ml = $e0 * $phi - $e1 * $sin2ph + $e2 * sin( 4.0 * $phi ) - $e3 * sin( 6.0 * $phi );
-        $mlp = $e0 - 2.0 * $e1 * cos( 2.0 * $phi ) + 4.0 * $e2 * cos( 4.0 * $phi ) - 6.0 * $e3 * cos( 6.0 * $phi );
-        $con1 = 2.0 * $ml + $c * ($ml * $ml + $b) - 2.0 * $a * ($c * $ml + 1.0);
-        $con2 = $eccent * $sin2ph * ($ml * $ml + $b - 2.0 * $a * $ml) / (2.0 * $c);
-        $con3 = 2.0 * ($a - $ml) * ($c * $mlp - 2.0 / $sin2ph) - 2.0 * $mlp;
-        $dphi = $con1 / ($con2 + $con3);
-        $phi += $dphi;
-        if( abs( $dphi ) <= .0000000001 )
-            return($phi);
-    }
-    
-    Proj4php::reportError( "phi4z: No convergence" );
-    
-    return null;
-}
-
-/* Function to compute the constant e4 from the input of the eccentricity
-  of the spheroid, x.  This constant is used in the Polar Stereographic
-  projection.
-  -------------------------------------------------------------------- */
-function e4fn( $x ) {
-    #$con;
-    #$com;
-    $con = 1.0 + $x;
-    $com = 1.0 - $x;
-    return (sqrt( (pow( $con, $con )) * (pow( $com, $com )) ));
-}
 
 /* * *****************************************************************************
   NAME                             POLYCONIC
@@ -94,12 +40,91 @@ function e4fn( $x ) {
 
 class Poly
 {
-    /* Initialize the POLYCONIC projection
-      ---------------------------------- */
-    public function init() {
-        #$temp;   /* temporary variable		 */
-        if( $this->lat0 == 0 )
+    public $a;
+    public $al;
+    public $b;
+    public $e0;
+    public $e1;
+    public $e2;
+    public $e3;
+    public $e;
+    public $es;
+    public $lat0;
+    public $long0;
+    public $ml0;
+    public $temp;
+    public $x0;
+    public $y0;
+
+    /**
+     * Compute, phi4, the latitude for the inverse of the
+     * Polyconic projection.
+     */
+    protected function phi4z($eccent, $e0, $e1, $e2, $e3, $a, $b, &$c, $phi)
+    {
+        /*
+        $sinphi;
+        $sin2ph;
+        $tanph;
+        $ml;
+        $mlp;
+        $con1;
+        $con2;
+        $con3;
+        $dphi;
+        $i;
+        */
+
+        $phi = $a;
+        for ($i = 1; $i <= 15; $i++) {
+            $sinphi = sin( $phi );
+            $tanphi = tan( $phi );
+            $c = $tanphi * sqrt( 1.0 - $eccent * $sinphi * $sinphi );
+            $sin2ph = sin( 2.0 * $phi );
+            /*
+              ml = e0 * *phi - e1 * sin2ph + e2 * sin (4.0 *  *phi);
+              mlp = e0 - 2.0 * e1 * cos (2.0 *  *phi) + 4.0 * e2 *  cos (4.0 *  *phi);
+             */
+            $ml = $e0 * $phi - $e1 * $sin2ph + $e2 * sin( 4.0 * $phi ) - $e3 * sin( 6.0 * $phi );
+            $mlp = $e0 - 2.0 * $e1 * cos( 2.0 * $phi ) + 4.0 * $e2 * cos( 4.0 * $phi ) - 6.0 * $e3 * cos( 6.0 * $phi );
+            $con1 = 2.0 * $ml + $c * ($ml * $ml + $b) - 2.0 * $a * ($c * $ml + 1.0);
+            $con2 = $eccent * $sin2ph * ($ml * $ml + $b - 2.0 * $a * $ml) / (2.0 * $c);
+            $con3 = 2.0 * ($a - $ml) * ($c * $mlp - 2.0 / $sin2ph) - 2.0 * $mlp;
+            $dphi = $con1 / ($con2 + $con3);
+            $phi += $dphi;
+
+            if ( abs( $dphi ) <= .0000000001 ) {
+                return($phi);
+            }
+        }
+
+        Proj4php::reportError('phi4z: No convergence');
+
+        return null;
+    }
+
+    /**
+     * Compute the constant e4 from the input of the eccentricity
+     * of the spheroid, x.  This constant is used in the Polar Stereographic
+     * projection.
+     */
+    function e4fn($x)
+    {
+        #$con;
+        #$com;
+        $con = 1.0 + $x;
+        $com = 1.0 - $x;
+        return (sqrt( (pow( $con, $con )) * (pow( $com, $com )) ));
+    }
+
+    /**
+     * Initialize the POLYCONIC projection
+     */
+    public function init()
+    {
+        if ( $this->lat0 == 0 ) {
             $this->lat0 = 90; //$this->lat0 ca
+        }
 
         /* Place parameters in static storage for common use
           ------------------------------------------------- */
@@ -114,10 +139,11 @@ class Poly
         //if (!$this->ml0) {$this->ml0=0;}
     }
 
-    /* Polyconic forward equations--mapping lat,long to x,y
-      --------------------------------------------------- */
-    public function forward( $p ) {
-        
+    /**
+     * Polyconic forward equations--mapping lat,long to x,y
+     */
+    public function forward($p)
+    {
         /*
         $sinphi;
         $cosphi; // sin and cos value
@@ -134,31 +160,32 @@ class Poly
         $lat = $p->y;
 
         $con = Common::adjust_lon( $lon - $this->long0 );
-        
-        if( abs( $lat ) <= .0000001 ) {
+
+        if ( abs( $lat ) <= .0000001 ) {
             $x = $this->x0 + $this->a * $con;
             $y = $this->y0 - $this->a * $this->ml0;
         } else {
             $sinphi = sin( $lat );
             $cosphi = cos( $lat );
-            
+
             $ml = Common::mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $lat );
             $ms = Common::msfnz( $this->e, $sinphi, $cosphi );
-            
+
             $x = $this->x0 + $this->a * $ms * sin( $sinphi ) / $sinphi;
             $y = $this->y0 + $this->a * ($ml - $this->ml0 + $ms * (1.0 - cos( $sinphi )) / $sinphi);
         }
 
         $p->x = $x;
         $p->y = $y;
-        
+
         return $p;
     }
 
-    /* Inverse equations
-      ----------------- */
-    public function inverse( $p ) {
-        
+    /**
+     * Inverse equations
+     */
+    public function inverse($p)
+    {
         /*
         $sin_phi;
         $cos_phi; // sin and cos values
@@ -171,26 +198,29 @@ class Poly
         $lon;
         $lat;
         */
-        
+
         $p->x -= $this->x0;
         $p->y -= $this->y0;
         $al = $this->ml0 + $p->y / $this->a;
         $iflg = 0;
 
-        if( abs( $al ) <= .0000001 ) {
+        if ( abs( $al ) <= .0000001 ) {
             $lon = $p->x / $this->a + $this->long0;
             $lat = 0.0;
         } else {
             $b = $al * $al + ($p->x / $this->a) * ($p->x / $this->a);
-            $iflg = phi4z( $this->es, $this->e0, $this->e1, $this->e2, $this->e3, $this->al, $b, $c, $lat );
-            if( $iflg != 1 )
+            $iflg = $this->phi4z( $this->es, $this->e0, $this->e1, $this->e2, $this->e3, $this->al, $b, $c, $lat );
+
+            if( $iflg != 1 ) {
                 return($iflg);
+            }
+
             $lon = Common::adjust_lon( (Common::asinz( $p->x * $c / $this->a ) / sin( $lat )) + $this->long0 );
         }
 
         $p->x = $lon;
         $p->y = $lat;
+
         return $p;
     }
-
 }

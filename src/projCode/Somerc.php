@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -25,13 +26,29 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Somerc
 {
+    public $K;
+    public $R;
+    public $a;
+    public $alpha;
+    public $b0;
+    public $e;
+    public $k0;
+    public $lambda0;
+    public $lat0;
+    public $long0;
+    public $rf;
+    public $x0;
+    public $y0;
+
     /**
      * 
      */
-    public function init() {
+    public function init()
+    {
         $phy0 = $this->lat0;
         $this->lambda0 = $this->long0;
         $sinPhy0 = sin( $phy0 );
@@ -44,24 +61,25 @@ class Somerc
         $this->alpha = sqrt( 1 + $e2 / (1 - $e2) * pow( cos( $phy0 ), 4.0 ) );
         $this->b0 = asin( $sinPhy0 / $this->alpha );
         $this->K = log( tan( Common::PI / 4.0 + $this->b0 / 2.0 ) )
-                  - $this->alpha
-                  * log( tan( Common::PI / 4.0 + $phy0 / 2.0 ) )
-                  + $this->alpha
-                  * $e / 2
-                  * log( (1 + $e * $sinPhy0)
-                            / (1 - $e * $sinPhy0) );
+            - $this->alpha
+            * log( tan( Common::PI / 4.0 + $phy0 / 2.0 ) )
+            + $this->alpha
+            * $e / 2
+            * log( (1 + $e * $sinPhy0)
+                    / (1 - $e * $sinPhy0) );
     }
 
     /**
      *
-     * @param type $p
-     * @return type 
+     * @param Point $p
+     * @return Point 
      */
-    public function forward( $p ) {
+    public function forward($p)
+    {
         $Sa1 = log( tan( Common::PI / 4.0 - $p->y / 2.0 ) );
         $Sa2 = $this->e / 2.0
-                  * log( (1 + $this->e * sin( $p->y ))
-                            / (1 - $this->e * sin( $p->y )) );
+            * log( (1 + $this->e * sin( $p->y ))
+            / (1 - $this->e * sin( $p->y )) );
         $S = -$this->alpha * ($Sa1 + $Sa2) + $this->K;
 
         // spheric latitude
@@ -72,28 +90,27 @@ class Somerc
 
         // psoeudo equatorial rotation
         $rotI = atan( sin( $I )
-                  / (sin( $this->b0 ) * tan( $b ) +
-                  cos( $this->b0 ) * cos( $I )) );
+            / (sin( $this->b0 ) * tan( $b ) +
+            cos( $this->b0 ) * cos( $I )) );
 
         $rotB = asin( cos( $this->b0 ) * sin( $b ) -
-                  sin( $this->b0 ) * cos( $b ) * cos( $I ) );
+            sin( $this->b0 ) * cos( $b ) * cos( $I ) );
 
         $p->y = $this->R / 2.0
-                  * log( (1 + sin( $rotB )) / (1 - sin( $rotB )) )
-                  + $this->y0;
-        
+            * log( (1 + sin( $rotB )) / (1 - sin( $rotB )) )
+            + $this->y0;
+
         $p->x = $this->R * $rotI + $this->x0;
-        
+
         return $p;
     }
 
     /**
-     *
-     * @param type $p
-     * @return type 
+     * @param Point $p
+     * @return Point 
      */
-    public function inverse( $p ) {
-        
+    public function inverse($p)
+    {
         $Y = $p->x - $this->x0;
         $X = $p->y - $this->y0;
 
@@ -101,10 +118,10 @@ class Somerc
         $rotB = 2 * (atan( exp( $X / $this->R ) ) - Common::PI / 4.0);
 
         $b = asin( cos( $this->b0 ) * sin( $rotB )
-                  + sin( $this->b0 ) * cos( $rotB ) * cos( $rotI ) );
+            + sin( $this->b0 ) * cos( $rotB ) * cos( $rotI ) );
         $I = atan( sin( $rotI )
-                  / (cos( $this->b0 ) * cos( $rotI ) - sin( $this->b0 )
-                  * tan( $rotB )) );
+            / (cos( $this->b0 ) * cos( $rotI ) - sin( $this->b0 )
+            * tan( $rotB )) );
 
         $lambda = $this->lambda0 + $I / $this->alpha;
 
@@ -112,27 +129,29 @@ class Somerc
         $phy = $b;
         $prevPhy = -1000.0;
         $iteration = 0;
-        while( abs( $phy - $prevPhy ) > 0.0000001 ) {
-            if( ++$iteration > 20 ) {
+
+        while ( abs( $phy - $prevPhy ) > 0.0000001 ) {
+            if ( ++$iteration > 20 ) {
                 Proj4php::reportError( "omercFwdInfinity" );
                 return;
             }
+
             //S = log(tan(PI / 4.0 + phy / 2.0));
             $S = 1.0
-                      / $this->alpha
-                      * (log( tan( Common::PI / 4.0 + $b / 2.0 ) ) - $this->K)
-                      + $this->e
-                      * log( tan( Common::PI / 4.0
-                                          + asin( $this->e * sin( $phy ) )
-                                          / 2.0 ) );
+                / $this->alpha
+                * (log( tan( Common::PI / 4.0 + $b / 2.0 ) ) - $this->K)
+                + $this->e
+                * log( tan( Common::PI / 4.0
+                + asin( $this->e * sin( $phy ) )
+                / 2.0 ) );
+
             $prevPhy = $phy;
             $phy = 2.0 * atan( exp( $S ) ) - Common::PI / 2.0;
         }
 
         $p->x = $lambda;
         $p->y = $phy;
-        
+
         return $p;
     }
-
 }

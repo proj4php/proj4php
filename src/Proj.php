@@ -382,7 +382,9 @@ class Proj
         Proj4php::extend($this->projection, $this);
 
         // initiate depending class (tidy up this condition)
-        if (false !== ($dependsOn = isset($this->projection->dependsOn) && !empty($this->projection->dependsOn) ? $this->projection->dependsOn : false)) {
+        if (
+            false !== ($dependsOn = isset($this->projection->dependsOn) && !empty($this->projection->dependsOn) ? $this->projection->dependsOn : false)
+        ) {
             Proj4php::extend(Proj4php::$proj[$dependsOn], $this->projection);
             Proj4php::$proj[$dependsOn]->init();
             Proj4php::extend($this->projection, Proj4php::$proj[$dependsOn]);

@@ -5,7 +5,7 @@ use proj4php\Point;
 use proj4php\Proj4php;
 use proj4php\Proj;
 
-error_reporting(E_STRICT);
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 class SpatialreferenceTest extends PHPUnit_Framework_TestCase

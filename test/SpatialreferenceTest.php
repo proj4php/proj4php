@@ -22,16 +22,27 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
      */
 
     protected $suppressOnAxisMismatch = true; 
-    protected $suppressOnUtmTmercMismatch = true; // alot of proj4 codes have +proj=utm while wkt is tmerc. are they comparable?
-    protected $suppressOnDatumParamsMismatch = true; //
-    protected $suppressOnDatumNameOnlyNullInProj4 = true; //if null in proj4 then ignore if set in wkt (maybe should check for zeros) 
-    protected $suppressIAU2000CentralMeridianPiMismatch = true; //there are a bunch of IAU2000 codes ending in 16 or 17 that have wkt value of pi instead of 0
 
-    protected $suppressToMeterMismatch = true; // I think this is ok to ignore.
+    // alot of proj4 codes have +proj=utm while wkt is tmerc. are they comparable?
+    protected $suppressOnUtmTmercMismatch = true;
 
-    protected $onlyTestTheseProjections = null; //'SR-ORG:8177';//array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test all, one or some projections.
+    protected $suppressOnDatumParamsMismatch = true;
 
-    protected $onlyTestTheseProjectionAlgorithms = null;//array('stere');
+    //if null in proj4 then ignore if set in wkt (maybe should check for zeros)
+    protected $suppressOnDatumNameOnlyNullInProj4 = true;
+
+    //there are a bunch of IAU2000 codes ending in 16 or 17 that have wkt value of pi instead of 0
+    protected $suppressIAU2000CentralMeridianPiMismatch = true;
+
+    // I think this is ok to ignore.
+    protected $suppressToMeterMismatch = true;
+
+    // uncomment or comment this to test all, one or some projections.
+    protected $onlyTestTheseProjections = null;
+    //'SR-ORG:8177';//array('EPSG:32040', 'EPSG:31370');
+
+    protected $onlyTestTheseProjectionAlgorithms = null;
+    //array('stere');
 
     /**
      * None of these projections are defined in proj4php
@@ -317,10 +328,14 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
 
             if (key_exists('axis', $actual) || key_exists('axis', $expected)) {
                 if ($actual['axis'] !== $expected['axis']) {
-                    if($this->suppressOnAxisMismatch){
-
+                    if ($this->suppressOnAxisMismatch) {
+                        // noop
                     } else {
-                        $this->assertEquals(array_intersect_key($expected, array('axis' => '')), array_intersect_key($actual, array('axis' => '')), $codesString);
+                        $this->assertEquals(
+                            array_intersect_key($expected, array('axis' => '')),
+                            array_intersect_key($actual, array('axis' => '')),
+                            $codesString
+                        );
                     }
                 }
             }
@@ -362,42 +377,70 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
             }
 
             // if either defines non zero alpha
-            if ((key_exists('from_greenwich', $actual) && $actual['from_greenwich'] !== 0.0) || (key_exists('from_greenwich', $expected) && $expected['from_greenwich'] !== 0.0)) {
-                $this->assertEquals(array_intersect_key($expected, array('from_greenwich' => '')), array_intersect_key($actual, array('from_greenwich' => '')), $codesString);
+            if (
+                (key_exists('from_greenwich', $actual) && $actual['from_greenwich'] !== 0.0)
+                || (key_exists('from_greenwich', $expected) && $expected['from_greenwich'] !== 0.0)
+            ) {
+                $this->assertEquals(
+                    array_intersect_key($expected, array('from_greenwich' => '')),
+                    array_intersect_key($actual, array('from_greenwich' => '')),
+                    $codesString
+                );
             }
 
-            $this->assertEquals(get_class($projection->projection), get_class($projWKTInline->projection), $codesString);
+            $this->assertEquals(
+                get_class($projection->projection),
+                get_class($projWKTInline->projection),
+                $codesString
+            );
         }
     }
 
     public function compareDatums($expected, $actual)
     {
         if (key_exists('datum', $expected)) {
-            if (! ($expected['datumCode']=='WGS84'&&is_null($actual['datumCode']))){
-              // because datum wgs84 defines tow84=0,0,0
+            if (! ($expected['datumCode']=='WGS84' && is_null($actual['datumCode']))) {
+                // because datum wgs84 defines tow84=0,0,0
 
-              if ($this->suppressOnDatumNameOnlyNullInProj4 && is_null($expected['datumCode']) && !is_null($actual['datumCode'])) {
+                if (
+                    $this->suppressOnDatumNameOnlyNullInProj4
+                    && is_null($expected['datumCode'])
+                    && !is_null($actual['datumCode'])
+                ) {
                     // datumCode in wkt is something, proj4 is null.
                 } else {
-                  $this->assertEquals($expected['datumCode'], $actual['datumCode'],$this->projectionString());
+                    $this->assertEquals($expected['datumCode'], $actual['datumCode'],$this->projectionString());
                 }
             } else {
                 // wgs is empty datum
             }
 
-            if(!$this->suppressOnDatumParamsMismatch){
+            if (! $this->suppressOnDatumParamsMismatch) {
                 $this->assertEquals($expected['datum_params'], $actual['datum_params'],$this->projectionString().json_encode($expected['datum_params']));
             }
 
             $this->assertEquals(
-                array_diff_key(get_object_vars($expected['datum']), $this->datumPrecision, array('datum_code'=>'','datum_params'=>'', 'datum_type'=>'')),
-                array_diff_key(get_object_vars($actual['datum']), $this->datumPrecision, array('datum_code'=>'','datum_params'=>'', 'datum_type'=>''))
+                array_diff_key(
+                    get_object_vars($expected['datum']),
+                    $this->datumPrecision,
+                    array('datum_code' => '', 'datum_params' => '', 'datum_type' => '')
+                ),
+                array_diff_key(
+                    get_object_vars($actual['datum']),
+                    $this->datumPrecision,
+                    array('datum_code' => '', 'datum_params' => '', 'datum_type' => '')
+                )
             );
 
             foreach ($this->datumPrecision as $key => $precision) {
                 if (key_exists($key, $expected['datum'])) {
                     //$this->assertEquals($expected['datum']->$key, $actual['datum']->$key, 'AssertEquals Failed: datum->'.$key.' ('.$precision.'): '.$codesString,$precision);
-                    $this->assertWithin($expected['datum']->$key, $actual['datum']->$key, 'AssertEquals Failed: datum->' . $key . ' (' . $precision . '): ' . $this->projectionString(), $precision);
+                    $this->assertWithin(
+                        $expected['datum']->$key,
+                        $actual['datum']->$key,
+                        'AssertEquals Failed: datum->' . $key . ' (' . $precision . '): ' . $this->projectionString(),
+                        $precision
+                    );
                 }
             }
         }
@@ -408,17 +451,26 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
         //if either defines non zero alpha or gama
         $alphagamma = array();
 
-        if ((key_exists('alpha', $actual) && $actual['alpha'] !== 0.0) || (key_exists('alpha', $expected) && $expected['alpha'] !== 0.0)) {
+        if (
+            (key_exists('alpha', $actual) && $actual['alpha'] !== 0.0)
+            || (key_exists('alpha', $expected) && $expected['alpha'] !== 0.0)
+        ) {
             $alphagamma['alpha'] = '';
         }
 
-        if ((key_exists('gamma', $actual) && $actual['gamma'] !== 0.0) || (key_exists('gamma', $expected) && $expected['gamma'] !== 0.0)) {
+        if (
+            (key_exists('gamma', $actual) && $actual['gamma'] !== 0.0)
+            || (key_exists('gamma', $expected) && $expected['gamma'] !== 0.0)
+        ) {
             $alphagamma['gamma'] = '';
         }
 
-        if (!empty($alphagamma)) {
-            $this->assertEquals(array_intersect_key($expected, $alphagamma), array_intersect_key($actual, $alphagamma),
-                'AssertEquals Failed: alphagamma: ' . $this->projectionString());
+        if (! empty($alphagamma)) {
+            $this->assertEquals(
+                array_intersect_key($expected, $alphagamma),
+                array_intersect_key($actual, $alphagamma),
+                'AssertEquals Failed: alphagamma: ' . $this->projectionString()
+            );
         }
     }
 
@@ -431,12 +483,22 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
                         $this->fail('Expected key ('.$key.':'.$expected[$key].') but was unset');
                      }
                 } else {
-                    if ($key=='long0' && $this->suppressIAU2000CentralMeridianPiMismatch &&
-                        strpos($this->code, 'IAU2000:') === 0 && $expected[$key] == 0.0 && $actual[$key]==pi()) {
+                    if (
+                        $key == 'long0'
+                        && $this->suppressIAU2000CentralMeridianPiMismatch
+                        && strpos($this->code, 'IAU2000:') === 0
+                        && $expected[$key] == 0.0
+                        && $actual[$key] == pi()
+                    ) {
                         // noop
                     } else {
                         //$this->assertEquals($expected[$key], $actual[$key], 'AssertEquals Failed: variables->'.$key.' ('.$precision.'): '.$codesString, $precision);
-                        $this->assertWithin($expected[$key], $actual[$key], 'AssertEquals Failed: variables->' . $key . ' (' . $precision . '): ' . $this->projectionString(), $precision);
+                        $this->assertWithin(
+                            $expected[$key],
+                            $actual[$key],
+                            'AssertEquals Failed: variables->' . $key . ' (' . $precision . '): ' . $this->projectionString(),
+                            $precision
+                        );
                     }
                 }
             }
@@ -445,7 +507,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
 
     public function assertWithin($a, $b, $message, $precision)
     {
-        $p = (max(1.0, abs($a)) * $precision);
+        $p = max(1.0, abs($a)) * $precision;
 
         if ($a === null) {
             return;
@@ -469,34 +531,31 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
         return ($expected['projName'] == 'utm' && $actual['projName'] == 'tmerc');
     }
 
-    public function projectionString(){
-
+    public function projectionString()
+    {
         return json_encode(array(
-
             $this->code,
             $this->defs->proj4,
-            $this->defs->{$this->wkt})
-        , JSON_PRETTY_PRINT);
+            $this->defs->{$this->wkt}
+        ), JSON_PRETTY_PRINT);
     }
 
     public function isIgnoredProjection()
     {
-        foreach ($this->ignoreProjectionAlgoirithms as $alg){
-            if (strpos($this->defs->proj4, '+proj='.$alg.' ')!==false){
+        foreach ($this->ignoreProjectionAlgoirithms as $alg) {
+            if (strpos($this->defs->proj4, '+proj='.$alg.' ') !== false) {
                 return true;
             }
-       }
+        }
 
-       if (!empty($this->onlyTestTheseProjectionAlgorithms)){
-
-            foreach ($this->onlyTestTheseProjectionAlgorithms as $alg){
-                if (strpos($this->defs->proj4, '+proj='.$alg.' ')!==false){
+        if (! empty($this->onlyTestTheseProjectionAlgorithms)){
+            foreach ($this->onlyTestTheseProjectionAlgorithms as $alg) {
+                if (strpos($this->defs->proj4, '+proj='.$alg.' ') !== false) {
                     return false;
                 }
             }
 
             return true;
-
        }
 
        return false;

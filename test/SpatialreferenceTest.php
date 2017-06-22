@@ -1,4 +1,5 @@
 <?php
+
 include __DIR__ . "/../vendor/autoload.php";
 
 use proj4php\Point;
@@ -98,26 +99,28 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     protected $dontUseTheseKeysForRegularComparison = array(
         'name'           => '',
         //'projName'=>'',
-        'units'          => '',
-        'srsCode'        => '',
-        'srsCodeInput'   => '',
-        'projection'     => '',
-        'srsAuth'        => '',
-        'srsProjNumber'  => '',
-        'defData'        => '',
-        'geocsCode'      => '',
-        'datumName'      => '',
-        'datumCode'      => '',
-        'from_greenwich' => '',
+        'units'             => '',
+        'srsCode'           => '',
+        'srsCodeInput'      => '',
+        'projection'        => '',
+        'srsAuth'           => '',
+        'srsProjNumber'     => '',
+        'defData'           => '',
+        'geocsCode'         => '',
+        'datumName'         => '',
+        'datumCode'         => '',
+        'from_greenwich'    => '',
         //'zone'=>'',
-        'ellps'          => '',
+        'ellps'             => '',
         //'utmSouth'=>'',
-        'datum'          => '',
-        'datum_params'   => '',
-        'alpha'          => '',
-        'axis'           => '',
-        'to_meter'=>'',
-        'R_A'=>'',
+        'datum'             => '',
+        'datum_params'      => '',
+        'alpha'             => '',
+        'axis'              => '',
+        'to_meter'          =>'',
+        'R_A'               =>'',
+        'lat_ts'            =>'',
+        'to_rads'           =>'',
     );
 
     /**
@@ -243,14 +246,14 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
         $proj4 = new Proj4php();
 
         $codes = get_object_vars(json_decode(file_get_contents(__DIR__ . '/codes.json')));
+
         foreach ($codes as $code => $defs) {
             $this->defs = $defs;
             $this->code = $code;
 
-            if (isset($this->onlyTestTheseProjections)&&(!empty($this->onlyTestTheseProjections))){
-
-                if (is_array($this->onlyTestTheseProjections)){
-                    if(!in_array($code, $this->onlyTestTheseProjections)){
+            if (! empty($this->onlyTestTheseProjections)) {
+                if (is_array($this->onlyTestTheseProjections)) {
+                    if (! in_array($code, $this->onlyTestTheseProjections)) {
                         continue;
                     }
                 } elseif ($code !== $this->onlyTestTheseProjections) {
@@ -262,91 +265,108 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
                 continue;
             }
 
-            if (key_exists('proj4', $defs) && (!empty($defs->proj4)) && key_exists($this->wkt, $defs) && (!empty($defs->{$this->wkt}))) {
-
-                $wktStr=$defs->{$this->wkt};
-
-                if ($this->isInvalidWKT($wktStr)) {
-                    continue;
-                }
-
-                if ($this->isIgnoredProjection()){
-                    continue;
-                }
-
-                $proj4->addDef($code, $defs->proj4);
-
-                $codesString = json_encode(array(
-                    $code,
-                    $defs->proj4,
-                    $wktStr,
-                    ), JSON_PRETTY_PRINT);
-
-                try {
-                    $projection = new Proj($code, $proj4);
-                    $projWKTInline = new Proj($wktStr, $proj4);
-                } catch(Exception $e) {
-                    throw new Exception($e->getMessage().$codesString);
-                    //throw $e;
-                }
-
-                $this->assertNotNull($projection->projection, $codesString);
-                $this->assertNotNull($projWKTInline->projection, $codesString);
-
-                $expected = get_object_vars($projection->projection);
-                $actual   = get_object_vars($projWKTInline->projection);
-
-                if ($this->isUtmTmerc($expected, $actual)){
-                    if ($this->suppressOnUtmTmercMismatch){
-                        continue;
-                    } else {
-                        $this->fail('UTM-TMERC Mismatch: ' . $codesString);
-                    }
-                }
-
-                        //$this->assertEquals($expected, $actual, $codesString);
-
-                if (key_exists('axis', $actual) || key_exists('axis', $expected)) {
-                    if ($actual['axis'] !== $expected['axis']) {
-                        if($this->suppressOnAxisMismatch){
-
-                        } else {
-                            $this->assertEquals(array_intersect_key($expected, array('axis' => '')), array_intersect_key($actual, array('axis' => '')), $codesString);
-                        }
-                    }
-                }
-
-                if ((!$this->suppressToMeterMismatch)&&((key_exists('to_meters', $actual) && $actual['to_meters'] !== 1.0) || (key_exists('to_meters', $expected) && $expected['to_meters'] !== 1.0))) {
-                    $this->assertEquals(array_intersect_key($expected, array('to_meters' => '')), array_intersect_key($actual, array('to_meters' => '')), $codesString);
-                }
-
-                if (! in_array($code, $this->skipRegularComparisonsForCode)) {
-                    $ignore = array_merge($this->dontUseTheseKeysForRegularComparison, $this->internalsPrecision);
-
-                    $a = array_diff_key($expected, $ignore);
-                    $b = array_intersect_key(array_diff_key($actual, $ignore), $a);
-
-                    $this->assertEquals($a, $b, print_r(array($a, $b, $codesString), true));
-                }
-
-                $this->compareDatums($expected, $actual);
-                $this->compareAlphaGama($expected, $actual);
-                $this->comparePreciseInternals($expected, $actual);
-
-                $unitA = strtolower($actual['units']{0});
-                $unitB = strtolower($expected['units']{0});
-
-                if (((!empty($unitA)) && $unitA != 'd') || ((!empty($unitB)) && $unitB != 'd')) {
-                    $this->assertEquals($unitA, $unitA, '(units mismatch) ' . $codesString);
-                }
-
-                //if either defines non zero alpha
-                if ((key_exists('from_greenwich', $actual) && $actual['from_greenwich'] !== 0.0) || (key_exists('from_greenwich', $expected) && $expected['from_greenwich'] !== 0.0)) {
-                    $this->assertEquals(array_intersect_key($expected, array('from_greenwich' => '')), array_intersect_key($actual, array('from_greenwich' => '')), $codesString);
-                }
-
-                $this->assertEquals(get_class($projection->projection), get_class($projWKTInline->projection), $codesString);
+            if (! key_exists('proj4', $defs) || empty($defs->proj4)) {
+                continue;
             }
+
+            if (! key_exists($this->wkt, $defs) || empty($defs->{$this->wkt})) {
+                continue;
+            }
+
+            $wktStr = $defs->{$this->wkt};
+
+            if ($this->isInvalidWKT($wktStr)) {
+                continue;
+            }
+
+            if ($this->isIgnoredProjection()){
+                continue;
+            }
+
+            $proj4->addDef($code, $defs->proj4);
+
+            $codesString = json_encode(array(
+                $code,
+                $defs->proj4,
+                $wktStr,
+            ), JSON_PRETTY_PRINT);
+
+            try {
+                $projection = new Proj($code, $proj4);
+                $projWKTInline = new Proj($wktStr, $proj4);
+            } catch(Exception $e) {
+                throw new \Exception($e->getMessage() . $codesString);
+                //throw $e;
+            }
+
+            $this->assertNotNull($projection->projection, $codesString);
+            $this->assertNotNull($projWKTInline->projection, $codesString);
+
+            $expected = get_object_vars($projection->projection);
+            $actual   = get_object_vars($projWKTInline->projection);
+
+            if ($this->isUtmTmerc($expected, $actual)){
+                if ($this->suppressOnUtmTmercMismatch){
+                    continue;
+                } else {
+                    $this->fail('UTM-TMERC Mismatch: ' . $codesString);
+                }
+            }
+
+            //$this->assertEquals($expected, $actual, $codesString);
+
+            if (key_exists('axis', $actual) || key_exists('axis', $expected)) {
+                if ($actual['axis'] !== $expected['axis']) {
+                    if($this->suppressOnAxisMismatch){
+
+                    } else {
+                        $this->assertEquals(array_intersect_key($expected, array('axis' => '')), array_intersect_key($actual, array('axis' => '')), $codesString);
+                    }
+                }
+            }
+
+            if (! $this->suppressToMeterMismatch) {
+                if (
+                    (key_exists('to_meters', $actual) && $actual['to_meters'] !== 1.0)
+                    || (key_exists('to_meters', $expected) && $expected['to_meters'] !== 1.0)
+                ) {
+                    $this->assertEquals(
+                        array_intersect_key($expected, array('to_meters' => '')),
+                        array_intersect_key($actual, array('to_meters' => '')),
+                        $codesString
+                    );
+                }
+            }
+
+            if (! in_array($code, $this->skipRegularComparisonsForCode)) {
+                $ignore = array_merge(
+                    $this->dontUseTheseKeysForRegularComparison,
+                    $this->internalsPrecision
+                );
+
+                $a = array_diff_key($expected, $ignore);
+                $b = array_intersect_key(array_diff_key($actual, $ignore), $a);
+
+                $this->assertEquals($a, $b, print_r(array($a, $b, $codesString), true));
+            }
+
+            $this->compareDatums($expected, $actual);
+            $this->compareAlphaGama($expected, $actual);
+            $this->comparePreciseInternals($expected, $actual);
+
+            $unitA = strtolower($actual['units']{0});
+            $unitB = strtolower($expected['units']{0});
+
+            if ((!empty($unitA) && $unitA != 'd') || (!empty($unitB) && $unitB != 'd')) {
+                $this->assertEquals($unitA, $unitA, '(units mismatch) ' . $codesString);
+            }
+
+            // if either defines non zero alpha
+            if ((key_exists('from_greenwich', $actual) && $actual['from_greenwich'] !== 0.0) || (key_exists('from_greenwich', $expected) && $expected['from_greenwich'] !== 0.0)) {
+                $this->assertEquals(array_intersect_key($expected, array('from_greenwich' => '')), array_intersect_key($actual, array('from_greenwich' => '')), $codesString);
+            }
+
+            $this->assertEquals(get_class($projection->projection), get_class($projWKTInline->projection), $codesString);
         }
     }
 
@@ -356,9 +376,9 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
             if (! ($expected['datumCode']=='WGS84'&&is_null($actual['datumCode']))){
               // because datum wgs84 defines tow84=0,0,0
 
-              if ($this->suppressOnDatumNameOnlyNullInProj4&&is_null($expected['datumCode'])&&(!is_null($actual['datumCode']))){
+              if ($this->suppressOnDatumNameOnlyNullInProj4 && is_null($expected['datumCode']) && !is_null($actual['datumCode'])) {
                     // datumCode in wkt is something, proj4 is null.
-                }else{
+                } else {
                   $this->assertEquals($expected['datumCode'], $actual['datumCode'],$this->projectionString());
                 }
             } else {
@@ -426,8 +446,12 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     public function assertWithin($a, $b, $message, $precision)
     {
         $p = (max(1.0, abs($a)) * $precision);
-        $this->assertEquals($a, $b, 'Asserting Within (' . $p . ') :: ' . $message, $p);
 
+        if ($a === null) {
+            return;
+        }
+
+        $this->assertEquals($a, $b, 'Asserting Within (' . $p . ') :: ' . $message, $p);
     }
 
     public function isInvalidWKT($wkt){

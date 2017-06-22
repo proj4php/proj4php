@@ -151,7 +151,7 @@ class Proj
             $params=Wkt::Parse($srsCode);
 
             // TODO: find a better way to apply wkt params to this instance
-            foreach($params as $k => $v){
+            foreach ($params as $k => $v) {
                 $this->$k = $v;
             }
 
@@ -169,8 +169,7 @@ class Proj
         }
 
         if (strpos($srsCode,'+proj') === 0) {
-
-            $this->defData=$srsCode;
+            $this->defData = $srsCode;
             $this->parseDefs();
             $this->loadProjCode($this->projName);
             $this->initTransforms();
@@ -179,6 +178,7 @@ class Proj
         } elseif (strpos($srsCode, 'urn:') === 0) {
             // DGR 2008-08-03 : support urn and url
             //urn:ORIGINATOR:def:crs:CODESPACE:VERSION:ID
+
             $urn = explode(':', $srsCode);
 
             if (($urn[1] == 'ogc' || $urn[1] == 'x-ogc')

@@ -185,7 +185,7 @@ class Proj
                 && ($urn[2] == 'def')
                 && ($urn[3] == 'crs')
             ) {
-                $srsCode = $urn[4] . ':' . $urn[strlen($urn) - 1];
+                $srsCode = $urn[4] . ':' . $urn[count($urn) - 1];
             }
         } elseif (strpos($srsCode, 'http://') === 0) {
             //url#ID
@@ -268,6 +268,7 @@ class Proj
                 strtoupper($this->srsAuth) . ':' . $this->srsProjNumber,
                 $this->proj4php->loadScript($url)
             );
+            $this->defsLoaded();
         } catch (Exception $e) {
             $this->defsFailed();
         }

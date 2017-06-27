@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -14,6 +15,22 @@ use proj4php\Common;
 
 class Gstmerc
 {
+    public $a;
+    public $b;
+    public $cp;
+    public $e;
+    public $k0;
+    public $lat0;
+    public $lc;
+    public $long0;
+    public $n2;
+    public $rs;
+    public $title;
+    public $x0;
+    public $xs;
+    public $y0;
+    public $ys;
+
     public function init()
     {
         // array of:  a, b, lon0, lat0, k0, x0, y0
@@ -29,13 +46,14 @@ class Gstmerc
         $this->xs = $this->x0;
         $this->ys = $this->y0 - $this->n2 * $pc;
 
-        if ( ! $this->title) {
+        if (! $this->title) {
             $this->title = "Gauss Schreiber transverse mercator";
         }
     }
 
-    // forward equations--mapping lat,long to x,y
-    // -----------------------------------------------------------------
+    /**
+     * forward equations--mapping lat,long to x,y
+     */
     public function forward($p)
     {
         $lon = $p->x;
@@ -45,13 +63,16 @@ class Gstmerc
         $Ls = $this->cp + ($this->rs * Common::latiso($this->e, $lat, sin($lat)));
         $lat1 = asin(sin($L) / cosh($Ls));
         $Ls1 = Common::latiso( 0.0, $lat1, sin($lat1));
+
         $p->x = $this->xs + ($this->n2 * $Ls1);
         $p->y = $this->ys + ($this->n2 * atan(sinh($Ls) / cos($L)));
+
         return $p;
     }
 
-    // inverse equations--mapping x,y to lat/long
-    // -----------------------------------------------------------------
+    /**
+     * inverse equations--mapping x,y to lat/long
+     */
     public function inverse($p)
     {
         $x = $p->x;

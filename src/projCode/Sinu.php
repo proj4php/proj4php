@@ -41,6 +41,17 @@ use proj4php\Point;
 
 class Sinu
 {
+    public $C_x;
+    public $C_y;
+    public $a;
+    public $en;
+    public $es;
+    public $long0;
+    public $m;
+    public $n;
+    public $x0;
+    public $y0;
+
     /**
      * Initialize the Sinusoidal projection
      */

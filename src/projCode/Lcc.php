@@ -199,8 +199,8 @@ class Lcc
     /**
      * Lambert Conformal Conic inverse equations--mapping x,y to lat/long
      * 
-     * @param type $p
-     * @return null 
+     * @param Point $p
+     * @return Point 
      */
     public function inverse($p)
     {

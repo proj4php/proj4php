@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -42,6 +43,11 @@ use proj4php\Common;
 
 class Mill
 {
+    public $long0;
+    public $x0;
+    public $y0;
+    public $a;
+
     /* Initialize the Miller Cylindrical projection
       ------------------------------------------- */
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -39,77 +40,95 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Vandg
 {
-    /* Initialize the Van Der Grinten projection
-      ---------------------------------------- */
+    public $R;
+    public $long0;
+    public $x0;
+    public $y0;
+
+    /**
+     * Initialize the Van Der Grinten projection
+     */
     public function init() {
         $this->R = 6370997.0; //Radius of earth
     }
 
     /**
-     *
-     * @param type $p
-     * @return type 
+     * Forward equations
+     * @param Point $p
+     * @return Point 
      */
-    public function forward( $p ) {
-
+    public function forward($p)
+    {
         $lon = $p->x;
         $lat = $p->y;
 
-        /* Forward equations
-          ----------------- */
-        $dlon = Common::adjust_lon( $lon - $this->long0 );
+        $dlon = Common::adjust_lon($lon - $this->long0);
+
         $x;
         $y;
 
-        if( abs( $lat ) <= Common::EPSLN ) {
+        if (abs($lat) <= Common::EPSLN) {
             $x = $this->x0 + $this->R * $dlon;
             $y = $this->y0;
         }
-        $theta = Common::asinz( 2.0 * abs( $lat / Common::PI ) );
-        if( (abs( $dlon ) <= Common::EPSLN) || (abs( abs( $lat ) - Common::HALF_PI ) <= Common::EPSLN) ) {
+
+        $theta = Common::asinz(2.0 * abs( $lat / Common::PI));
+
+        if ((abs($dlon) <= Common::EPSLN) || (abs(abs($lat) - Common::HALF_PI) <= Common::EPSLN)) {
             $x = $this->x0;
-            if( $lat >= 0 ) {
-                $y = $this->y0 + Common::PI * $this->R * tan( .5 * $theta );
+
+            if ($lat >= 0) {
+                $y = $this->y0 + Common::PI * $this->R * tan(0.5 * $theta);
             } else {
-                $y = $this->y0 + Common::PI * $this->R * - tan( .5 * $theta );
+                $y = $this->y0 + Common::PI * $this->R * - tan(0.5 * $theta);
             }
             //  return(OK);
         }
-        $al = .5 * abs( (Common::PI / $dlon) - ($dlon / Common::PI) );
+
+        $al = 0.5 * abs((Common::PI / $dlon) - ($dlon / Common::PI));
         $asq = $al * $al;
-        $sinth = sin( $theta );
-        $costh = cos( $theta );
+
+        $sinth = sin($theta);
+        $costh = cos($theta);
 
         $g = $costh / ($sinth + $costh - 1.0);
         $gsq = $g * $g;
         $m = $g * (2.0 / $sinth - 1.0);
         $msq = $m * $m;
-        $con = Common::PI * $this->R * ($al * ($g - $msq) + sqrt( $asq * ($g - $sq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq) )) / ($msq + $asq);
-        if( $dlon < 0 ) {
+
+        $con = Common::PI
+            * $this->R
+            * ($al * ($g - $msq) + sqrt($asq * ($g - $sq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq) )) / ($msq + $asq);
+
+        if ($dlon < 0) {
             $con = -$con;
         }
+
         $x = $this->x0 + $con;
         $con = abs( $con / (Common::PI * $this->R) );
-        if( $lat >= 0 ) {
-            $y = $this->y0 + Common::PI * $this->R * sqrt( 1.0 - $con * $con - 2.0 * $al * $con );
+
+        if ($lat >= 0) {
+            $y = $this->y0 + Common::PI * $this->R * sqrt(1.0 - $con * $con - 2.0 * $al * $con);
         } else {
-            $y = $this->y0 - Common::PI * $this->R * sqrt( 1.0 - $con * $con - 2.0 * $al * $con );
+            $y = $this->y0 - Common::PI * $this->R * sqrt(1.0 - $con * $con - 2.0 * $al * $con);
         }
-        
+
         $p->x = $x;
         $p->y = $y;
-        
+
         return $p;
     }
 
-    /* Van Der Grinten inverse equations--mapping x,y to lat/long
-      --------------------------------------------------------- */
-
-    public function inverse( $p ) {
-        
+    /**
+     * inverse equations
+     * Van Der Grinten inverse equations--mapping x,y to lat/long
+     */
+    public function inverse($p)
+    {
         /*
         $dlon;
         $xx;
@@ -126,45 +145,54 @@ class Vandg
         $th1;
         $d;
         */
-        
-        /* inverse equations
-          ----------------- */
+
         $p->x -= $this->x0;
         $p->y -= $this->y0;
+
         $con = Common::PI * $this->R;
+
         $xx = $p->x / $con;
         $yy = $p->y / $con;
+
         $xys = $xx * $xx + $yy * $yy;
+
         $c1 = -abs( $yy ) * (1.0 + $xys);
         $c2 = $c1 - 2.0 * $yy * $yy + $xx * $xx;
         $c3 = -2.0 * $c1 + 1.0 + 2.0 * $yy * $yy + $xys * $xys;
+
         $d = $yy * $yy / $c3 + (2.0 * $c2 * $c2 * $c2 / $c3 / $c3 / $c3 - 9.0 * $c1 * $c2 / $c3 / $c3) / 27.0;
+
         $a1 = ($c1 - $c2 * $c2 / 3.0 / $c3) / $c3;
         $m1 = 2.0 * sqrt( -$a1 / 3.0 );
         $con = ((3.0 * $d) / $a1) / $m1;
-        if( abs( $con ) > 1.0 ) {
-            if( $con >= 0.0 ) {
+
+        if (abs($con) > 1.0) {
+            if ($con >= 0.0) {
                 $con = 1.0;
             } else {
                 $con = -1.0;
             }
         }
-        $th1 = acos( $con ) / 3.0;
-        if( $p->$y >= 0 ) {
-            $lat = (-$m1 * cos( $th1 + Common::PI / 3.0 ) - $c2 / 3.0 / $c3) * Common::PI;
+
+        $th1 = acos($con) / 3.0;
+
+        if ($p->$y >= 0) {
+            $lat = (-$m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
         } else {
-            $lat = -(-m1 * cos( $th1 + Common::PI / 3.0 ) - $c2 / 3.0 / $c3) * Common::PI;
+            $lat = -(-m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
         }
 
-        if( abs( $xx ) < Common::EPSLN ) {
+        if (abs($xx) < Common::EPSLN) {
             $lon = $this->$long0;
         }
-        $lon = Common::adjust_lon( $this->long0 + Common::PI * ($xys - 1.0 + sqrt( 1.0 + 2.0 * ($xx * $xx - $yy * $yy) + $xys * $xys )) / 2.0 / $xx );
+
+        $lon = Common::adjust_lon(
+            $this->long0 + Common::PI * ($xys - 1.0 + sqrt(1.0 + 2.0 * ($xx * $xx - $yy * $yy) + $xys * $xys)) / 2.0 / $xx
+        );
 
         $p->x = $lon;
         $p->y = $lat;
-        
+
         return $p;
     }
-
 }

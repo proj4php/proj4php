@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -11,9 +12,20 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Sterea extends Gauss
 {
+    public $R2;
+    public $a;
+    public $cosc0;
+    public $k0;
+    public $long0;
+    public $sinc0;
+    public $title;
+    public $x0;
+    public $y0;
+
     /**
      * @return void 
      */
@@ -22,7 +34,7 @@ class Sterea extends Gauss
         // Initialise dependant projection first.
         parent::init();
 
-        if ( !$this->rc) {
+        if (! $this->rc) {
             Proj4php::reportError("sterea:init:E_ERROR_0");
             return;
         }
@@ -31,14 +43,14 @@ class Sterea extends Gauss
         $this->cosc0 = cos($this->phic0);
         $this->R2 = 2.0 * $this->rc;
 
-        if ( ! $this->title) {
+        if (! $this->title) {
             $this->title = "Oblique Stereographic Alternative";
         }
     }
 
     /**
-     * @param type $p
-     * @return type 
+     * @param Point $p
+     * @return Point
      */
     public function forward($p)
     {
@@ -63,8 +75,8 @@ class Sterea extends Gauss
     }
 
     /**
-     * @param type $p
-     * @return type 
+     * @param Point $p
+     * @return Point
      */
     public function inverse($p)
     {

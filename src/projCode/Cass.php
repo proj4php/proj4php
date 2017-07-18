@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /*******************************************************************************
@@ -37,9 +38,29 @@ use proj4php\Common;
 
 class Cass
 {
+    public $a1;
+    public $a2;
+    public $a;
+    public $c;
+    public $d2;
+    public $dd;
+    public $en;
+    public $es;
+    public $lat0;
+    public $long0;
+    public $m0;
+    public $n;
+    public $phi0;
+    public $r;
+    public $sphere;
+    public $t;
+    public $tn;
+    public $x0;
+    public $y0;
+
     public function init()
     {
-        if (!$this->sphere) {
+        if (! $this->sphere) {
             $this->en = Common::pj_enfn($this->es);
             $this->m0 = Common::pj_mlfn($this->lat0, sin($this->lat0), cos($this->lat0), $this->en);
         }
@@ -51,8 +72,9 @@ class Cass
     protected $C4 = 0.33333333333333333333;
     protected $C5 = 0.06666666666666666666;
 
-    /* Cassini forward equations--mapping lat,long to x,y
-      ----------------------------------------------------------------------- */
+    /**
+     * Cassini forward equations--mapping lat,long to x,y
+     */
     public function forward($p)
     {
         // Forward equations
@@ -60,7 +82,7 @@ class Cass
         $phi = $p->y;
         $lam = Common::adjust_lon($lam - $this->long0);
 
-        if( $this->sphere) {
+        if ($this->sphere) {
             $x = asin(cos($phi) * sin($lam));
             $y = atan2(tan($phi), cos($lam)) - $this->phi0;
         } else {
@@ -80,7 +102,7 @@ class Cass
 
         $p->x = $this->a * $x + $this->x0;
         $p->y = $this->a * $y + $this->y0;
-        
+
         return $p;
     }
 

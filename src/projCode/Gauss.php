@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -11,9 +12,19 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Gauss
 {
+    public $C;
+    public $K;
+    public $e;
+    public $es;
+    public $lat0;
+    public $phic0;
+    public $ratexp;
+    public $rc;
+
     /**
      * 
      */
@@ -34,8 +45,8 @@ class Gauss
     }
 
     /**
-     * @param type $p
-     * @return type 
+     * @param Point $p
+     * @return Point
      */
     public function forward($p)
     {
@@ -49,8 +60,8 @@ class Gauss
     }
 
     /**
-     * @param type $p
-     * @return null 
+     * @param Point $p
+     * @return Point
      */
     public function inverse($p)
     {
@@ -70,7 +81,7 @@ class Gauss
         }
 
         // convergence failed
-        if ( ! $i) {
+        if (! $i) {
             Proj4php::reportError("gauss:inverse:convergence failed");
             return null;
         }

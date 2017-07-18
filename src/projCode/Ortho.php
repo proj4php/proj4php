@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -33,23 +34,35 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Ortho
 {
-    /* Initialize the Orthographic projection
-      ------------------------------------- */
-    public function init() //SR-ORG:6980
-    {
-        //double temp;			/* temporary variable		*/
+    public $a;
+    public $cos_p14;
+    public $lat0;
+    public $long0;
+    public $sin_p14;
+    public $x0;
+    public $y0;
 
-        /* Place parameters in static storage for common use
-          ------------------------------------------------- */;
+    /**
+     * Initialize the Orthographic projection
+     */
+    public function init()
+    {
+        //SR-ORG:6980
+        //double temp;
+
+        // Place parameters in static storage for common use
+
         $this->sin_p14 = sin($this->lat0);
         $this->cos_p14 = cos($this->lat0);
     }
 
-    /* Orthographic forward equations--mapping lat,long to x,y
-      --------------------------------------------------- */
+    /**
+     * Orthographic forward equations--mapping lat,long to x,y
+     */
     public function forward($p)
     {
         /*
@@ -89,9 +102,9 @@ class Ortho
     }
 
     /**
-     *
-     * @param type $p
-     * @return type 
+     * Inverse equations
+     * @param Point $p
+     * @return Point 
      */
     public function inverse($p)
     {
@@ -106,8 +119,6 @@ class Ortho
         $lat;
         */
 
-        /* Inverse equations
-          ----------------- */
         $p->x -= $this->x0;
         $p->y -= $this->y0;
         $rh = sqrt($p->x * $p->x + $p->y * $p->y);

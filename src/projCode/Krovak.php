@@ -26,28 +26,57 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Krovak
 {
+    public $a;
+    public $ad;
+    public $alfa;
+    public $czech;
+    public $e2;
+    public $e;
+    public $es;
+    public $fi0;
+    public $g;
+    public $k0;
+    public $k1;
+    public $k;
+    public $lat0;
+    public $long0;
+    public $n0;
+    public $n;
+    public $ro0;
+    public $s0;
+    public $s45;
+    public $s90;
+    public $u0;
+    public $uq;
+
     /**
      * 
      */
-    public function init() {
+    public function init()
+    {
         /* we want Bessel as fixed ellipsoid */
         $this->a = 6377397.155;
         $this->es = 0.006674372230614;
         $this->e = sqrt( $this->es );
+
         /* if latitude of projection center is not set, use 49d30'N */
-        if( !$this->lat0 ) {
+        if (! $this->lat0) {
             $this->lat0 = 0.863937979737193;
         }
-        if( !$this->long0 ) {
+
+        if (! $this->long0) {
             $this->long0 = 0.7417649320975901 - 0.308341501185665;
         }
+
         /* if scale not set default to 0.9999 */
-        if( !$this->k0 ) {
+        if (! $this->k0) {
             $this->k0 = 0.9999;
         }
+
         $this->s45 = 0.785398163397448;    /* 45° */
         $this->s90 = 2 * $this->s45;
         $this->fi0 = $this->lat0;    /* Latitude of projection centre 49° 30' */
@@ -69,21 +98,21 @@ class Krovak
         $this->ad = $this->s90 - $this->uq;
         $this->czech = true; /* Always use czech GIS coordinates -> negative ones */
     }
-    
+
     /**
      * ellipsoid
      * calculate xy from lat/lon
      * Constants, identical to inverse transform function
      *
-     * @param type $p
-     * @return type 
+     * @param Point $p
+     * @return Point 
      */
-    public function forward( $p ) {
-        
+    public function forward($p)
+    {
         $lon = $p->x;
         $lat = $p->y;
         $delta_lon = Common::adjust_lon( $lon - $this->long0 ); // Delta longitude
-        
+
         /* Transformation */
         $gfi = pow( ((1. + $this->e * sin( $lat )) / (1. - $this->e * sin( $lat )) ), ($this->alfa * $this->e / 2. ) );
         $u = 2. * (atan( $this->k * pow( tan( $lat / 2. + $this->s45 ), $this->alfa ) / $gfi ) - $this->s45);
@@ -92,39 +121,40 @@ class Krovak
         $d = asin( cos( $u ) * sin( $deltav ) / cos( $s ) );
         $eps = $this->n * $d;
         $ro = $this->ro0 * pow( tan( $this->s0 / 2. + $this->s45 ), $this->n ) / pow( tan( $s / 2. + $this->s45 ), $this->n );
+
         /* x and y are reverted! */
         //$p->y = ro * cos(eps) / a;
         //$p->x = ro * sin(eps) / a;
         $p->y = $ro * cos( $eps ) / 1.0;
         $p->x = $ro * sin( $eps ) / 1.0;
 
-        if( $this->czech ) {
+        if ($this->czech) {
             $p->y *= -1.0;
             $p->x *= -1.0;
         }
-        
+
         return $p;
     }
-    
+
     /**
      * calculate lat/lon from xy
      * 
      * @param Point $p
      * @return Point $p 
      */
-    public function inverse( $p ) {
-        
+    public function inverse($p)
+    {
         /* Transformation */
         /* revert y, x */
         $tmp = $p->x;
         $p->x = $p->y;
         $p->y = $tmp;
-        
-        if( $this->czech ) {
+
+        if ($this->czech) {
             $p->y *= -1.0;
             $p->x *= -1.0;
         }
-        
+
         $ro = sqrt( $p->x * $p->x + $p->y * $p->y );
         $eps = atan2( $p->y, $p->x );
         $d = $eps / sin( $this->s0 );
@@ -132,7 +162,7 @@ class Krovak
         $u = asin( cos( $this->ad ) * sin( $s ) - sin( $this->ad ) * cos( $s ) * cos( $d ) );
         $deltav = asin( cos( $s ) * sin( $d ) / cos( $u ) );
         $p->x = $this->long0 - $deltav / $this->alfa;
-        
+
         /* ITERATION FOR $lat */
         $fi1 = $u;
         $ok = 0;
@@ -142,13 +172,13 @@ class Krovak
                                 pow( tan( $u / 2. + $this->s45 ), 1. / $this->alfa ) *
                                 pow( (1. + $this->e * sin( $fi1 )) / (1. - $this->e * sin( $fi1 )), $this->e / 2. )
                       ) - $this->s45);
-            if( abs( $fi1 - $p->y ) < 0.0000000001 )
+            if (abs( $fi1 - $p->y ) < 0.0000000001)
                 $ok = 1;
             $fi1 = $p->y;
             $iter += 1;
-        } while( $ok == 0 && $iter < 15 );
-        
-        if( $iter >= 15 ) {
+        } while ($ok == 0 && $iter < 15);
+
+        if ($iter >= 15) {
             Proj4php::reportError( "PHI3Z-CONV:Latitude failed to converge after 15 iterations" );
             //console.log('iter:', iter);
             return null;
@@ -156,5 +186,4 @@ class Krovak
 
         return $p;
     }
-
 }

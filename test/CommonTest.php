@@ -1,4 +1,5 @@
 <?php
+
 include(__DIR__ . "/../vendor/autoload.php");
 
 use proj4php\Common;
@@ -7,14 +8,13 @@ if (!class_exists('\PHPUnit_Framework_TestCase') && class_exists('\PHPUnit\Frame
     class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
 }
 
-class CommonTest
-    extends PHPUnit_Framework_TestCase
+class CommonTest extends PHPUnit_Framework_TestCase
 {
-
     public function testSign()
     {
         $this->assertEquals(-1, Common::sign(-111));
         $this->assertEquals(-1, Common::sign(-111.2));
+        $this->assertEquals(1, Common::sign(0));
         $this->assertEquals(1, Common::sign(1));
         $this->assertEquals(1, Common::sign(200));
     }
@@ -30,8 +30,6 @@ class CommonTest
 
     public function testTsfnz()
     {
-
-
         $ret = Common::tsfnz(0.12, 0.30, 0.40);
         $this->assertEquals(0.74167840619598, $ret, "", 0.000001);
 
@@ -42,8 +40,6 @@ class CommonTest
 
     public function testAsinz()
     {
-
-
         $ret = Common::asinz(10);
         $this->assertEquals(1.5707963267949, $ret, "", 0.000001);
 
@@ -96,6 +92,4 @@ class CommonTest
         $ret = Common::e2fn(0.1422);
         $this->assertEquals(0.00131117534683, $ret, "", 0.000001);
     }
-
 }
-

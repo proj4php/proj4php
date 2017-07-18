@@ -6,11 +6,14 @@ use proj4php\Point;
 use proj4php\Proj;
 use proj4php\Proj4php;
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (!class_exists('\PHPUnit_Framework_TestCase') && class_exists('\PHPUnit\Framework\TestCase')) {
     class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
 }
 
-class Proj4phpTest extends \PHPUnit_Framework_TestCase
+class Proj4phpTest extends PHPUnit_Framework_TestCase
 {
     public function testTransform()
     {

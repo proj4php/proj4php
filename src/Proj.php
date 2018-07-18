@@ -127,6 +127,53 @@ class Proj
 
     public $sphere = false;
 
+    public function toString()
+    {
+        $str  =  "title :".$this->title;
+        $str .= " projName :".$this->projName;
+        $str .= " units :".$this->units;
+//        $str .= " datum :".$this->datum;
+        $str .= " datum_params :".$this->datum_params;
+        $str .= " datumCode :".$this->datumCode;
+        $str .= " axis :".$this->axis;
+        $str .= " x0 :".$this->x0;
+        $str .= " y0 :".$this->y0;
+        $str .= " localCS :".$this->localCS;
+        $str .= " srsCode :".$this->srsCode;
+        $str .= " R_A :".$this->R_A;
+        $str .= " a2 :".$this->a2;
+        $str .= " a :".$this->a;
+        $str .= " alpha :".$this->alpha;
+        $str .= " b2 :".$this->b2;
+        $str .= " b :".$this->b;
+        $str .= " datumName :".$this->datumName;
+        $str .= " defData:".$this->defData;
+        $str .= " e :".$this->e;
+        $str .= " ellps :".$this->ellps;
+        $str .= " ep2 :".$this->ep2;
+        $str .= " es :".$this->es;
+        $str .= " from_greenwich :".$this->from_greenwich;
+        $str .= " k0 :".$this->k0;
+        $str .= " lat0 :".$this->lat0;
+        $str .= " lat1 :".$this->lat1;
+        $str .= " lat2 :".$this->lat2;
+        $str .= " lat_ts :".$this->lat_ts;
+        $str .= " long0 :".$this->long0;
+        $str .= " longc :".$this->longc;
+        $str .= " nagrids :".$this->nagrids;
+        $str .= " rf :".$this->rf;
+        $str .= " srsAuth :".$this->srsAuth;
+        $str .= " rf :".$this->rf;
+        $str .= " srsAuth :".$this->srsAuth;
+        $str .= " srsProjNumber :".$this->srsProjNumber;
+        $str .= " to_rads :".$this->ro_rads;
+        $str .= " utmSouth :".$this->utmSouth;
+        $str .= " zone :".$this->zone;
+        $str .= " to_meter :".$this->to_meter;
+        $str .= " sphere :".$this->sphere;
+        return $str;
+    }
+
     /**
      * Constructor: initialize
      * Constructor for Proj4php::Proj objects

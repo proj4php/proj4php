@@ -559,6 +559,7 @@ class Wkt {
 		self::$wktDatums["OSGB 1936"] = "OSGB36"; // EPSG:62776405
 		self::$wktDatums["Deutsches Hauptdreiecksnetz"] = "potsdam"; // EPSG:63146405
 
+                self::$wktDatums["D_OSGB_1936"] = "OSGB36";
 	}
 
 }

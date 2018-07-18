@@ -2,17 +2,14 @@
 include dirname(__DIR__) . "/src/Wkt.php";
 
 
-error_reporting(E_STRICT);
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 use proj4php\Wkt;
 
 class WktParserTest extends PHPUnit_Framework_TestCase
 {
-
-
-
-	protected $onlyTestTheseProjections=null;//'SR-ORG:8177';//array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test all, one or some projections.
+    protected $onlyTestTheseProjections=null;//'SR-ORG:8177';//array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test all, one or some projections.
 
     protected $onlyTestTheseProjectionAlgorithms=null;//array('stere');
 
@@ -144,53 +141,53 @@ class WktParserTest extends PHPUnit_Framework_TestCase
         );
 
 
- 	protected $wkt='ogcwkt'; //ersrwkt
-	/**
+    protected $wkt='ogcwkt'; //ersrwkt
+    /**
      * @runInSeparateProcess
      */
-	 public function testAllWktStrings()
+     public function testAllWktStrings()
     {
-    	    
+            
 
-    	$codes = get_object_vars(json_decode(file_get_contents(__DIR__ . '/codes.json')));
-    	foreach ($codes as $code => $defs) {
-    		$this->defs = $defs;
-    		$this->code = $code;
+        $codes = get_object_vars(json_decode(file_get_contents(__DIR__ . '/codes.json')));
+        foreach ($codes as $code => $defs) {
+            $this->defs = $defs;
+            $this->code = $code;
 
-    		if (isset($this->onlyTestTheseProjections)&&(!empty($this->onlyTestTheseProjections))){
+            if (isset($this->onlyTestTheseProjections)&&(!empty($this->onlyTestTheseProjections))){
 
-    			if(is_array($this->onlyTestTheseProjections)){
-    				if(!in_array($code, $this->onlyTestTheseProjections)){
-    					continue;
-    				}
-    			}elseif($code !== $this->onlyTestTheseProjections) {
-    				continue;
-    			}
-    		}
+                if(is_array($this->onlyTestTheseProjections)){
+                    if(!in_array($code, $this->onlyTestTheseProjections)){
+                        continue;
+                    }
+                }elseif($code !== $this->onlyTestTheseProjections) {
+                    continue;
+                }
+            }
 
-    		if (in_array($code, $this->skipAllTestsForCode)) {
-    			continue;
-    		}
+            if (in_array($code, $this->skipAllTestsForCode)) {
+                continue;
+            }
 
-    		if (key_exists('proj4', $defs) && (!empty($defs->proj4)) && key_exists($this->wkt, $defs) && (!empty($defs->{$this->wkt}))) {
+            if (key_exists('proj4', $defs) && (!empty($defs->proj4)) && key_exists($this->wkt, $defs) && (!empty($defs->{$this->wkt}))) {
 
-    			$wktStr=$defs->{$this->wkt};
+                $wktStr=$defs->{$this->wkt};
 
-    			if ($this->isInvalidWKT($wktStr)) {
-    				continue;
-    			}
+                if ($this->isInvalidWKT($wktStr)) {
+                    continue;
+                }
 
                 if($this->isIgnoredProjection()){
                     continue;
                 }
 
 
-    			$result=Wkt::Parse($wktStr);
-    			$this->assertTrue(gettype($result)=='object');
-				
-			}
-		}
-	}
+                $result=Wkt::Parse($wktStr);
+                $this->assertTrue(gettype($result)=='object');
+                
+            }
+        }
+    }
 
 
 
@@ -218,16 +215,14 @@ class WktParserTest extends PHPUnit_Framework_TestCase
 
 
     public function isInvalidWKT($wkt){
-    	return (strpos($wkt, '(deprecated)') !== false ||
-    		strpos($wkt, 'AXIS["Easting",UNKNOWN]') !== false ||
-    		strpos($wkt, 'AXIS["none",EAST]') !== false ||
-    		strpos($wkt, 'NULL') !== false ||
-    		strpos($wkt, 'AXIS["X",UNKNOWN]') !== false||
+        return (strpos($wkt, '(deprecated)') !== false ||
+            strpos($wkt, 'AXIS["Easting",UNKNOWN]') !== false ||
+            strpos($wkt, 'AXIS["none",EAST]') !== false ||
+            strpos($wkt, 'NULL') !== false ||
+            strpos($wkt, 'AXIS["X",UNKNOWN]') !== false||
             strpos($wkt, "\n") !== false||
             strpos($wkt, "\r") !== false
         );
 
-	}
-
-
+    }
 }

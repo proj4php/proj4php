@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /*******************************************************************************
@@ -34,15 +35,44 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Aea
 {
+    public $a;
+    public $b;
+    public $c;
+    public $con;
+    public $cos_phi;
+    public $cos_po;
+    public $e3;
+    public $es;
+    public $lat0;
+    public $lat1;
+    public $lat2;
+    public $long0;
+    public $ms1;
+    public $ms2;
+    public $ns0;
+    public $qs0;
+    public $qs1;
+    public $qs2;
+    public $rh;
+    public $sin_phi;
+    public $sin_po;
+    public $t1;
+    public $t2;
+    public $t3;
+    public $temp;
+    public $x0;
+    public $y0;
+
     /**
      * @return void 
      */
     public function init()
     {
-        if (abs( $this->lat1 + $this->lat2 ) < Common::EPSLN) {
+        if (abs($this->lat1 + $this->lat2) < Common::EPSLN) {
             Proj4php::reportError("aeaInitEqualLatitudes");
             return;
         }
@@ -86,13 +116,15 @@ class Aea
      * @return Point $p 
      */
     public function forward($p)
-   {
+    {
         $lon = $p->x;
         $lat = $p->y;
 
         $this->sin_phi = sin($lat);
         $this->cos_phi = cos($lat);
 
+        // NOTE: qsfnz() only takes two parameters, so the third will be ignored.
+        // Is this ther correct function to use here?
         $qs = Common::qsfnz($this->e3, $this->sin_phi, $this->cos_phi);
         $rh1 = $this->a * sqrt($this->c - $this->ns0 * $qs) / $this->ns0;
         $theta = $this->ns0 * Common::adjust_lon($lon - $this->long0);
@@ -159,9 +191,9 @@ class Aea
     /**
      * Function to compute phi1, the latitude for the inverse of the Albers Conical Equal-Area projection.
      *
-     * @param type $eccent
-     * @param type $qs
-     * @return $phi or null on Convergence error
+     * @param float $eccent
+     * @param float $qs
+     * @return float|null on Convergence error
      */
     public function phi1z($eccent, $qs)
     {

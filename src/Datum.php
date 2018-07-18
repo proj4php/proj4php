@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php;
 
 /**
@@ -9,6 +10,8 @@ namespace proj4php;
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
 
+use Exception;
+
 class Datum
 {
     public $datum_code;
@@ -16,8 +19,18 @@ class Datum
     public $datum_params;
 
     /**
-     *
-     * @param type $proj 
+     * Various properties that are set and referenced *somewhere* in this class.
+     * They should all be followed up: do they need to be public? Are they used
+     * anywhere? Are they redundant/duplicates of other properties, constants or
+     * system constants?
+     */
+    public $a;
+    public $b;
+    public $ep2;
+    public $es;
+
+    /**
+     * @param Proj $proj 
      */
     public function __construct(Proj $proj)
     {
@@ -76,9 +89,9 @@ class Datum
      * Why not call this class "equals()"? Compare functions tend to return more
      * than just a true/false. if ($datum1->equals($datum2)) ...
      *
-     * @param type $dest
-     * @return boolean Returns TRUE if the two datums match, otherwise FALSE.
-     * @throws type
+     * @param Datum $dest
+     * @return boolean TRUE if the two datums match, otherwise FALSE.
+     * @throws Exception
      */
     public function compare_datums(Datum $dest)
     {
@@ -203,13 +216,16 @@ class Datum
     }
 
     /**
-     * FIXME: what is $p? It is some kind of object.
-     * @param object $p
-     * @return type 
+     * @param Point $p TBC
+     * @return Point 
      */
     public function geocentric_to_geodetic($p)
     {
-        Proj4php::reportDebug('geocentric_to_geodetic('.$p->x.','.$p->y.")\n");
+        Proj4php::reportDebug(sprintf(
+            "geocentric_to_geodetic(%s,%s)\n",
+            $p->x,
+            $p->y
+        ));
         $this->reportDebug();
 
         // local defintions and variables
@@ -222,7 +238,7 @@ class Datum
         $Y = $p->y;
 
         // Z value not always supplied
-        $Z = $p->z ? $p->z : 0.0;
+        $Z = ($p->z ? $p->z : 0.0);
 
         /*
         $P;        // distance between semi-minor axis and location 
@@ -414,7 +430,11 @@ class Datum
      */
     public function geocentric_to_wgs84(Point $p)
     {
-        Proj4php::reportDebug('geocentric_to_wgs84('.$p->x.','.$p->y.")\n");
+        Proj4php::reportDebug(sprintf(
+            "geocentric_to_wgs84(%s,%s)\n",
+            $p->x,
+            $p->y
+        ));
 
         if ($this->datum_type == Common::PJD_3PARAM) {
             Proj4php::reportDebug("+x=".$this->datum_params[0]."\n");

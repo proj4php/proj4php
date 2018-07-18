@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /*******************************************************************************
@@ -46,28 +47,37 @@ namespace proj4php\projCode;
 
 use proj4php\Proj4php;
 use proj4php\Common;
+use proj4php\Point;
 
 class Cea
 {
-    /* Initialize the Cylindrical Equal Area projection
-      ------------------------------------------- */
+    public $a;
+    public $lat_ts;
+    public $long0;
+    public $x0;
+    public $y0;
 
-    public function init() {
+    /**
+     * Initialize the Cylindrical Equal Area projection
+     */
+    public function init()
+    {
         //no-op
     }
 
-    /* Cylindrical Equal Area forward equations--mapping lat,long to x,y
-      ------------------------------------------------------------ */
-    public function forward( $p ) {
-        
+    /**
+     * Forward equations
+     * Cylindrical Equal Area forward equations--mapping lat,long to x,y
+     */
+    public function forward($p)
+    {
         $lon = $p->x;
         $lat = $p->y;
-        
-        /* Forward equations
-          ----------------- */
+
         $dlon = Common::adjust_lon( $lon - $this->long0 );
         $x = $this->x0 + $this->a * $dlon * cos( $this->lat_ts );
         $y = $this->y0 + $this->a * sin( $lat ) / cos( $this->lat_ts );
+
         /* Elliptical Forward Transform
           Not implemented due to a lack of a matchign inverse function
           {
@@ -80,15 +90,15 @@ class Cea
 
         $p->x = $x;
         $p->y = $y;
-        
+
         return $p;
     }
 
     /**
      * Cylindrical Equal Area inverse equations--mapping x,y to lat/long
      * 
-     * @param type $p
-     * @return type 
+     * @param Point $p
+     * @return Point
      */
     public function inverse( $p ) {
         $p->x -= $this->x0;
@@ -96,7 +106,7 @@ class Cea
 
         $p->x = Common::adjust_lon( $this->long0 + ($p->x / $this->a) / cos( $this->lat_ts ) );
         $p->y = asin( ($p->y / $this->a) * cos( $this->lat_ts ) );
-        
+
         return $p;
     }
 }

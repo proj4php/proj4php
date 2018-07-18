@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php;
 
 /**
@@ -11,14 +12,15 @@ namespace proj4php;
  * All methods in this class are static and all data are constants.
  * There is no need to instantiate this class.
  */
+
 class Common
 {
-    // FIXME: These are constants, so we should define them as constants,
-    // instead of copying them into the global Proj4php::$common.
-
-    const PI = M_PI; // 3.141592653589793238; //Math.PI,
-    const HALF_PI = M_PI_2; // 1.570796326794896619; //Math.PI*0.5,
-    const TWO_PI = 6.283185307179586477; //Math.PI*2,
+    // 3.141592653589793238; //Math.PI,
+    const PI = M_PI;
+    // 1.570796326794896619; //Math.PI*0.5,
+    const HALF_PI = M_PI_2;
+    // Math.PI*2,
+    const TWO_PI = 6.283185307179586477;
     const FORTPI = 0.78539816339744833;
     const R2D = 57.29577951308232088;
     const D2R = 0.01745329251994329577;
@@ -26,18 +28,23 @@ class Common
     const EPSLN = 1.0e-10;
     const MAX_ITER = 20;
     // following constants from geocent.c
-    const COS_67P5 = 0.38268343236508977;  /* cosine of 67.5 degrees */
-    const AD_C = 1.0026000;                /* Toms region 1 constant */
+    // cosine of 67.5 degrees
+    const COS_67P5 = 0.38268343236508977;
+    // Toms region 1 constant
+    const AD_C = 1.0026000;
 
     /* datum_type values */
-    const PJD_UNKNOWN = 0;
-    const PJD_3PARAM = 1;
-    const PJD_7PARAM = 2;
+    const PJD_UNKNOWN   = 0;
+    const PJD_3PARAM    = 1;
+    const PJD_7PARAM    = 2;
     const PJD_GRIDSHIFT = 3;
-    const PJD_WGS84 = 4;   // WGS84 or equivalent
-    const PJD_NODATUM = 5;   // WGS84 or equivalent
+    // WGS84 or equivalent
+    const PJD_WGS84     = 4;
+    // WGS84 or equivalent
+    const PJD_NODATUM   = 5;
 
-    const SRS_WGS84_SEMIMAJOR = 6378137.0;  // only used in grid shift transforms
+    // only used in grid shift transforms
+    const SRS_WGS84_SEMIMAJOR = 6378137.0;
 
     // ellipoid pj_set_ell.c
 
@@ -48,10 +55,11 @@ class Common
     const RV6 = .04243827160493827160; /* 55/1296 */
 
 
-    /* meridinal distance for ellipsoid and inverse
-     * *	8th degree - accurate to < 1e-5 meters when used in conjuction
-     * *		with typical major axis values.
-     * *	Inverse determines phi to EPS (1e-11) radians, about 1e-6 seconds.
+    /**
+     * meridinal distance for ellipsoid and inverse
+     * 8th degree - accurate to < 1e-5 meters when used in conjuction
+     * with typical major axis values.
+     * Inverse determines phi to EPS (1e-11) radians, about 1e-6 seconds.
      */
     const C00 = 1.0;
     const C02 = 0.25;
@@ -70,10 +78,10 @@ class Common
      * Function to compute the constant small m which is the radius of
      * a parallel of latitude, phi, divided by the semimajor axis.
      * 
-     * @param type $eccent
-     * @param type $sinphi
-     * @param type $cosphi
-     * @return type
+     * @param float $eccent
+     * @param float $sinphi
+     * @param float $cosphi
+     * @return float
      */
     public static function msfnz($eccent, $sinphi, $cosphi)
     {
@@ -86,10 +94,10 @@ class Common
      * computations in the Lambert Conformal Conic and the Polar
      * Stereographic projections.
      * 
-     * @param type $eccent
-     * @param type $phi
-     * @param type $sinphi
-     * @return type
+     * @param float $eccent
+     * @param float $phi
+     * @param float $sinphi
+     * @return float
      */
     public static function tsfnz($eccent, $phi, $sinphi)
     {
@@ -106,18 +114,20 @@ class Common
      * 
      * rise up an assertion if there is no convergence.
      * 
-     * @param type $eccent
-     * @param type $ts
-     * @return type
+     * @param float $eccent
+     * @param float $ts
+     * @return float|int
      */
     public static function phi2z($eccent, $ts)
     {
-        $eccnth = .5 * $eccent;
+        $eccnth = 0.5 * $eccent;
         $phi = M_PI_2 - 2 * atan($ts);
 
         for ($i = 0; $i <= 15; $i++) {
             $con = $eccent * sin($phi);
-            $dphi = M_PI_2 - 2 * atan($ts * (pow(((1.0 - $con) / (1.0 + $con)), $eccnth ))) - $phi;
+            $dphi = M_PI_2
+                - 2 * atan($ts * (pow(((1.0 - $con) / (1.0 + $con)), $eccnth )))
+                - $phi;
             $phi += $dphi;
 
             if (abs($dphi) <= .0000000001) {
@@ -127,6 +137,7 @@ class Common
 
         assert("false; /* phi2z has NoConvergence */");
 
+        // What does this return value mean?
         return (-9999);
     }
 
@@ -134,16 +145,19 @@ class Common
      * Function to compute constant small q which is the radius of a 
      * parallel of latitude, phi, divided by the semimajor axis.
      * 
-     * @param type $eccent
-     * @param type $sinphi
-     * @return type
+     * @param float $eccent
+     * @param float $sinphi
+     * @return float
      */
     public static function qsfnz($eccent, $sinphi)
     {
         if ($eccent > 1.0e-7) {
             $con = $eccent * $sinphi;
 
-            return (( 1.0 - $eccent * $eccent) * ($sinphi / (1.0 - $con * $con) - (.5 / $eccent) * log( (1.0 - $con) / (1.0 + $con) )));
+            return (
+                ( 1.0 - $eccent * $eccent)
+                * ($sinphi / (1.0 - $con * $con) - (.5 / $eccent) * log( (1.0 - $con) / (1.0 + $con) ))
+            );
         }
 
         return (2.0 * $sinphi);
@@ -152,26 +166,21 @@ class Common
     /**
      * Function to eliminate roundoff errors in asin
      * 
-     * @param type $x
-     * @return type
+     * @param float $x
+     * @return float
      */
     public static function asinz($x)
     {
         return asin(
             abs( $x ) > 1.0 ? ($x > 1.0 ? 1.0 : -1.0) : $x 
         );
-
-        //if( abs( $x ) > 1.0 ) {
-        //    $x = ($x > 1.0) ? 1.0 : -1.0;
-        //}
-        //return asin( $x );
     }
 
     /**
      * following functions from gctpc cproj.c for transverse mercator projections
      * 
-     * @param type $x
-     * @return type
+     * @param float $x
+     * @return float
      */
     public static function e0fn($x)
     {
@@ -179,9 +188,8 @@ class Common
     }
 
     /**
-     * 
-     * @param type $x
-     * @return type
+     * @param float $x
+     * @return float
      */
     public static function e1fn($x)
     {
@@ -189,9 +197,8 @@ class Common
     }
 
     /**
-     * 
-     * @param type $x
-     * @return type
+     * @param float $x
+     * @return float
      */
     public static function e2fn($x)
     {
@@ -199,9 +206,8 @@ class Common
     }
 
     /**
-     * 
-     * @param type $x
-     * @return type
+     * @param float $x
+     * @return float
      */
     public static function e3fn($x)
     {
@@ -209,62 +215,70 @@ class Common
     }
 
     /**
-     * 
-     * @param type $e0
-     * @param type $e1
-     * @param type $e2
-     * @param type $e3
-     * @param type $phi
-     * @return type
+     * @param float $e0
+     * @param float $e1
+     * @param float $e2
+     * @param float $e3
+     * @param float $phi
+     * @return float
      */
     public static function mlfn($e0, $e1, $e2, $e3, $phi)
     {
-        return ($e0 * $phi - $e1 * sin( 2.0 * $phi ) + $e2 * sin( 4.0 * $phi ) - $e3 * sin( 6.0 * $phi ));
+        return (
+            $e0 * $phi
+            - $e1 * sin( 2.0 * $phi )
+            + $e2 * sin( 4.0 * $phi )
+            - $e3 * sin( 6.0 * $phi )
+        );
     }
 
     /**
-     * 
-     * @param type $esinp
-     * @param type $exp
-     * @return type
+     * @param float $esinp
+     * @param float $exp
+     * @return float
      */
     public static function srat($esinp, $exp)
     {
-        return (pow( (1.0 - $esinp) / (1.0 + $esinp), $exp ));
+        return pow((1.0 - $esinp) / (1.0 + $esinp), $exp);
     }
 
     /**
-     * Function to return the sign of an argument
+     * Return the sign of an argument.
+     * This differs from PHP's core sign() function in that zero returns as postive.
      * 
-     * @param type $x
-     * @return type
+     * @param int|float $x The numeric valid to test.
+     * @return int -1 for negative; +1 for positive or zero
      */
     public static function sign($x)
     {
-        return $x < 0.0 ? -1 : 1;
+        return ($x < 0.0 ? -1 : 1);
     }
 
     /**
-     * Function to adjust longitude to -180 to 180; input in radians
+     * Adjust longitude to -180 to 180; input in radians
      * 
-     * @param type $x
-     * @return type
+     * @param float $x
+     * @return float
      */
     public static function adjust_lon($x)
     {
-        return (abs($x) < M_PI) ? $x : ($x - (static::sign($x) * static::TWO_PI));
+        return (abs($x) < M_PI)
+            ? $x
+            : ($x - (static::sign($x) * static::TWO_PI));
     }
 
     /**
      * IGNF - DGR : algorithms used by IGN France
-     * Function to adjust latitude to -90 to 90; input in radians
+     * Adjust latitude to -90 to 90; input in radians
      * 
-     * @param type $x
-     * @return type
+     * @param float $x
+     * @return float
      */
     public static function adjust_lat($x)
     {
-        $x = (abs($x) < M_PI_2) ? $x : ($x - (static::sign($x) * M_PI) );
+        $x = (abs($x) < M_PI_2)
+            ? $x
+            : ($x - (static::sign($x) * M_PI) );
 
         return $x;
     }
@@ -272,10 +286,10 @@ class Common
     /**
      * Latitude Isometrique - close to tsfnz ...
      * 
-     * @param type $eccent
+     * @param float $eccent
      * @param float $phi
-     * @param type $sinphi
-     * @return string
+     * @param float $sinphi
+     * @return float
      */
     public static function latiso($eccent, $phi, $sinphi)
     {
@@ -293,14 +307,15 @@ class Common
 
         $con = $eccent * $sinphi;
 
-        return log(tan((M_PI_2 + $phi) / 2.0 ) ) + $eccent * log( (1.0 - $con) / (1.0 + $con)) / 2.0;
+        return log(tan((M_PI_2 + $phi) / 2.0 ) )
+            + $eccent * log( (1.0 - $con) / (1.0 + $con)) / 2.0;
     }
 
     /**
      * 
-     * @param type $x
-     * @param type $L
-     * @return type
+     * @param float $x
+     * @param float $L
+     * @return float
      */
     public static function fL($x, $L)
     {
@@ -310,9 +325,9 @@ class Common
     /**
      * Inverse Latitude Isometrique - close to ph2z
      * 
-     * @param type $eccent
-     * @param type $ts
-     * @return type
+     * @param float $eccent
+     * @param float $ts
+     * @return float
      */
     public static function invlatiso($eccent, $ts)
     {
@@ -332,26 +347,26 @@ class Common
     /**
      * Grande Normale
      * 
-     * @param type $a
-     * @param type $e
-     * @param type $sinphi
-     * @return type
+     * @param float $a
+     * @param float $e
+     * @param float $sinphi
+     * @return float
      */
     public static function gN($a, $e, $sinphi)
     {
-        $temp = $e * $sinphi;
-        return $a / sqrt(1.0 - $temp * $temp);
+        $product = $e * $sinphi;
+        return $a / sqrt(1.0 - $product * $product);
     }
 
     /**
      * code from the PROJ.4 pj_mlfn.c file;  this may be useful for other projections
      * 
-     * @param type $es
-     * @return type
+     * @param float $es
+     * @return float
      */
     public static function pj_enfn($es)
     {
-        $en = array( );
+        $en = array();
         $en[0] = static::C00 - $es * (static::C02 + $es * (static::C04 + $es * (static::C06 + $es * static::C08)));
         $en[1] = $es * (static::C22 - $es * (static::C04 + $es * (static::C06 + $es * static::C08)));
         $t = $es * $es;
@@ -364,27 +379,29 @@ class Common
     }
 
     /**
-     * 
-     * @param type $phi
-     * @param type $sphi
-     * @param type $cphi
-     * @param type $en
-     * @return type
+     * @param float $phi
+     * @param float $sphi
+     * @param float $cphi
+     * @param float $en
+     * @return float
      */
     public static function pj_mlfn($phi, $sphi, $cphi, $en)
     {
         $cphi *= $sphi;
         $sphi *= $sphi;
 
-        return ($en[0] * $phi - $cphi * ($en[1] + $sphi * ($en[2] + $sphi * ($en[3] + $sphi * $en[4]))));
+        return (
+            $en[0] * $phi
+            - $cphi * ($en[1] + $sphi * ($en[2] + $sphi * ($en[3] + $sphi * $en[4])))
+        );
     }
 
     /**
      * 
-     * @param type $arg
-     * @param type $es
-     * @param type $en
-     * @return type
+     * @param float $arg
+     * @param float $es
+     * @param float $en
+     * @return float
      */
     public static function pj_inv_mlfn($arg, $es, $en)
     {
@@ -394,6 +411,7 @@ class Common
             // rarely goes over 2 iterations
             $s = sin($phi);
             $t = 1.0 - $es * $s * $s;
+
             //$t = static::pj_mlfn($phi, $s, cos($phi), $en) - $arg;
             //$phi -= $t * ($t * sqrt($t)) * $k;
             $t = (static::pj_mlfn( $phi, $s, cos($phi), $en) - $arg) * ($t * sqrt($t)) * $k;

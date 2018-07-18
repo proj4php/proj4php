@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php;
 
 /**
@@ -249,7 +250,7 @@ class Proj4php
         ];
 
         // Load them through the API so we have a single point of validation.
-        foreach($default_ellipsoids as $key => $data) {
+        foreach ($default_ellipsoids as $key => $data) {
             $this->addEllipsoid($key, $data);
         }
     }
@@ -301,7 +302,7 @@ class Proj4php
         ];
 
         // Load them through the API so we have a single point of validation.
-        foreach($default_prime_meridians as $key => $data) {
+        foreach ($default_prime_meridians as $key => $data) {
             $this->addPrimeMeridian($key, $data);
         }
     }
@@ -355,8 +356,10 @@ class Proj4php
   
     private function notWGS($a, $b ) {
 
-    return (($a->datum->datum_type === Common::PJD_3PARAM || $a->datum->datum_type === Common::PJD_7PARAM) && $b->datum->datum_code !== "WGS84");
-    
+    return (
+        ($a->datum->datum_type === Common::PJD_3PARAM || $a->datum->datum_type === Common::PJD_7PARAM)
+        && $b->datum->datum_code !== 'WGS84'
+    );
   }
 
 
@@ -373,26 +376,22 @@ class Proj4php
      */
     public function transform()
     {
-        if (func_num_args()==2)
-        {
+        if (func_num_args() == 2) {
           $source = null;
           $dest = func_get_arg(0);
           $point = func_get_arg(1);
-        }
-        else
-        {
+        } else {
           $source = func_get_arg(0);
           $dest = func_get_arg(1);
           $point = func_get_arg(2);
         }
 
-        if ($source===null)
-        {
-           if ($point->getProjection()===null)
-           {
+        if ($source === null) {
+           if ($point->getProjection() === null) {
               self::reportError("No projection for point\r\n");
               return $point;
            }
+
            $source = $point->getProjection();
         }
 
@@ -402,27 +401,25 @@ class Proj4php
 
         $this->msg = '';
 
-        if ( ! $source->readyToUse) {
+        if (! $source->readyToUse) {
             self::reportError("Proj4php initialization for: " . $source->srsCode . " not yet complete");
             return $point;
         }
 
-        if ( ! $dest->readyToUse) {
+        if (! $dest->readyToUse) {
             self::reportError("Proj4php initialization for: " . $dest->srsCode . " not yet complete");
             return $point;
         }
 
-        if (isset($source->datum) && isset($dest->datum) && ($this->notWGS($source, $dest) || $this->notWGS($dest, $source))) {
-
-            
-
-
+        if (
+            isset($source->datum)
+            && isset($dest->datum)
+            && ($this->notWGS($source, $dest) || $this->notWGS($dest, $source))
+        ) {
             $wgs84 = new Proj('WGS84', $this);
             $this->transform($source, $wgs84, $point);
             $source = $wgs84;
-      
         }
-
 
         // DGR, 2010/11/12
         if ($source->axis != "enu") {
@@ -462,6 +459,7 @@ class Proj4php
         // immutable so it is clear what is happening.
         $point = $this->datum_transform($source->datum, $dest->datum, $point);
         self::reportDebug("datum_transform => ".$point->x.",".$point->y."\r\n");
+
         // Adjust for the prime meridian if necessary
         if (isset($dest->from_greenwich)) {
             $point->x -= $dest->from_greenwich;
@@ -479,19 +477,19 @@ class Proj4php
             if (isset($dest->to_meter)) {
                 $point->x /= $dest->to_meter;
                 $point->y /= $dest->to_meter;
-                self::reportDebug("convert to_meter => ".$point->x.",".$point->y."\r\n");
+                self::reportDebug(sprintf("convert to_meter => %s,%s\r\n", $point->x, $point->y));
             }
         }
 
         // DGR, 2010/11/12
         if ($dest->axis != "enu") {
             $this->adjust_axis($dest, true, $point);
-            self::reportDebug("adjust axis => ".$point->x.",".$point->y."\r\n");
+            self::reportDebug(sprintf("adjust axis => %s,%s\r\n", $point->x, $point->y));
         }
 
         $point->setProjection($dest);
 
-        self::reportDebug("Transform result $point->x $point->y\r\n");
+        self::reportDebug(sprintf("Transform result %s %s\r\n", $point->x, $point->y));
 
         // Nov 2014 - changed Werner Schäffer
         // Clone point to avoid a lot of problems

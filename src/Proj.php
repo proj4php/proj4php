@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php;
 
 /**
@@ -23,7 +24,7 @@ class Proj
      * Property: title
      * The title to describe the projection
      */
-    public $title = null;
+    public $title;
 
     /**
      * Property: projName
@@ -31,24 +32,24 @@ class Proj
      * or merc for mercator).  These are exactly equivalent to their Proj4
      * counterparts.
      */
-    public $projName = null;
+    public $projName;
 
     /**
      * Property: projection
      * The projection object for $this projection. */
-    public $projection = null;
+    public $projection;
 
     /**
      * Property: units
      * The units of the projection.  Values include 'm' and 'degrees'
      */
-    public $units = null;
+    public $units;
 
     /**
      * Property: datum
      * The datum specified for the projection
      */
-    public $datum = null;
+    public $datum;
 
     // The Datum class sets these directly.
     public $datum_params;
@@ -88,9 +89,42 @@ class Proj
      */
     public $srsCode;
 
+    /**
+     * Various properties that are set and referenced *somewhere* in this class.
+     * They should all be followed up: do they need to be public? Are they used
+     * anywhere? Are they redundant/duplicates of other properties, constants or
+     * system constants?
+     */
+    public $R_A;
+    public $a2;
+    public $a;
+    public $alpha;
+    public $b2;
+    public $b;
+    public $datumName;
+    public $defData;
+    public $e;
+    public $ellps;
+    public $ep2;
+    public $es;
+    public $from_greenwich;
+    public $k0;
+    public $lat0;
+    public $lat1;
+    public $lat2;
+    public $lat_ts;
+    public $long0;
+    public $longc;
+    public $nagrids;
+    public $rf;
+    public $srsAuth;
+    public $srsProjNumber;
+    public $to_rads;
+    public $utmSouth;
+    public $zone;
 
     public $to_meter = 1.0;
-    
+
     public $sphere = false;
 
     public function toString()
@@ -153,28 +187,22 @@ class Proj
         //$this->srsCodeInput = $srsCode;
         $this->proj4php = $proj4php;
 
-
-
-
         // Check to see if $this is a Well Known Text (WKT) string.
         // This is an old, deprecated format, but still used.
         // CHECKME: are these the WKT "objects"? If so, we probably
         // need to check the string *starts* with these names.
 
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
-            $this->to_rads=COMMON::D2R;
-
-
+            $this->to_rads = COMMON::D2R;
 
             $params=Wkt::Parse($srsCode);
 
             // TODO: find a better way to apply wkt params to this instance
-            foreach($params as $k=>$v){
-                $this->$k=$v;
+            foreach ($params as $k => $v) {
+                $this->$k = $v;
             }
 
-
-            if(isset($this->defData)){
+            if (isset($this->defData)) {
                 // wkt codes can contain EXTENSION["PROJ4", "..."]
                 // for example SR-ORG:6
                 $this->parseDefs();
@@ -187,25 +215,24 @@ class Proj
             return;
         }
 
-        if(strpos($srsCode,'+proj')===0){
-
-            $this->defData=$srsCode;
+        if (strpos($srsCode,'+proj') === 0) {
+            $this->defData = $srsCode;
             $this->parseDefs();
             $this->loadProjCode($this->projName);
             $this->initTransforms();
 
             return;
-
-        }elseif (strpos($srsCode, 'urn:') === 0) {
+        } elseif (strpos($srsCode, 'urn:') === 0) {
             // DGR 2008-08-03 : support urn and url
             //urn:ORIGINATOR:def:crs:CODESPACE:VERSION:ID
+
             $urn = explode(':', $srsCode);
 
-            if (($urn[1] == 'ogc' || $urn[1] == 'x-ogc') &&
-                ($urn[2] == 'def') &&
-                ($urn[3] == 'crs')
+            if (($urn[1] == 'ogc' || $urn[1] == 'x-ogc')
+                && ($urn[2] == 'def')
+                && ($urn[3] == 'crs')
             ) {
-                $srsCode = $urn[4] . ':' . $urn[strlen($urn) - 1];
+                $srsCode = $urn[4] . ':' . $urn[count($urn) - 1];
             }
         } elseif (strpos($srsCode, 'http://') === 0) {
             //url#ID
@@ -288,6 +315,7 @@ class Proj
                 strtoupper($this->srsAuth) . ':' . $this->srsProjNumber,
                 $this->proj4php->loadScript($url)
             );
+            $this->defsLoaded();
         } catch (Exception $e) {
             $this->defsFailed();
         }
@@ -377,7 +405,9 @@ class Proj
      */
     public function loadProjCodeFailure($projName)
     {
-        Proj4php::reportError("failed to find projection file for: (".gettype($projName).")" . $projName);
+        Proj4php::reportError(sprintf(
+            "failed to find projection file for: (%s) %s", gettype($projName), $projName
+        ));
         //TBD initialize with identity transforms so proj will still work?
     }
 
@@ -399,8 +429,10 @@ class Proj
         $this->projection = new Proj4php::$proj[$this->projName];
         Proj4php::extend($this->projection, $this);
 
-        // initiate depending class
-        if (false !== ($dependsOn = isset($this->projection->dependsOn) && !empty($this->projection->dependsOn) ? $this->projection->dependsOn : false)) {
+        // initiate depending class (tidy up this condition)
+        if (
+            false !== ($dependsOn = isset($this->projection->dependsOn) && !empty($this->projection->dependsOn) ? $this->projection->dependsOn : false)
+        ) {
             Proj4php::extend(Proj4php::$proj[$dependsOn], $this->projection);
             Proj4php::$proj[$dependsOn]->init();
             Proj4php::extend($this->projection, Proj4php::$proj[$dependsOn]);
@@ -419,41 +451,40 @@ class Proj
     }
 
     /**
-     * @param type $pt
-     * @return type
+     * @param Point $point
+     * @return Point
      */
-    public function forward(Point $pt)
+    public function forward(Point $point)
     {
-        return $this->projection->forward($pt);
+        return $this->projection->forward($point);
     }
 
     /**
-     * @param type $pt
-     * @return type
+     * @param Point $point
+     * @return Point
      */
-    public function inverse(Point $pt)
+    public function inverse(Point $point)
     {
-        return $this->projection->inverse($pt);
+        return $this->projection->inverse($point);
     }
 
 
     /**
      * Function: parseDefs
      * Parses the PROJ.4 initialization string and sets the associated properties.
-     *
      */
     public function parseDefs()
     {
-        if(!isset($this->defData)){
+        if (! isset($this->defData)) {
             // allow wkt to define defData, and not be overwritten here.
             $this->defData = $this->proj4php->getDef($this->srsCode);
         }
 
-        if ( ! $this->defData) {
+        if (! $this->defData) {
             return;
         }
 
-        $paramArray = explode("+", $this->defData);
+        $paramArray = explode('+', $this->defData);
 
         for ($prop = 0; $prop < sizeof($paramArray); $prop++) {
             if (strlen($paramArray[$prop]) == 0) {
@@ -468,7 +499,8 @@ class Proj
             }
 
             switch (trim($paramName)) {
-                // throw away nameless parameter
+                // Throw away nameless parameter.
+                // This will be from before the first "+" that explode() creates.
                 case "":
                     break;
                 case "title":
@@ -593,7 +625,7 @@ class Proj
                     } //FIXME: be silent ?
 
                     break;
-                case "no_defs":
+                case 'no_defs':
                     break;
                 default:
                     //alert("Unrecognized parameter: " . paramName);
@@ -606,7 +638,6 @@ class Proj
     /**
      * Function: deriveConstants
      * Sets several derived constant values and initialization of datum and ellipse parameters.
-     *
      */
     public function deriveConstants()
     {

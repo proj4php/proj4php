@@ -1,4 +1,5 @@
 <?php
+
 namespace proj4php\projCode;
 
 /**
@@ -36,48 +37,72 @@ use proj4php\Common;
 
 class Equi
 {
-    public function init() {
-        if( !$this->x0 )
+    public $a;
+    public $lat0;
+    public $long0;
+    public $t1;
+    public $t2;
+    public $x0;
+    public $y0;
+
+    public function init()
+    {
+        if (! $this->x0) {
             $this->x0 = 0;
-        if( !$this->y0 )
+        }
+
+        if (! $this->y0) {
             $this->y0 = 0;
-        if( !$this->lat0 )
+        }
+
+        if (! $this->lat0) {
             $this->lat0 = 0;
-        if( !$this->long0 )
+        }
+
+        if (! $this->long0) {
             $this->long0 = 0;
+        }
         ///$this->t2;
     }
 
-    /* Equirectangular forward equations--mapping lat,long to x,y
-      --------------------------------------------------------- */
-    public function forward( $p ) {
-
+    /*(
+     * Equirectangular forward equations--mapping lat,long to x,y
+     */
+    public function forward($p)
+    {
         $lon = $p->x;
         $lat = $p->y;
 
-        $dlon = Common::adjust_lon( $lon - $this->long0 );
-        $x = $this->x0 + $this->a * $dlon * cos( $this->lat0 );
+        $dlon = Common::adjust_lon($lon - $this->long0);
+
+        $x = $this->x0 + $this->a * $dlon * cos($this->lat0);
         $y = $this->y0 + $this->a * $lat;
 
         $this->t1 = $x;
-        $this->t2 = cos( $this->lat0 );
+        $this->t2 = cos($this->lat0);
+
         $p->x = $x;
         $p->y = $y;
+
         return $p;
     }
 
-    /* Equirectangular inverse equations--mapping x,y to lat/long
-      --------------------------------------------------------- */
-    public function inverse( $p ) {
-
+    /**
+     * Equirectangular inverse equations--mapping x,y to lat/long
+     */
+    public function inverse($p)
+    {
         $p->x -= $this->x0;
         $p->y -= $this->y0;
+
         $lat = $p->y / $this->a;
 
-        if( abs( $lat ) > Common::HALF_PI ) {
-            Proj4php::reportError( "equi:Inv:DataError" );
+        if (abs($lat) > Common::HALF_PI) {
+            Proj4php::reportError("equi:Inv:DataError");
         }
+
         $lon = Common::adjust_lon( $this->long0 + $p->x / ($this->a * cos( $this->lat0 )) );
+
         $p->x = $lon;
         $p->y = $lat;
     }

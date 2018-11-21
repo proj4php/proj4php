@@ -4,3 +4,9 @@ php:
   - 5.3
   - nightly
 script: phpunit test
+matrix:
+  include:
+    - php: 5.2
+      dist: precise
+    - php: 5.3
+      dist: precise

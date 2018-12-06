@@ -159,7 +159,7 @@ class Laea
                     }
 
                     $y = sqrt( 2. / $y );
-                    $x = $y * cosphi * sin( $lam );
+                    $x = $y * $cosphi * sin( $lam );
                     $y *= ($this->mode == $this->EQUIT) ? $sinphi : $this->cosph0 * $sinphi - $this->sinph0 * $cosphi * $coslam;
                     break;
                 case $this->N_POLE:

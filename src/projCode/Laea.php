@@ -153,7 +153,7 @@ class Laea
                 case $this->OBLIQ:
                 case $this->EQUIT:
                     $y = ($this->mode == $this->EQUIT) ? 1. + $cosphi * $coslam : 1. + $this->sinph0 * $sinphi + $this->cosph0 * $cosphi * $coslam;
-                    if (y <= Common::EPSLN) {
+                    if ($y <= Common::EPSLN) {
                         Proj4php::reportError( "laea:fwd:y less than eps" );
                         return null;
                     }

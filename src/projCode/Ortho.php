@@ -85,7 +85,7 @@ class Ortho
         $cosphi = cos($lat);
 
         $coslon = cos($dlon);
-        $g = $this->sin_p14 * sinphi + $this->cos_p14 * $cosphi * $coslon;
+        $g = $this->sin_p14 * $sinphi + $this->cos_p14 * $cosphi * $coslon;
         $ksp = 1.0;
 
         if (($g > 0) || (abs($g) <= Common::EPSLN)) {

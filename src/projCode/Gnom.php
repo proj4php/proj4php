@@ -94,7 +94,7 @@ class Gnom
         $g = $this->sin_p14 * $sinphi + $this->cos_p14 * $cosphi * $coslon;
         $ksp = 1.0;
 
-        if ((g > 0) || (abs( g ) <= Common::EPSLN)) {
+        if (($g > 0) || (abs( $g ) <= Common::EPSLN)) {
             $x = $this->x0 + $this->a * $ksp * $cosphi * sin( $dlon ) / $g;
             $y = $this->y0 + $this->a * $ksp * ($this->cos_p14 * $sinphi - $this->sin_p14 * $cosphi * $coslon) / $g;
         } else {

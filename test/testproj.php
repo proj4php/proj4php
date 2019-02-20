@@ -14,6 +14,7 @@ $projL72 = new Proj('EPSG:31370',$proj4);
 $proj25833 = new Proj('EPSG:25833',$proj4);
 $proj31468 = new Proj('EPSG:31468',$proj4);
 $proj5514 = new Proj('EPSG:5514',$proj4);
+$projRDNew = new Proj('EPSG:28992',$proj4);
 
 // GPS
 // latitude        longitude
@@ -25,6 +26,9 @@ $proj5514 = new Proj('EPSG:5514',$proj4);
 //
 // LI
 // 601413.709   1125717.730
+//
+// RD New
+// -67685.34    97805.63
 //
 
 $pointSrc = new Point('652709.401','6859290.946',$projL93);
@@ -53,7 +57,6 @@ $pointDest = $proj4->transform($projL93,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in L93<br><br>";
 
 
-
 $pointSrc = new Point('177329.253543','58176.702191');
 echo "Source : ".$pointSrc->toShortString()." in Lambert 1972<br>";
 $pointDest = $proj4->transform($projL72,$projWGS84,$pointSrc);
@@ -63,7 +66,6 @@ $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
 $pointDest = $proj4->transform($projWGS84,$projL72,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in Lambert 1972<br><br>";
-
 
 $pointSrc = $pointDest;
 echo "Source : ".$pointSrc->toShortString()." in Lambert 1972<br>";
@@ -80,6 +82,7 @@ echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
 $pointDest = $proj4->transform($projWGS84,$proj31468,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in EPSG:31468<br><br>";
 
+
 $pointSrc = new Point('-868208.53', '-1095793.57');
 echo "Source : ".$pointSrc->toShortString()." in S-JTSK<br>";
 $pointDest = $proj4->transform($proj5514,$projWGS84,$pointSrc);
@@ -90,6 +93,16 @@ echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
 $pointDest = $proj4->transform($projWGS84,$proj5514,$pointSrc);
 echo "Conversion : ".$pointDest->toShortString()." in S-JTSK<br><br>";
 
+
+$pointSrc = new Point('-67685.34', '97805.63');
+echo "Source : ".$pointSrc->toShortString()." in Amersfoort / RD New<br>";
+$pointDest = $proj4->transform($projRDNew,$projWGS84,$pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in WGS84<br><br>";
+
+$pointSrc = $pointDest;
+echo "Source : ".$pointSrc->toShortString()." in WGS84<br>";
+$pointDest = $proj4->transform($projWGS84,$projRDNew,$pointSrc);
+echo "Conversion : ".$pointDest->toShortString()." in Amersfoort / RD New<br><br>";
 
 
 $proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');

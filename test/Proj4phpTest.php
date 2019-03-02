@@ -1,5 +1,5 @@
 <?php
-://phpunit.readthedocs.io/en/8.0/writing-tests-for-phpunit.html
+//phpunit.readthedocs.io/en/8.0/writing-tests-for-phpunit.html
 
 include(__DIR__ . "/../vendor/autoload.php");
 

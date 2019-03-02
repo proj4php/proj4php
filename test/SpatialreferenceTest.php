@@ -513,7 +513,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
             return;
         }
 
-        $this->assertEquals($a, $b, 'Asserting Within (' . $p . ') :: ' . $message, $p);
+        $this->assertEqualsWithDelta($a, $b, $p, 'Asserting Within (' . $p . ') :: ' . $message);
     }
 
     public function isInvalidWKT($wkt){

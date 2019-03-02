@@ -1,4 +1,5 @@
 <?php
+//phpunit.readthedocs.io/en/8.0/writing-tests-for-phpunit.html
 
 include(__DIR__ . "/../vendor/autoload.php");
 
@@ -211,22 +212,22 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointWGS84 = new Point(-96,28.5, $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
-        $this->assertEquals($pointNAD27->x,2963487.15,'',0.1);
-        $this->assertEquals($pointNAD27->y,255412.99,'', 0.1 );
+        $this->assertEqualsWithDelta($pointNAD27->x,2963487.15,0.1);
+        $this->assertEqualsWithDelta($pointNAD27->y,255412.99,0.1 );
 
         $pointWGS84 = $proj4->transform($projWGS84,$pointNAD27);
-        $this->assertEquals($pointWGS84->x,-96,'',0.1);
-        $this->assertEquals($pointWGS84->y,28.5,'',0.1);
+        $this->assertEqualsWithDelta($pointWGS84->x,-96,0.1);
+        $this->assertEqualsWithDelta($pointWGS84->y,28.5,0.1);
 
         $pointSrc = new Point(671196.3657,1230275.0454,$projOSGB36);
         $pointDest = $proj4->transform($projWGS84, $pointSrc);
-        $this->assertEquals(2.9964931538756, $pointDest->x, '', 0.1);
-        $this->assertEquals(60.863435314163, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(2.9964931538756, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(60.863435314163, $pointDest->y, 0.1);
 
         $pointSrc = $pointDest;
         $pointDest = $proj4->transform($projOSGB36, $pointSrc);
-        $this->assertEquals(671196.3657, $pointDest->x, '', 0.1);
-        $this->assertEquals(1230275.0454, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(671196.3657, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(1230275.0454, $pointDest->y, 0.1);
 
         //from @coreation
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
@@ -234,8 +235,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         //Proj4php::setDebug(true);
         $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
-        $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
-        $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.1);
+        $this->assertEqualsWithDelta($pointWGS84->x, $pointWGS84Actual->x, 0.1);
+        $this->assertEqualsWithDelta($pointWGS84->y, $pointWGS84Actual->y, 0.1);
         //Proj4php::setDebug(false);
 
         $pointWGS84=new Point(3.3500208637038, 50.803896326566, $projWGS84);
@@ -243,8 +244,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         //Proj4php::setDebug(true);
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
-        $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
-        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
+        $this->assertEqualsWithDelta($pointLCC2SP->x, $pointLCC2SPActual->x, 0.1);
+        $this->assertEqualsWithDelta($pointLCC2SP->y, $pointLCC2SPActual->y, 0.1);
         //Proj4php::setDebug(false);
 
         // from spatialreference.org (EPSG:31370 page)
@@ -253,8 +254,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         //Proj4php::setDebug(true);
         $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
-        $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.0001);
-        $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.0001);
+        $this->assertEqualsWithDelta($pointWGS84->x, $pointWGS84Actual->x, 0.0001);
+        $this->assertEqualsWithDelta($pointWGS84->y, $pointWGS84Actual->y, 0.0001);
         //Proj4php::setDebug(false);
 
         $pointWGS84=new Point(4.47, 50.505, $projWGS84);
@@ -262,8 +263,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         //Proj4php::setDebug(true);
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
-        $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
-        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
+        $this->assertEqualsWithDelta($pointLCC2SP->x, $pointLCC2SPActual->x, 0.1);
+        $this->assertEqualsWithDelta($pointLCC2SP->y, $pointLCC2SPActual->y, 0.1);
         //Proj4php::setDebug(false);
 
     }
@@ -284,14 +285,14 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84 = new Point(-96,28.5,  $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
  
-        $this->assertEquals($pointNAD27->x,2963487.15,'', 0.1);
-        $this->assertEquals($pointNAD27->y,255412.99,'', 0.1);
+        $this->assertEqualsWithDelta($pointNAD27->x,2963487.15,0.1);
+        $this->assertEqualsWithDelta($pointNAD27->y,255412.99,0.1);
 
         // Proj4php::setDebug(false);
 
         $pointWGS84 = $proj4->transform($projWGS84,$pointNAD27);
-        $this->assertEquals($pointWGS84->x,-96,'',0.1);
-        $this->assertEquals($pointWGS84->y,28.5,'',0.1);
+        $this->assertEqualsWithDelta($pointWGS84->x,-96,0.1);
+        $this->assertEqualsWithDelta($pointWGS84->y,28.5,0.1);
 
         //from @coreation
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
@@ -308,8 +309,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointWGS84=new Point(3.3500208637038, 50.803896326566, $projWGS84);
 
         $pointWGS84Actual =$proj4->transform($projWGS84, $pointLCC2SP);
-        $this->assertEquals($pointWGS84->x, $pointWGS84Actual->x, '', 0.1);
-        $this->assertEquals($pointWGS84->y, $pointWGS84Actual->y, '', 0.1);
+        $this->assertEqualsWithDelta($pointWGS84->x, $pointWGS84Actual->x, 0.1);
+        $this->assertEqualsWithDelta($pointWGS84->y, $pointWGS84Actual->y, 0.1);
 
         // reverse transform.
         // I have to redefine the input/output expected points because above they 
@@ -318,8 +319,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointLCC2SP=new Point(78367.044643634, 166486.56503096, $projLCC2SP);
 
         $pointLCC2SPActual=$proj4->transform($projLCC2SP, $pointWGS84);
-        $this->assertEquals($pointLCC2SP->x, $pointLCC2SPActual->x, '', 0.1);
-        $this->assertEquals($pointLCC2SP->y, $pointLCC2SPActual->y, '', 0.1);
+        $this->assertEqualsWithDelta($pointLCC2SP->x, $pointLCC2SPActual->x, 0.1);
+        $this->assertEqualsWithDelta($pointLCC2SP->y, $pointLCC2SPActual->y, 0.1);
     }
 
     public function testDatum()
@@ -339,8 +340,8 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $proj4->datum_transform($projWGS84->datum,$projED50->datum,$pointWGS84);
 
-        $this->assertEquals(deg2rad(53.809189444),$pointWGS84->x,'',0.1);
-        $this->assertEquals(deg2rad(2.129455),$pointWGS84->y,'',0.1);
+        $this->assertEqualsWithDelta(deg2rad(53.809189444),$pointWGS84->x,0.1);
+        $this->assertEqualsWithDelta(deg2rad(2.129455),$pointWGS84->y,0.1);
     }
 
     public function testProjFour()
@@ -359,50 +360,50 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('652709.401 6859290.946', $pointSrc->toShortString());
 
         $pointDest = $proj4->transform($projL93, $projWGS84, $pointSrc);
-        $this->assertEquals(2.3557811127971, $pointDest->x, '', 0.1);
-        $this->assertEquals(48.831938054369, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(2.3557811127971, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(48.831938054369, $pointDest->y, 0.1);
 
         $pointDest = $proj4->transform($projWGS84, $projLSeventyTwo, $pointSrc);
-        $this->assertEquals(2179.4161950587, $pointDest->x, '', 20);
-        $this->assertEquals(-51404.55306690, $pointDest->y, '', 20);
-        $this->assertEquals(2354.4969810662, $pointDest->x, '', 300);
-        $this->assertEquals(-51359.251012595, $pointDest->y, '', 300);
+        $this->assertEqualsWithDelta(2179.4161950587, $pointDest->x, 20);
+        $this->assertEqualsWithDelta(-51404.55306690, $pointDest->y, 20);
+        $this->assertEqualsWithDelta(2354.4969810662, $pointDest->x, 300);
+        $this->assertEqualsWithDelta(-51359.251012595, $pointDest->y, 300);
 
         $pointDest = $proj4->transform($projLSeventyTwo, $projWGS84, $pointSrc);
-        $this->assertEquals(2.3557811002407, $pointDest->x, '', 0.1);
-        $this->assertEquals(48.831938050542, $pointDest->y, '', 0.1);
-        $this->assertEquals(2.3557811127971, $pointDest->x, '', 0.1);
-        $this->assertEquals(48.831938054369, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(2.3557811002407, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(48.831938050542, $pointDest->y, 0.1);
+        $this->assertEqualsWithDelta(2.3557811127971, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(48.831938054369, $pointDest->y, 0.1);
 
         $pointDest = $proj4->transform($projWGS84, $projLSud, $pointSrc);
-        $this->assertEquals(601419.93654252, $pointDest->x, '', 0.1);
-        $this->assertEquals(726554.08650133, $pointDest->y, '', 0.1);
-        $this->assertEquals(601419.93647681, $pointDest->x, '', 0.1);
-        $this->assertEquals(726554.08650133, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(601419.93654252, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(726554.08650133, $pointDest->y, 0.1);
+        $this->assertEqualsWithDelta(601419.93647681, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(726554.08650133, $pointDest->y, 0.1);
 
         $pointDest = $proj4->transform($projLSud, $projWGS84, $pointSrc);
-        $this->assertEquals(2.3557810993491, $pointDest->x, '', 0.1);
-        $this->assertEquals(48.831938051718, $pointDest->y, '', 0.1);
-        $this->assertEquals(2.3557811002407, $pointDest->x, '', 0.1);
-        $this->assertEquals(48.831938050527, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(2.3557810993491, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(48.831938051718, $pointDest->y, 0.1);
+        $this->assertEqualsWithDelta(2.3557811002407, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(48.831938050527, $pointDest->y, 0.1);
 
         $pointDest = $proj4->transform($projWGS84, $projLI, $pointSrc);
-        $this->assertEquals(601415.06988072, $pointDest->x, '', 0.1);
-        $this->assertEquals(1125718.0309796, $pointDest->y, '', 0.1);
-        $this->assertEquals(601415.06994621, $pointDest->x, '', 0.1);
-        $this->assertEquals(1125718.0308472, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(601415.06988072, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(1125718.0309796, $pointDest->y, 0.1);
+        $this->assertEqualsWithDelta(601415.06994621, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(1125718.0308472, $pointDest->y, 0.1);
 
         $pointDest = $proj4->transform($projLI, $projL93, $pointSrc);
-        $this->assertEquals(652709.40007563, $pointDest->x, '', 0.1);
-        $this->assertEquals(6859290.9456811, $pointDest->y, '', 0.1);
-        $this->assertEquals(652709.40001126, $pointDest->x, '', 0.1);
-        $this->assertEquals(6859290.9458141, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(652709.40007563, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(6859290.9456811, $pointDest->y, 0.1);
+        $this->assertEqualsWithDelta(652709.40001126, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(6859290.9458141, $pointDest->y, 0.1);
 
         $pointDest = $proj4->transform($projGDA94, $projL93, $pointSrc);
-        $this->assertEquals(7172106.7349943, $pointDest->x, '', 0.1);
-        $this->assertEquals(13534125.230361, $pointDest->y, '', 0.1);
-        $this->assertEquals(7172106.7349943, $pointDest->x, '', 0.1);
-        $this->assertEquals(13534125.230361, $pointDest->y, '', 0.1);
+        $this->assertEqualsWithDelta(7172106.7349943, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(13534125.230361, $pointDest->y, 0.1);
+        $this->assertEqualsWithDelta(7172106.7349943, $pointDest->x, 0.1);
+        $this->assertEqualsWithDelta(13534125.230361, $pointDest->y, 0.1);
     }
 
     public function testMonteMarioItaly()
@@ -417,6 +418,6 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $pointMin = new Point(1013714.5417662, 5692462.5159013);
         $pointMinTr = $proj4->transform($projFROM, $projTO, $pointMin);
 
-        $this->assertEquals(array(1508344.3777571, 5032839.2985009), array($pointMinTr->x, $pointMinTr->y), '', 0.0001);
+        $this->assertEqualsWithDelta(array(1508344.3777571, 5032839.2985009), array($pointMinTr->x, $pointMinTr->y), 0.0001);
     }
 }

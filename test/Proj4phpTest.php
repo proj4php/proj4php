@@ -36,7 +36,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $proj3827 = new Proj('EPSG:3827', $proj4); //TWD67 / TM2 zone 119
         $proj3828 = new Proj('EPSG:3828', $proj4); //TWD67 / TM2 zone 121
         $proj27700 = new Proj('+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs',$proj4);
-        $proj27700bis = new Proj('PROJCS["OSGB 1936 / British National Grid",GEOGCS["OSGB 1936",DATUM["D_OSGB_1936",SPHEROID["Airy_1830",6377563.396,299.3249646]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",49],PARAMETER["central_meridian",-2],PARAMETER["scale_factor",0.9996012717],PARAMETER["false_easting",400000],PARAMETER["false_northing",-100000],UNIT["Meter",1]]',$proj4);
+        $proj27700bis = new Proj(' PROJCS["OSGB 1936 / British National Grid",GEOGCS["OSGB 1936",DATUM["D_OSGB_1936",SPHEROID["Airy_1830",6377563.396,299.3249646]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",49], PARAMETER["central_meridian", -2], PARAMETER["scale_factor", 0.9996012717], PARAMETER["false_easting", 400000], PARAMETER["false_northing",-100000], UNIT["Meter",1]]', $proj4);
 
         // GPS
         // latitude        longitude

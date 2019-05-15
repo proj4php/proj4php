@@ -33,7 +33,7 @@ class Wkt {
 			);
 		}
 
-		$wktSections = self::ParseWKTIntoSections($wktString);
+		$wktSections = self::ParseWKTIntoSections(trim($wktString));
 
 		if (empty($wktSections)) {
 			//print_r(json_encode($wktParams,JSON_PRETTY_PRINT));

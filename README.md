@@ -19,7 +19,7 @@ features are being implemented on this package:
 * [x] Full compatibility with [composer](https://getcomposer.org/)
 * [ ] Tests to come once the above is implemented.
 
-A [legacy branch php4proj5.2](https://github.com/proj4php/proj4php/tree/proj4php5.2) will be
+Legacy branches [proj4php5.2](https://github.com/proj4php/proj4php/tree/proj4php5.2) and [proj4php7.1](https://github.com/proj4php/proj4php/tree/proj4php7.1) will be
 maintained for older applications that need it.
 
 ## Using

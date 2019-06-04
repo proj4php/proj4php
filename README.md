@@ -1,5 +1,6 @@
 [![Build Status](https://img.shields.io/travis/proj4php/proj4php/master.svg)](https://travis-ci.org/proj4php/proj4php)
 [![Latest Stable Version](https://img.shields.io/packagist/dt/proj4php/proj4php.svg)](https://packagist.org/packages/proj4php/proj4php)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/proj4php/proj4php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/proj4php/proj4php/?branch=master)
 
 # proj4php
 PHP-class for proj4

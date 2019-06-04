@@ -233,7 +233,7 @@ class Laea
                     break;
                 case $this->N_POLE:
                 case $this->S_POLE:
-                    if (q >= 0.0) {
+                    if ($q >= 0.0) {
                         $x = ($b = sqrt($q)) * $sinlam;
                         $y = $coslam * (($this->mode == $this->S_POLE) ? $b : -$b);
                     } else {

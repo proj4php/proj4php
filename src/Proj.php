@@ -129,48 +129,48 @@ class Proj
 
     public function toString()
     {
-        $str  =  "title :".$this->title;
-        $str .= " projName :".$this->projName;
-        $str .= " units :".$this->units;
+        $str  = "title :" . $this->title;
+        $str .= " projName :" . $this->projName;
+        $str .= " units :" . $this->units;
 //        $str .= " datum :".$this->datum;
-        $str .= " datum_params :".$this->datum_params;
-        $str .= " datumCode :".$this->datumCode;
-        $str .= " axis :".$this->axis;
-        $str .= " x0 :".$this->x0;
-        $str .= " y0 :".$this->y0;
-        $str .= " localCS :".$this->localCS;
-        $str .= " srsCode :".$this->srsCode;
-        $str .= " R_A :".$this->R_A;
-        $str .= " a2 :".$this->a2;
-        $str .= " a :".$this->a;
-        $str .= " alpha :".$this->alpha;
-        $str .= " b2 :".$this->b2;
-        $str .= " b :".$this->b;
-        $str .= " datumName :".$this->datumName;
-        $str .= " defData:".$this->defData;
-        $str .= " e :".$this->e;
-        $str .= " ellps :".$this->ellps;
-        $str .= " ep2 :".$this->ep2;
-        $str .= " es :".$this->es;
-        $str .= " from_greenwich :".$this->from_greenwich;
-        $str .= " k0 :".$this->k0;
-        $str .= " lat0 :".$this->lat0;
-        $str .= " lat1 :".$this->lat1;
-        $str .= " lat2 :".$this->lat2;
-        $str .= " lat_ts :".$this->lat_ts;
-        $str .= " long0 :".$this->long0;
-        $str .= " longc :".$this->longc;
-        $str .= " nagrids :".$this->nagrids;
-        $str .= " rf :".$this->rf;
-        $str .= " srsAuth :".$this->srsAuth;
-        $str .= " rf :".$this->rf;
-        $str .= " srsAuth :".$this->srsAuth;
-        $str .= " srsProjNumber :".$this->srsProjNumber;
-        $str .= " to_rads :".$this->ro_rads;
-        $str .= " utmSouth :".$this->utmSouth;
-        $str .= " zone :".$this->zone;
-        $str .= " to_meter :".$this->to_meter;
-        $str .= " sphere :".$this->sphere;
+        $str .= " datum_params :" . $this->datum_params;
+        $str .= " datumCode :" . $this->datumCode;
+        $str .= " axis :" . $this->axis;
+        $str .= " x0 :" . $this->x0;
+        $str .= " y0 :" . $this->y0;
+        $str .= " localCS :" . $this->localCS;
+        $str .= " srsCode :" . $this->srsCode;
+        $str .= " R_A :" . $this->R_A;
+        $str .= " a2 :" . $this->a2;
+        $str .= " a :" . $this->a;
+        $str .= " alpha :" . $this->alpha;
+        $str .= " b2 :" . $this->b2;
+        $str .= " b :" . $this->b;
+        $str .= " datumName :" . $this->datumName;
+        $str .= " defData:" . $this->defData;
+        $str .= " e :" . $this->e;
+        $str .= " ellps :" . $this->ellps;
+        $str .= " ep2 :" . $this->ep2;
+        $str .= " es :" . $this->es;
+        $str .= " from_greenwich :" . $this->from_greenwich;
+        $str .= " k0 :" . $this->k0;
+        $str .= " lat0 :" . $this->lat0;
+        $str .= " lat1 :" . $this->lat1;
+        $str .= " lat2 :" . $this->lat2;
+        $str .= " lat_ts :" . $this->lat_ts;
+        $str .= " long0 :" . $this->long0;
+        $str .= " longc :" . $this->longc;
+        $str .= " nagrids :" . $this->nagrids;
+        $str .= " rf :" . $this->rf;
+        $str .= " srsAuth :" . $this->srsAuth;
+        $str .= " rf :" . $this->rf;
+        $str .= " srsAuth :" . $this->srsAuth;
+        $str .= " srsProjNumber :" . $this->srsProjNumber;
+        $str .= " to_rads :" . $this->ro_rads;
+        $str .= " utmSouth :" . $this->utmSouth;
+        $str .= " zone :" . $this->zone;
+        $str .= " to_meter :" . $this->to_meter;
+        $str .= " sphere :" . $this->sphere;
         return $str;
     }
 
@@ -195,7 +195,7 @@ class Proj
         if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
             $this->to_rads = COMMON::D2R;
 
-            $params=Wkt::Parse($srsCode);
+            $params = Wkt::Parse($srsCode);
 
             // TODO: find a better way to apply wkt params to this instance
             foreach ($params as $k => $v) {
@@ -215,7 +215,7 @@ class Proj
             return;
         }
 
-        if (strpos($srsCode,'+proj') === 0) {
+        if (strpos($srsCode, '+proj') === 0) {
             $this->defData = $srsCode;
             $this->parseDefs();
             $this->loadProjCode($this->projName);
@@ -475,12 +475,12 @@ class Proj
      */
     public function parseDefs()
     {
-        if (! isset($this->defData)) {
+        if (!isset($this->defData)) {
             // allow wkt to define defData, and not be overwritten here.
             $this->defData = $this->proj4php->getDef($this->srsCode);
         }
 
-        if (! $this->defData) {
+        if (!$this->defData) {
             return;
         }
 
@@ -519,7 +519,7 @@ class Proj
                 case "ellps":
                     $this->ellps = trim($paramVal);
                     if ($this->ellps=='WGS84' && !isset($this->datumCode))
-                       $this->datumCode = trim($paramVal);
+                        $this->datumCode = trim($paramVal);
                     break;
                 case "a":
                     // semi-major radius
@@ -591,7 +591,7 @@ class Proj
                     $this->utmSouth = true;
                     break;
                 case "towgs84":
-                    $this->datum_params = explode( ",", $paramVal);
+                    $this->datum_params = explode(",", $paramVal);
                     break;
                 case "to_meter":
                     // cartesian scaling
@@ -650,7 +650,7 @@ class Proj
             if (is_array($datumDef)) {
                 $this->datum_params = array_key_exists('towgs84', $datumDef) ? explode(',', $datumDef['towgs84']) : null;
 
-               if(!isset($this->ellps)){
+                if(!isset($this->ellps)){
                     //in the case of SR-ORG:7191, proj for defines  +datum=wgs84, but also +ellps=krass. this would have overwriten that ellipsoid
                     $this->ellps = $datumDef['ellipse'];
                 }
@@ -660,7 +660,7 @@ class Proj
 
         // Do we have an ellipsoid?
         if (!isset($this->a)) {
-            if ( ! isset($this->ellps) || strlen($this->ellps) == 0 || ! $this->proj4php->hasEllipsoid($this->ellps)) {
+            if (!isset($this->ellps) || strlen($this->ellps) == 0 || !$this->proj4php->hasEllipsoid($this->ellps)) {
                 $ellipse = $this->proj4php->getEllipsoid('WGS84');
             } else {
                 $ellipse = $this->proj4php->getEllipsoid($this->ellps);
@@ -669,7 +669,7 @@ class Proj
             Proj4php::extend($this, $ellipse);
         }
 
-        if (isset($this->rf) && !isset($this->b)&&$this->rf!=0) { // SR-ORG:28 division by 0
+        if (isset($this->rf) && !isset($this->b) && $this->rf != 0) { // SR-ORG:28 division by 0
 
             $this->b = (1.0 - 1.0 / $this->rf) * $this->a;
         }
@@ -700,7 +700,7 @@ class Proj
         // used in geocentric
         $this->ep2 = ($this->a2 - $this->b2) / $this->b2;
 
-        if ( ! isset($this->k0)) {
+        if (!isset($this->k0)) {
             // default value
             $this->k0 = 1.0;
         }

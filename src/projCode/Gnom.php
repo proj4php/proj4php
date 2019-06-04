@@ -59,8 +59,8 @@ class Gnom
     {
         // Place parameters in static storage for common use
 
-        $this->sin_p14 = sin( $this->lat0 );
-        $this->cos_p14 = cos( $this->lat0 );
+        $this->sin_p14 = sin($this->lat0);
+        $this->cos_p14 = cos($this->lat0);
 
         // Approximation for projecting points to the horizon (infinity)
         $this->infinity_dist = 1000 * $this->a;
@@ -85,20 +85,20 @@ class Gnom
         $lon = $p->x;
         $lat = $p->y;
 
-        $dlon = Common::adjust_lon( $lon - $this->long0 );
+        $dlon = Common::adjust_lon($lon - $this->long0);
 
-        $sinphi = sin( $lat );
-        $cosphi = cos( $lat );
+        $sinphi = sin($lat);
+        $cosphi = cos($lat);
 
-        $coslon = cos( $dlon );
+        $coslon = cos($dlon);
         $g = $this->sin_p14 * $sinphi + $this->cos_p14 * $cosphi * $coslon;
         $ksp = 1.0;
 
-        if (($g > 0) || (abs( $g ) <= Common::EPSLN)) {
-            $x = $this->x0 + $this->a * $ksp * $cosphi * sin( $dlon ) / $g;
+        if (($g > 0) || (abs($g) <= Common::EPSLN)) {
+            $x = $this->x0 + $this->a * $ksp * $cosphi * sin($dlon) / $g;
             $y = $this->y0 + $this->a * $ksp * ($this->cos_p14 * $sinphi - $this->sin_p14 * $cosphi * $coslon) / $g;
         } else {
-            Proj4php::reportError( "orthoFwdPointError" );
+            Proj4php::reportError("orthoFwdPointError");
 
             // Point is in the opposing hemisphere and is unprojectable
             // We still need to return a reasonable point, so we project 
@@ -107,7 +107,7 @@ class Gnom
             // This is a reasonable approximation for short shapes and lines that 
             // straddle the horizon.
 
-            $x = $this->x0 + $this->infinity_dist * $cosphi * sin( $dlon );
+            $x = $this->x0 + $this->infinity_dist * $cosphi * sin($dlon);
             $y = $this->y0 + $this->infinity_dist * ($this->cos_p14 * $sinphi - $this->sin_p14 * $cosphi * $coslon);
         }
 
@@ -141,13 +141,13 @@ class Gnom
         $p->y /= $this->k0;
 
         if (($rh = sqrt($p->x * $p->x + $p->y * $p->y))) {
-            $c = atan2( $rh, $this->rc );
-            $sinc = sin( $c );
-            $cosc = cos( $c );
+            $c = atan2($rh, $this->rc);
+            $sinc = sin($c);
+            $cosc = cos($c);
 
-            $lat = Common::asinz( $cosc * $this->sin_p14 + ($p->y * $sinc * $this->cos_p14) / $rh );
-            $lon = atan2( $p->x * sinc, rh * $this->cos_p14 * $cosc - $p->y * $this->sin_p14 * $sinc );
-            $lon = Common::adjust_lon( $this->long0 + $lon );
+            $lat = Common::asinz($cosc * $this->sin_p14 + ($p->y * $sinc * $this->cos_p14) / $rh);
+            $lon = atan2($p->x * sinc, rh * $this->cos_p14 * $cosc - $p->y * $this->sin_p14 * $sinc);
+            $lon = Common::adjust_lon($this->long0 + $lon);
         } else {
             $lat = $this->phic0;
             $lon = 0.0;

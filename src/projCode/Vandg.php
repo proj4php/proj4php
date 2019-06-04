@@ -76,7 +76,7 @@ class Vandg
             $y = $this->y0;
         }
 
-        $theta = Common::asinz(2.0 * abs( $lat / Common::PI));
+        $theta = Common::asinz(2.0 * abs($lat / Common::PI));
 
         if ((abs($dlon) <= Common::EPSLN) || (abs(abs($lat) - Common::HALF_PI) <= Common::EPSLN)) {
             $x = $this->x0;
@@ -102,14 +102,14 @@ class Vandg
 
         $con = Common::PI
             * $this->R
-            * ($al * ($g - $msq) + sqrt($asq * ($g - $sq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq) )) / ($msq + $asq);
+            * ($al * ($g - $msq) + sqrt($asq * ($g - $sq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq))) / ($msq + $asq);
 
         if ($dlon < 0) {
             $con = -$con;
         }
 
         $x = $this->x0 + $con;
-        $con = abs( $con / (Common::PI * $this->R) );
+        $con = abs($con / (Common::PI * $this->R));
 
         if ($lat >= 0) {
             $y = $this->y0 + Common::PI * $this->R * sqrt(1.0 - $con * $con - 2.0 * $al * $con);
@@ -156,7 +156,7 @@ class Vandg
 
         $xys = $xx * $xx + $yy * $yy;
 
-        $c1 = -abs( $yy ) * (1.0 + $xys);
+        $c1 = -abs($yy) * (1.0 + $xys);
         $c2 = $c1 - 2.0 * $yy * $yy + $xx * $xx;
         $c3 = -2.0 * $c1 + 1.0 + 2.0 * $yy * $yy + $xys * $xys;
 

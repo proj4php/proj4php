@@ -49,10 +49,10 @@ class Point
      */
     public function __construct($x = null, $y = null, $z = null, Proj $projection = null)
     {
-        if ($projection===null and $z instanceof Proj)
+        if ($projection === null and $z instanceof Proj)
         {
-          $projection = $z;
-          $z = null;
+            $projection = $z;
+            $z = null;
         }
         $this->projection = $projection;
         if (is_array($x)) {

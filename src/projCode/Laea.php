@@ -83,9 +83,9 @@ class Laea
     public function init()
     {
         $t = abs($this->lat0);
-        if (abs( $t - Common::HALF_PI) < Common::EPSLN) {
+        if (abs($t - Common::HALF_PI) < Common::EPSLN) {
             $this->mode = $this->lat0 < 0. ? $this->S_POLE : $this->N_POLE;
-        } else if( abs( $t ) < Common::EPSLN ) {
+        } else if (abs($t) < Common::EPSLN) {
             $this->mode = $this->EQUIT;
         } else {
             $this->mode = $this->OBLIQ;
@@ -94,26 +94,26 @@ class Laea
         if ($this->es > 0) {
             #$sinphi;
 
-            $this->qp = Common::qsfnz( $this->e, 1.0 );
+            $this->qp = Common::qsfnz($this->e, 1.0);
             $this->mmf = 0.5 / (1.0 - $this->es);
-            $this->apa = $this->authset( $this->es );
-            switch( $this->mode ) {
+            $this->apa = $this->authset($this->es);
+            switch ($this->mode) {
                 case $this->N_POLE:
                 case $this->S_POLE:
                     $this->dd = 1.0;
                     break;
                 case $this->EQUIT:
-                    $this->rq = sqrt( .5 * $this->qp );
+                    $this->rq = sqrt(.5 * $this->qp);
                     $this->dd = 1.0 / $this->rq;
                     $this->xmf = 1.0;
                     $this->ymf = 0.5 * $this->qp;
                     break;
                 case $this->OBLIQ:
-                    $this->rq = sqrt( .5 * $this->qp );
-                    $sinphi = sin( $this->lat0 );
-                    $this->sinb1 = Common::qsfnz( $this->e, $sinphi ) / $this->qp;
-                    $this->cosb1 = sqrt( 1. - $this->sinb1 * $this->sinb1 );
-                    $this->dd = cos( $this->lat0 ) / (sqrt( 1.0 - $this->es * $sinphi * $sinphi ) * $this->rq * $this->cosb1);
+                    $this->rq = sqrt(.5 * $this->qp);
+                    $sinphi = sin($this->lat0);
+                    $this->sinb1 = Common::qsfnz($this->e, $sinphi) / $this->qp;
+                    $this->cosb1 = sqrt(1. - $this->sinb1 * $this->sinb1);
+                    $this->dd = cos($this->lat0) / (sqrt(1.0 - $this->es * $sinphi * $sinphi) * $this->rq * $this->cosb1);
                     $this->ymf = ($this->xmf = $this->rq) / $this->dd;
                     $this->xmf *= $this->dd;
                     break;
@@ -154,19 +154,19 @@ class Laea
                 case $this->EQUIT:
                     $y = ($this->mode == $this->EQUIT) ? 1. + $cosphi * $coslam : 1. + $this->sinph0 * $sinphi + $this->cosph0 * $cosphi * $coslam;
                     if ($y <= Common::EPSLN) {
-                        Proj4php::reportError( "laea:fwd:y less than eps" );
+                        Proj4php::reportError("laea:fwd:y less than eps");
                         return null;
                     }
 
-                    $y = sqrt( 2. / $y );
-                    $x = $y * $cosphi * sin( $lam );
+                    $y = sqrt(2. / $y);
+                    $x = $y * $cosphi * sin($lam);
                     $y *= ($this->mode == $this->EQUIT) ? $sinphi : $this->cosph0 * $sinphi - $this->sinph0 * $cosphi * $coslam;
                     break;
                 case $this->N_POLE:
                     $coslam = -$coslam;
                 case $this->S_POLE:
-                    if( abs( $phi + $this->phi0 ) < Common::EPSLN ) {
-                        Proj4php::reportError( "laea:fwd:phi < eps" );
+                    if (abs($phi + $this->phi0) < Common::EPSLN) {
+                        Proj4php::reportError("laea:fwd:phi < eps");
                         return;
                     }
 
@@ -195,7 +195,7 @@ class Laea
 
             if ($this->mode == $this->OBLIQ || $this->mode == $this->EQUIT) {
                 $sinb = $q / $this->qp;
-                $cosb = sqrt( 1.0 - $sinb * $sinb );
+                $cosb = sqrt(1.0 - $sinb * $sinb);
             }
 
             switch ($this->mode) {
@@ -223,18 +223,18 @@ class Laea
             switch ($this->mode) {
                 case $this->OBLIQ:
                 case $this->EQUIT:
-                    $b = sqrt( 2.0 / $b );
-                    if ($this->mode == $this->OBLIQ ) {
+                    $b = sqrt(2.0 / $b);
+                    if ($this->mode == $this->OBLIQ) {
                         $y = $this->ymf * $b * ($this->cosb1 * $sinb - $this->sinb1 * $cosb * $coslam);
                     } else {
-                        $y = ($b = sqrt( 2. / (1. + $cosb * $coslam) )) * $sinb * $this->ymf;
+                        $y = ($b = sqrt(2. / (1. + $cosb * $coslam))) * $sinb * $this->ymf;
                     }
                     $x = $this->xmf * $b * $cosb * $sinlam;
                     break;
                 case $this->N_POLE:
                 case $this->S_POLE:
                     if (q >= 0.0) {
-                        $x = ($b = sqrt( $q )) * $sinlam;
+                        $x = ($b = sqrt($q)) * $sinlam;
                         $y = $coslam * (($this->mode == $this->S_POLE) ? $b : -$b);
                     } else {
                         $x = $y = 0.;
@@ -275,7 +275,7 @@ class Laea
         $x = $p->x / $this->a;
         $y = $p->y / $this->a;
 
-        if( $this->sphere ) {
+        if ($this->sphere) {
             $cosz = 0.0;
             #$rh;
             $sinz = 0.0;
@@ -288,22 +288,22 @@ class Laea
                 return null;
             }
 
-            $phi = 2. * asin( $phi );
+            $phi = 2. * asin($phi);
 
             if ($this->mode == $this->OBLIQ || $this->mode == $this->EQUIT) {
                 $sinz = sin($phi);
                 $cosz = cos($phi);
             }
-            switch( $this->mode ) {
+            switch ($this->mode) {
                 case $this->EQUIT:
-                    $phi = (abs( $rh ) <= Common::EPSLN) ? 0. : asin( $y * $sinz / $rh );
+                    $phi = (abs($rh) <= Common::EPSLN) ? 0. : asin($y * $sinz / $rh);
                     $x *= $sinz;
                     $y = $cosz * $rh;
                     break;
                 case $this->OBLIQ:
-                    $phi = (abs( $rh ) <= Common::EPSLN) ? $this->phi0 : asin( $cosz * $this->sinph0 + $y * $sinz * $this->cosph0 / $rh );
+                    $phi = (abs($rh) <= Common::EPSLN) ? $this->phi0 : asin($cosz * $this->sinph0 + $y * $sinz * $this->cosph0 / $rh);
                     $x *= $sinz * $this->cosph0;
-                    $y = ($cosz - sin( $phi ) * $this->sinph0) * $rh;
+                    $y = ($cosz - sin($phi) * $this->sinph0) * $rh;
                     break;
                 case $this->N_POLE:
                     $y = -$y;
@@ -324,12 +324,12 @@ class Laea
             */
             $ab = 0.0;
 
-            switch($this->mode) {
+            switch ($this->mode) {
                 case $this->EQUIT:
                 case $this->OBLIQ:
                     $x /= $this->dd;
                     $y *= $this->dd;
-                    $rho = sqrt( $x * $x + $y * $y );
+                    $rho = sqrt($x * $x + $y * $y);
 
                     if ($rho < Common::EPSLN) {
                         $p->x = 0.;
@@ -337,8 +337,8 @@ class Laea
                         return $p;
                     }
 
-                    $sCe = 2. * asin( .5 * $rho / $this->rq );
-                    $cCe = cos( $sCe );
+                    $sCe = 2. * asin(.5 * $rho / $this->rq);
+                    $cCe = cos($sCe);
                     $x *= ($sCe = sin($sCe));
 
                     if ($this->mode == $this->OBLIQ) {
@@ -356,7 +356,7 @@ class Laea
                 case $this->S_POLE:
                     $q = ($x * $x + $y * $y);
 
-                    if ( ! $q) {
+                    if (!$q) {
                         $p->x = 0.;
                         $p->y = $this->phi0;
                         return $p;
@@ -438,6 +438,6 @@ class Laea
      */
     public function authlat($beta, $APA) {
         $t = $beta + $beta;
-        return ($beta + $APA[0] * sin( $t ) + $APA[1] * sin($t + $t) + $APA[2] * sin($t + $t + $t));
+        return ($beta + $APA[0] * sin($t) + $APA[1] * sin($t + $t) + $APA[2] * sin($t + $t + $t));
     }
 }

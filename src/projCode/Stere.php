@@ -62,16 +62,16 @@ class Stere
      */
     public function init()
     {
-        if (! isset($this->lat_ts)) {
-            $this->lat_ts=Common::HALF_PI;
+        if (!isset($this->lat_ts)) {
+            $this->lat_ts = Common::HALF_PI;
         }
 
-        $this->lat_ts=abs($this->lat_ts);
+        $this->lat_ts = abs($this->lat_ts);
 
         $this->phits = $this->lat_ts;
-        $t = abs( $this->lat0 );
+        $t = abs($this->lat0);
 
-        if ((abs( $t ) - Common::HALF_PI) < Common::EPSLN) {
+        if ((abs($t) - Common::HALF_PI) < Common::EPSLN) {
             $this->mode = $this->lat0 < 0. ? $this->S_POLE : $this->N_POLE;
         } else {
             $this->mode = $t > Common::EPSLN ? $this->OBLIQ : $this->EQUIT;
@@ -83,13 +83,13 @@ class Stere
             switch ($this->mode) {
                 case $this->N_POLE:
                 case $this->S_POLE:
-                    if (abs( $this->phits - Common::HALF_PI) < Common::EPSLN) {
-                        $this->akm1 = 2. * $this->k0 / sqrt( pow( 1 + $this->e, 1 + $this->e ) * pow( 1 - $this->e, 1 - $this->e ) );
+                    if (abs($this->phits - Common::HALF_PI) < Common::EPSLN) {
+                        $this->akm1 = 2. * $this->k0 / sqrt(pow(1 + $this->e, 1 + $this->e) * pow(1 - $this->e, 1 - $this->e));
                     } else {
-                        $t = sin( $this->phits );
-                        $this->akm1 = cos( $this->phits ) / Common::tsfnz( $this->e, $this->phits, $t );
+                        $t = sin($this->phits);
+                        $this->akm1 = cos($this->phits) / Common::tsfnz($this->e, $this->phits, $t);
                         $t *= $this->e;
-                        $this->akm1 /= sqrt( 1. - $t * $t );
+                        $this->akm1 /= sqrt(1. - $t * $t);
                     }
                     break;
 
@@ -98,19 +98,19 @@ class Stere
                     break;
 
                 case $this->OBLIQ:
-                    $t = sin( $this->lat0 );
-                    $X = 2. * atan( $this->ssfn_( $this->lat0, $t, $this->e ) ) - Common::HALF_PI;
+                    $t = sin($this->lat0);
+                    $X = 2. * atan($this->ssfn_($this->lat0, $t, $this->e)) - Common::HALF_PI;
                     $t *= $this->e;
-                    $this->akm1 = 2. * $this->k0 * cos( $this->lat0 ) / sqrt( 1. - $t * $t );
-                    $this->sinX1 = sin( $X );
-                    $this->cosX1 = cos( $X );
+                    $this->akm1 = 2. * $this->k0 * cos($this->lat0) / sqrt(1. - $t * $t);
+                    $this->sinX1 = sin($X);
+                    $this->cosX1 = cos($X);
                     break;
             }
         } else {
             switch ($this->mode) {
                 case $this->OBLIQ:
-                    $this->sinph0 = sin( $this->lat0 );
-                    $this->cosph0 = cos( $this->lat0 );
+                    $this->sinph0 = sin($this->lat0);
+                    $this->cosph0 = cos($this->lat0);
 
                 case $this->EQUIT:
                     $this->akm1 = 2. * $this->k0;
@@ -135,7 +135,7 @@ class Stere
     public function forward($p)
     {
         $lon = $p->x;
-        $lon = Common::adjust_lon( $lon - $this->long0 );
+        $lon = Common::adjust_lon($lon - $this->long0);
         $lat = $p->y;
 
         if ($this->sphere) {
@@ -151,7 +151,7 @@ class Stere
             $coslam = cos($lon);
             $sinlam = sin($lon);
 
-            switch($this->mode) {
+            switch ($this->mode) {
                 case $this->EQUIT:
                     $y = 1. + $cosphi * $coslam;
                     if (y <= Common::EPSLN) {
@@ -181,7 +181,7 @@ class Stere
                     if (abs($lat - Common::HALF_PI) < $this->TOL) {
                         Proj4php::reportError("stere:forward:S_POLE");
                     }
-                    $y = $this->akm1 * tan( Common::FORTPI + .5 * $lat );
+                    $y = $this->akm1 * tan(Common::FORTPI + .5 * $lat);
                     $x = $sinlam * $y;
                     $y *= $coslam;
                     break;
@@ -216,7 +216,7 @@ class Stere
                     $sinphi = -$sinphi;
 
                 case $this->N_POLE:
-                    $x = $this->akm1 * Common::tsfnz( $this->e, $lat, $sinphi );
+                    $x = $this->akm1 * Common::tsfnz($this->e, $lat, $sinphi);
                     $y = - $x * $coslam;
                     break;
             }
@@ -238,7 +238,7 @@ class Stere
      */
     public function inverse($p)
     {
-        $x = ($p->x - $this->x0) / $this->a;   /* descale and de-offset */
+        $x = ($p->x - $this->x0) / $this->a; /* descale and de-offset */
         $y = ($p->y - $this->y0) / $this->a;
 
         /*
@@ -263,32 +263,32 @@ class Stere
             $cosc;
             */
 
-            $rh = sqrt( $x * $x + $y * $y );
-            $c = 2. * atan( $rh / $this->akm1 );
-            $sinc = sin( $c );
-            $cosc = cos( $c );
+            $rh = sqrt($x * $x + $y * $y);
+            $c = 2. * atan($rh / $this->akm1);
+            $sinc = sin($c);
+            $cosc = cos($c);
             $lon = 0.;
 
             switch ($this->mode) {
                 case $this->EQUIT:
-                    if (abs( $rh ) <= Common::EPSLN) {
+                    if (abs($rh) <= Common::EPSLN) {
                         $lat = 0.;
                     } else {
-                        $lat = asin( $y * $sinc / $rh );
+                        $lat = asin($y * $sinc / $rh);
                     }
                     if ($cosc != 0. || $x != 0.0)
-                        $lon = atan2( $x * $sinc, $cosc * $rh );
+                        $lon = atan2($x * $sinc, $cosc * $rh);
                     break;
 
                 case $this->OBLIQ:
                     if (abs($rh) <= Common::EPSLN) {
                         $lat = $this->phi0;
                     } else {
-                        $lat = asin( $cosc * $this->sinph0 + $y * $sinc * $this->cosph0 / $rh );
+                        $lat = asin($cosc * $this->sinph0 + $y * $sinc * $this->cosph0 / $rh);
                     }
-                    $c = $cosc - $this->sinph0 * sin( $lat );
+                    $c = $cosc - $this->sinph0 * sin($lat);
                     if ($c != 0. || $x != 0.0) {
-                        $lon = atan2( $x * $sinc * $this->cosph0, $c * $rh );
+                        $lon = atan2($x * $sinc * $this->cosph0, $c * $rh);
                     }
                     break;
 
@@ -299,13 +299,13 @@ class Stere
                     if (abs($rh) <= Common::EPSLN) {
                         $lat = $this->phi0;
                     } else {
-                        $lat = asin( $this->mode == $this->S_POLE ? -$cosc : $cosc  );
+                        $lat = asin($this->mode == $this->S_POLE ? -$cosc : $cosc);
                     }
                     $lon = ($x == 0. && $y == 0.0) ? 0. : atan2($x, $y);
                     break;
             }
 
-            $p->x = Common::adjust_lon( $lon + $this->long0 );
+            $p->x = Common::adjust_lon($lon + $this->long0);
             $p->y = $lat;
         } else {
             $rho = sqrt($x * $x + $y * $y);
@@ -313,16 +313,16 @@ class Stere
             switch ($this->mode) {
                 case $this->OBLIQ:
                 case $this->EQUIT:
-                    $tp = 2. * atan2( $rho * $this->cosX1, $this->akm1 );
-                    $cosphi = cos( $tp );
-                    $sinphi = sin( $tp );
+                    $tp = 2. * atan2($rho * $this->cosX1, $this->akm1);
+                    $cosphi = cos($tp);
+                    $sinphi = sin($tp);
                     if ($rho == 0.0) {
                         $phi_l = asin($cosphi * $this->sinX1);
                     } else {
                         $phi_l = asin($cosphi * $this->sinX1 + ($y * $sinphi * $this->cosX1 / $rho));
                     }
 
-                    $tp = tan( .5 * (Common::HALF_PI + $phi_l) );
+                    $tp = tan(.5 * (Common::HALF_PI + $phi_l));
                     $x *= $sinphi;
                     $y = $rho * $this->cosX1 * $cosphi - $y * $this->sinX1 * $sinphi;
                     $pi2 = Common::HALF_PI;
@@ -334,7 +334,7 @@ class Stere
 
                 case $this->S_POLE:
                     $tp = - $rho / $this->akm1;
-                    $phi_l = Common::HALF_PI - 2. * atan( $tp );
+                    $phi_l = Common::HALF_PI - 2. * atan($tp);
                     $pi2 = -Common::HALF_PI;
                     $halfe = -.5 * $this->e;
                     break;
@@ -342,15 +342,15 @@ class Stere
 
             for ($i = $this->NITER; $i--; $phi_l = $lat) { //check this
                 $sinphi = $this->e * sin($phi_l);
-                $lat = 2.0 * atan( $tp * pow((1.0 + $sinphi) / (1.0 - $sinphi), $halfe)) - $pi2;
+                $lat = 2.0 * atan($tp * pow((1.0 + $sinphi) / (1.0 - $sinphi), $halfe)) - $pi2;
 
-                if (abs( phi_l - lat ) < $this->CONV) {
+                if (abs(phi_l - lat) < $this->CONV) {
                     if ($this->mode == $this->S_POLE) {
                         $lat = -$lat;
                     }
 
                     $lon = ($x == 0. && $y == 0.0) ? 0. : atan2($x, $y);
-                    $p->x = Common::adjust_lon( $lon + $this->long0);
+                    $p->x = Common::adjust_lon($lon + $this->long0);
                     $p->y = $lat;
 
                     return $p;

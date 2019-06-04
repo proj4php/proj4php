@@ -123,7 +123,7 @@ class Ortho
         $p->y -= $this->y0;
         $rh = sqrt($p->x * $p->x + $p->y * $p->y);
 
-        if($rh > $this->a + 0.0000001) {
+        if ($rh > $this->a + 0.0000001) {
             Proj4php::reportError("orthoInvDataError");
         }
 

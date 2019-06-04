@@ -77,23 +77,23 @@ class Poly
 
         $phi = $a;
         for ($i = 1; $i <= 15; $i++) {
-            $sinphi = sin( $phi );
-            $tanphi = tan( $phi );
-            $c = $tanphi * sqrt( 1.0 - $eccent * $sinphi * $sinphi );
-            $sin2ph = sin( 2.0 * $phi );
+            $sinphi = sin($phi);
+            $tanphi = tan($phi);
+            $c = $tanphi * sqrt(1.0 - $eccent * $sinphi * $sinphi);
+            $sin2ph = sin(2.0 * $phi);
             /*
               ml = e0 * *phi - e1 * sin2ph + e2 * sin (4.0 *  *phi);
               mlp = e0 - 2.0 * e1 * cos (2.0 *  *phi) + 4.0 * e2 *  cos (4.0 *  *phi);
              */
-            $ml = $e0 * $phi - $e1 * $sin2ph + $e2 * sin( 4.0 * $phi ) - $e3 * sin( 6.0 * $phi );
-            $mlp = $e0 - 2.0 * $e1 * cos( 2.0 * $phi ) + 4.0 * $e2 * cos( 4.0 * $phi ) - 6.0 * $e3 * cos( 6.0 * $phi );
+            $ml = $e0 * $phi - $e1 * $sin2ph + $e2 * sin(4.0 * $phi) - $e3 * sin(6.0 * $phi);
+            $mlp = $e0 - 2.0 * $e1 * cos(2.0 * $phi) + 4.0 * $e2 * cos(4.0 * $phi) - 6.0 * $e3 * cos(6.0 * $phi);
             $con1 = 2.0 * $ml + $c * ($ml * $ml + $b) - 2.0 * $a * ($c * $ml + 1.0);
             $con2 = $eccent * $sin2ph * ($ml * $ml + $b - 2.0 * $a * $ml) / (2.0 * $c);
             $con3 = 2.0 * ($a - $ml) * ($c * $mlp - 2.0 / $sin2ph) - 2.0 * $mlp;
             $dphi = $con1 / ($con2 + $con3);
             $phi += $dphi;
 
-            if ( abs( $dphi ) <= .0000000001 ) {
+            if (abs($dphi) <= .0000000001) {
                 return($phi);
             }
         }
@@ -114,7 +114,7 @@ class Poly
         #$com;
         $con = 1.0 + $x;
         $com = 1.0 - $x;
-        return (sqrt( (pow( $con, $con )) * (pow( $com, $com )) ));
+        return (sqrt((pow($con, $con)) * (pow($com, $com))));
     }
 
     /**
@@ -122,20 +122,20 @@ class Poly
      */
     public function init()
     {
-        if ( $this->lat0 == 0 ) {
+        if ($this->lat0 == 0) {
             $this->lat0 = 90; //$this->lat0 ca
         }
 
         /* Place parameters in static storage for common use
           ------------------------------------------------- */
         $this->temp = $this->b / $this->a;
-        $this->es = 1.0 - pow( $this->temp, 2 ); // devait etre dans tmerc.js mais n y est pas donc je commente sinon retour de valeurs nulles 
-        $this->e = sqrt( $this->es );
-        $this->e0 = Common::e0fn( $this->es );
-        $this->e1 = Common::e1fn( $this->es );
-        $this->e2 = Common::e2fn( $this->es );
-        $this->e3 = Common::e3fn( $this->es );
-        $this->ml0 = Common::mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $this->lat0 ); //si que des zeros le calcul ne se fait pas
+        $this->es = 1.0 - pow($this->temp, 2); // devait etre dans tmerc.js mais n y est pas donc je commente sinon retour de valeurs nulles 
+        $this->e = sqrt($this->es);
+        $this->e0 = Common::e0fn($this->es);
+        $this->e1 = Common::e1fn($this->es);
+        $this->e2 = Common::e2fn($this->es);
+        $this->e3 = Common::e3fn($this->es);
+        $this->ml0 = Common::mlfn($this->e0, $this->e1, $this->e2, $this->e3, $this->lat0); //si que des zeros le calcul ne se fait pas
         //if (!$this->ml0) {$this->ml0=0;}
     }
 
@@ -159,20 +159,20 @@ class Poly
         $lon = $p->x;
         $lat = $p->y;
 
-        $con = Common::adjust_lon( $lon - $this->long0 );
+        $con = Common::adjust_lon($lon - $this->long0);
 
-        if ( abs( $lat ) <= .0000001 ) {
+        if (abs($lat) <= .0000001) {
             $x = $this->x0 + $this->a * $con;
             $y = $this->y0 - $this->a * $this->ml0;
         } else {
-            $sinphi = sin( $lat );
-            $cosphi = cos( $lat );
+            $sinphi = sin($lat);
+            $cosphi = cos($lat);
 
-            $ml = Common::mlfn( $this->e0, $this->e1, $this->e2, $this->e3, $lat );
-            $ms = Common::msfnz( $this->e, $sinphi, $cosphi );
+            $ml = Common::mlfn($this->e0, $this->e1, $this->e2, $this->e3, $lat);
+            $ms = Common::msfnz($this->e, $sinphi, $cosphi);
 
-            $x = $this->x0 + $this->a * $ms * sin( $sinphi ) / $sinphi;
-            $y = $this->y0 + $this->a * ($ml - $this->ml0 + $ms * (1.0 - cos( $sinphi )) / $sinphi);
+            $x = $this->x0 + $this->a * $ms * sin($sinphi) / $sinphi;
+            $y = $this->y0 + $this->a * ($ml - $this->ml0 + $ms * (1.0 - cos($sinphi)) / $sinphi);
         }
 
         $p->x = $x;
@@ -204,18 +204,18 @@ class Poly
         $al = $this->ml0 + $p->y / $this->a;
         $iflg = 0;
 
-        if ( abs( $al ) <= .0000001 ) {
+        if (abs($al) <= .0000001) {
             $lon = $p->x / $this->a + $this->long0;
             $lat = 0.0;
         } else {
             $b = $al * $al + ($p->x / $this->a) * ($p->x / $this->a);
-            $iflg = $this->phi4z( $this->es, $this->e0, $this->e1, $this->e2, $this->e3, $this->al, $b, $c, $lat );
+            $iflg = $this->phi4z($this->es, $this->e0, $this->e1, $this->e2, $this->e3, $this->al, $b, $c, $lat);
 
-            if( $iflg != 1 ) {
+            if ($iflg != 1) {
                 return($iflg);
             }
 
-            $lon = Common::adjust_lon( (Common::asinz( $p->x * $c / $this->a ) / sin( $lat )) + $this->long0 );
+            $lon = Common::adjust_lon((Common::asinz($p->x * $c / $this->a) / sin($lat)) + $this->long0);
         }
 
         $p->x = $lon;

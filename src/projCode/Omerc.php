@@ -113,7 +113,7 @@ class Omerc
         }
 
         if (! isset($this->longc)) {
-             $this->longc = 0;
+                $this->longc = 0;
         }
 
         // $this->f=1.0;
@@ -121,45 +121,45 @@ class Omerc
         // Place parameters in static storage for common use
 
         $temp = $this->b / $this->a;
-        $es = 1.0 - pow( $temp, 2 );
-        $e = sqrt( $es );
+        $es = 1.0 - pow($temp, 2);
+        $e = sqrt($es);
 
-        $this->sin_p20 = sin( $this->lat0 );
-        $this->cos_p20 = cos( $this->lat0 );
+        $this->sin_p20 = sin($this->lat0);
+        $this->cos_p20 = cos($this->lat0);
 
         $this->con = 1.0 - $this->es * $this->sin_p20 * $this->sin_p20;
-        $this->com = sqrt( 1.0 - $es );
-        $this->bl = sqrt( 1.0 + $this->es * pow( $this->cos_p20, 4.0 ) / (1.0 - $es) );
+        $this->com = sqrt(1.0 - $es);
+        $this->bl = sqrt(1.0 + $this->es * pow($this->cos_p20, 4.0) / (1.0 - $es));
         $this->al = $this->a * $this->bl * $this->k0 * $this->com / $this->con;
 
-        if (abs( $this->lat0 ) < Common::EPSLN) {
+        if (abs($this->lat0) < Common::EPSLN) {
             $this->ts = 1.0;
             $this->d = 1.0;
             $this->el = 1.0;
         } else {
-            $this->ts = Common::tsfnz( $this->e, $this->lat0, $this->sin_p20 );
-            $this->con = sqrt( $this->con );
+            $this->ts = Common::tsfnz($this->e, $this->lat0, $this->sin_p20);
+            $this->con = sqrt($this->con);
             $this->d = $this->bl * $this->com / ($this->cos_p20 * $this->con);
 
             if (($this->d * $this->d - 1.0) > 0.0) {
                 if ($this->lat0 >= 0.0) {
-                    $this->f = $this->d + sqrt( $this->d * $this->d - 1.0 );
+                    $this->f = $this->d + sqrt($this->d * $this->d - 1.0);
                 } else {
-                    $this->f = $this->d - sqrt( $this->d * $this->d - 1.0 );
+                    $this->f = $this->d - sqrt($this->d * $this->d - 1.0);
                 }
             } else {
                 $this->f = $this->d;
             }
 
-            $this->el = $this->f * pow( $this->ts, $this->bl );
+            $this->el = $this->f * pow($this->ts, $this->bl);
         }
 
         //$this->longc=52.60353916666667;
 
         if ($this->mode != 0) {
             $this->g = .5 * ($this->f - 1.0 / $this->f);
-            $this->gama = Common::asinz( sin( $this->alpha ) / $this->d );
-            $this->longc = $this->longc - Common::asinz( $this->g * tan( $this->gama ) ) / $this->bl;
+            $this->gama = Common::asinz(sin($this->alpha) / $this->d);
+            $this->longc = $this->longc - Common::asinz($this->g * tan($this->gama)) / $this->bl;
 
             /* Report parameters common to format B
               ------------------------------------- */
@@ -177,20 +177,20 @@ class Omerc
                 $this->cosaz = cos($this->alpha);
 
                 if ($this->lat0 >= 0) {
-                    $this->u = ($this->al / $this->bl) * atan( sqrt( $this->d * $this->d - 1.0 ) / $this->cosaz );
+                    $this->u = ($this->al / $this->bl) * atan(sqrt($this->d * $this->d - 1.0) / $this->cosaz);
                 } else {
-                    $this->u = -($this->al / $this->bl) * atan( sqrt( $this->d * $this->d - 1.0 ) / $this->cosaz );
+                    $this->u = -($this->al / $this->bl) * atan(sqrt($this->d * $this->d - 1.0) / $this->cosaz);
                 }
             } else {
                 Proj4php::reportError("omerc:Init:DataError");
             }
         } else {
-            $this->sinphi = sin( $this->at1 );
-            $this->ts1 = Common::tsfnz( $this->e, $this->lat1, $this->sinphi );
-            $this->sinphi = sin( $this->lat2 );
-            $this->ts2 = Common::tsfnz( $this->e, $this->lat2, $this->sinphi );
-            $this->h = pow( $this->ts1, $this->bl );
-            $this->l = pow( $this->ts2, $this->bl );
+            $this->sinphi = sin($this->at1);
+            $this->ts1 = Common::tsfnz($this->e, $this->lat1, $this->sinphi);
+            $this->sinphi = sin($this->lat2);
+            $this->ts2 = Common::tsfnz($this->e, $this->lat2, $this->sinphi);
+            $this->h = pow($this->ts1, $this->bl);
+            $this->l = pow($this->ts2, $this->bl);
             $this->f = $this->el / $this->h;
             $this->g = .5 * ($this->f - 1.0 / $this->f);
             $this->j = ($this->el * $this->el - $this->l * $this->h) / ($this->el * $this->el + $this->l * $this->h);
@@ -221,11 +221,11 @@ class Omerc
             }
 
             if (($this->con <= Common::EPSLN) || (abs($this->con - Common::HALF_PI) <= Common::EPSLN)) {
-                Proj4php::reportError( "omercInitDataError" );
+                Proj4php::reportError("omercInitDataError");
                 //return(202);
             } else {
                 if (abs(abs($this->lat0) - Common::HALF_PI) <= Common::EPSLN) {
-                    Proj4php::reportError( "omercInitDataError" );
+                    Proj4php::reportError("omercInitDataError");
                     //return(202);
                 }
             }
@@ -237,9 +237,9 @@ class Omerc
             $this->cosaz = cos($this->alpha);
 
             if ($this->lat0 >= 0) {
-                $this->u = ($this->al / $this->bl) * atan( sqrt( $this->d * $this->d - 1.0 ) / $this->cosaz );
+                $this->u = ($this->al / $this->bl) * atan(sqrt($this->d * $this->d - 1.0) / $this->cosaz);
             } else {
-                $this->u = -($this->al / $this->bl) * atan( sqrt( $this->d * $this->d - 1.0 ) / $this->cosaz );
+                $this->u = -($this->al / $this->bl) * atan(sqrt($this->d * $this->d - 1.0) / $this->cosaz);
             }
         }
     }
@@ -274,22 +274,22 @@ class Omerc
         $lon = $p->x;
         $lat = $p->y;
 
-        $sin_phi = sin( $lat );
-        $dlon = Common::adjust_lon( $lon - $this->longc );
-        $vl = sin( $this->bl * $dlon );
+        $sin_phi = sin($lat);
+        $dlon = Common::adjust_lon($lon - $this->longc);
+        $vl = sin($this->bl * $dlon);
 
-        if (abs( abs( $lat ) - Common::HALF_PI ) > Common::EPSLN) {
-            $ts1 = Common::tsfnz( $this->e, $lat, $sin_phi );
-            $q = $this->el / (pow( $ts1, $this->bl ));
+        if (abs(abs($lat) - Common::HALF_PI) > Common::EPSLN) {
+            $ts1 = Common::tsfnz($this->e, $lat, $sin_phi);
+            $q = $this->el / (pow($ts1, $this->bl));
             $s = .5 * ($q - 1.0 / $q);
             $t = .5 * ($q + 1.0 / $q);
             $ul = ($s * $this->singam - $vl * $this->cosgam) / $t;
-            $con = cos( $this->bl * $dlon );
+            $con = cos($this->bl * $dlon);
 
-            if (abs( $con ) < .0000001) {
+            if (abs($con) < .0000001) {
                 $us = $this->al * $this->bl * $dlon;
             } else {
-                $us = $this->al * atan( ($s * $this->cosgam + $vl * $this->singam) / $con ) / $this->bl;
+                $us = $this->al * atan(($s * $this->cosgam + $vl * $this->singam) / $con) / $this->bl;
 
                 if ($con < 0) {
                     $us = $us + Common::PI * $this->al / $this->bl;
@@ -305,13 +305,13 @@ class Omerc
             $us = $this->al * $lat / $this->bl;
         }
 
-        if (abs( abs( $ul ) - 1.0 ) <= Common::EPSLN) {
+        if (abs(abs($ul) - 1.0) <= Common::EPSLN) {
             //alert("Point projects into infinity","omer-for");
-            Proj4php::reportError( "omercFwdInfinity" );
+            Proj4php::reportError("omercFwdInfinity");
             //return(205);
         }
 
-        $vs = .5 * $this->al * log( (1.0 - $ul) / (1.0 + $ul) ) / $this->bl;
+        $vs = .5 * $this->al * log((1.0 - $ul) / (1.0 + $ul)) / $this->bl;
         $us = $us - $this->u;
         $p->x = $this->x0 + $vs * $this->cosaz + $us * $this->sinaz;
         $p->y = $this->y0 + $us * $this->cosaz - $vs * $this->sinaz;
@@ -363,7 +363,7 @@ class Omerc
         $s = .5 * ($q - 1.0 / $q);
         $t = .5 * ($q + 1.0 / $q);
 
-        $vl = sin( $this->bl * $us / $this->al );
+        $vl = sin($this->bl * $us / $this->al);
         $ul = ($vl * $this->cosgam + $s * $this->singam) / $t;
 
         if (abs(abs($ul) - 1.0) <= Common::EPSLN) {
@@ -375,13 +375,13 @@ class Omerc
             }
         } else {
             $con = 1.0 / $this->bl;
-            $ts1 = pow( ($this->el / sqrt( (1.0 + $ul) / (1.0 - $ul) ) ), $con );
-            $lat = Common::phi2z( $this->e, $ts1 );
+            $ts1 = pow(($this->el / sqrt((1.0 + $ul) / (1.0 - $ul))), $con);
+            $lat = Common::phi2z($this->e, $ts1);
             //if ($flag != 0)
             //return($flag);
             //~ con = cos($this->bl * us /al);
-            $theta = $this->longc - atan2( ($s * $this->cosgam - $vl * $this->singam ), $con ) / $this->bl;
-            $lon = Common::adjust_lon( $theta );
+            $theta = $this->longc - atan2(($s * $this->cosgam - $vl * $this->singam), $con) / $this->bl;
+            $lon = Common::adjust_lon($theta);
         }
 
         $p->x = $lon;

@@ -60,7 +60,7 @@ class Cass
 
     public function init()
     {
-        if (! $this->sphere) {
+        if (!$this->sphere) {
             $this->en = Common::pj_enfn($this->es);
             $this->m0 = Common::pj_mlfn($this->lat0, sin($this->lat0), cos($this->lat0), $this->en);
         }

@@ -71,7 +71,7 @@ class Gauss
         $num = pow(tan(0.5 * $lat + Common::FORTPI) / $this->K, 1.0 / $this->C);
 
         for ($i = Common::MAX_ITER; $i > 0; --$i) {
-            $lat = 2.0 * atan( $num * Common::srat($this->e * sin($p->y), -0.5 * $this->e)) - Common::HALF_PI;
+            $lat = 2.0 * atan($num * Common::srat($this->e * sin($p->y), -0.5 * $this->e)) - Common::HALF_PI;
 
             if (abs($lat - $p->y) < $DEL_TOL) {
                 break;
@@ -81,7 +81,7 @@ class Gauss
         }
 
         // convergence failed
-        if (! $i) {
+        if (!$i) {
             Proj4php::reportError("gauss:inverse:convergence failed");
             return null;
         }

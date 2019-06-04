@@ -8,15 +8,15 @@ $error = false;
  * Geometry-Points 
  */
 if (isset($_GET['GEOM'])) {
-    list($x, $y) = explode( ' ', $_GET['GEOM'] );
+    list($x, $y) = explode(' ', $_GET['GEOM']);
 } else {
-    if ( isset( $_GET['x'] ) ) {
+    if (isset($_GET['x'])) {
         $x = $_GET['x'];
     } else {
         $error = true;
     }
 
-    if (isset( $_GET['y'] ) ) {
+    if (isset($_GET['y'])) {
         $y = $_GET['y'];
     } else {
         $error = true;
@@ -27,10 +27,10 @@ if (isset($_GET['GEOM'])) {
  * Source-CRS 
  */
 if (isset($_GET['SOURCECRS'])) {
-    $srcProjection = str_replace( '::', ':', $_GET['SOURCECRS'] );
-} elseif (isset( $_GET['projectionxy'])) {
+    $srcProjection = str_replace('::', ':', $_GET['SOURCECRS']);
+} elseif (isset($_GET['projectionxy'])) {
     $srcProjection = $_GET['projectionxy'];
-    $srcProjection = str_replace( '::', ':', $srcProjection );
+    $srcProjection = str_replace('::', ':', $srcProjection);
 } else {
     $srcProjection = 'EPSG:2154';
 }
@@ -38,11 +38,11 @@ if (isset($_GET['SOURCECRS'])) {
 /**
  * Target-CRS 
  */
-if (isset( $_GET['TARGETCRS'])) {
-    $tgtProjection = str_replace( '::', ':', $_GET['TARGETCRS'] );
-} elseif (isset( $_GET['projection'])) {
+if (isset($_GET['TARGETCRS'])) {
+    $tgtProjection = str_replace('::', ':', $_GET['TARGETCRS']);
+} elseif (isset($_GET['projection'])) {
     $tgtProjection = $_GET['projection'];
-    $tgtProjection = str_replace( '::', ':', $tgtProjection );
+    $tgtProjection = str_replace('::', ':', $tgtProjection);
 } else {
     $tgtProjection = 'EPSG:4326';
 }
@@ -50,9 +50,9 @@ if (isset( $_GET['TARGETCRS'])) {
 /**
  * Format
  */
-if (isset( $_GET['format'] ) ) {
+if (isset($_GET['format'])) {
     $format = $_GET['format'];
-    if (  !($format == 'xml' || $format == 'json')) {
+    if (!($format == 'xml' || $format == 'json')) {
         $error = true;
     }
 } else {
@@ -89,7 +89,7 @@ if ($format == 'json') {
     echo "{\"status\" :\"success\", \"point\" : {\"x\":" . $pointDest->x . ", \"y\":" . $pointDest->y . ",\"projection\" :\"" . $tgtProjection . "\"}}";
     exit;
 } else {
-    header ("Content-Type:text/xml"); 
+    header("Content-Type:text/xml"); 
     echo "<reponse>";
     echo "<point>";
     echo "<x>" . $pointDest->x . "</x>";

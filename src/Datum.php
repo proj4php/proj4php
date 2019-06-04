@@ -37,8 +37,9 @@ class Datum
         // default setting
         $this->datum_type = Common::PJD_WGS84;
 
-        if (isset($proj->datumCode))
-            $this->datum_code = $proj->datumCode;
+        if (isset($proj->datumCode)) {
+                    $this->datum_code = $proj->datumCode;
+        }
 
         if (isset($proj->datumCode) && $proj->datumCode == 'none') {
             $this->datum_type = Common::PJD_NODATUM;
@@ -130,24 +131,24 @@ class Datum
     public function reportDebug()
     {
         if (isset($this->datum_code))
-          Proj4php::reportDebug("Datum code=$this->datum_code\n");
+            Proj4php::reportDebug("Datum code=$this->datum_code\n");
         Proj4php::reportDebug('Datum type:'.$this->datum_type."\n");
         if (isset($this->a))
-          Proj4php::reportDebug("a=$this->a\n");
+            Proj4php::reportDebug("a=$this->a\n");
         if (isset($this->b))
-          Proj4php::reportDebug("b=$this->b\n");
+            Proj4php::reportDebug("b=$this->b\n");
         if (isset($this->es))
-          Proj4php::reportDebug("es=$this->es\n");
+            Proj4php::reportDebug("es=$this->es\n");
         if (isset($this->es2))
-          Proj4php::reportDebug("es2=$this->es2\n");
+            Proj4php::reportDebug("es2=$this->es2\n");
         if (isset($this->datum_params))
         {
-          foreach($this->datum_params as $key=>$value)
-             Proj4php::reportDebug("Param $key=$value\n");
+            foreach($this->datum_params as $key=>$value)
+                Proj4php::reportDebug("Param $key=$value\n");
         }
         else
         {
-          Proj4php::reportDebug("no params\n");
+            Proj4php::reportDebug("no params\n");
         }
     }
 
@@ -166,7 +167,7 @@ class Datum
      */
     public function geodetic_to_geocentric($p)
     {
-        Proj4php::reportDebug('geodetic_to_geocentric('.$p->x.','.$p->y.")\n");
+        Proj4php::reportDebug('geodetic_to_geocentric(' . $p->x . ',' . $p->y . ")\n");
         $this->reportDebug();
 
         $Longitude = $p->x;
@@ -188,7 +189,7 @@ class Datum
             $Latitude = Common::HALF_PI;
         } elseif (($Latitude < -Common::HALF_PI) || ($Latitude > Common::HALF_PI)) {
             // Latitude out of range.
-            Proj4php::reportError('geocent:lat out of range:' . $Latitude."\n");
+            Proj4php::reportError('geocent:lat out of range:' . $Latitude . "\n");
             return null;
         }
 
@@ -309,7 +310,7 @@ class Datum
             $Height = $P * $CPHI0 + $Z * $SPHI0 - $RN * (1.0 - $this->es * $SPHI0 * $SPHI0);
 
             $RK = $this->es * $RN / ($RN + $Height);
-            $RX = 1.0 / sqrt( 1.0 - $RK * (2.0 - $RK) * $ST * $ST);
+            $RX = 1.0 / sqrt(1.0 - $RK * (2.0 - $RK) * $ST * $ST);
             $CPHI = $ST * (1.0 - $RK) * $RX;
             $SPHI = $CT * $RX;
             $SDPHI = $SPHI * $CPHI0 - $CPHI * $SPHI0;
@@ -403,7 +404,7 @@ class Datum
         $S1 = sqrt($T1 * $T1 + $Sum * $Sum);
         $Sin_p1 = $T1 / $S1;
         $Cos_p1 = $Sum / $S1;
-        $Rn = $this->a / sqrt( 1.0 - $this->es * $Sin_p1 * $Sin_p1);
+        $Rn = $this->a / sqrt(1.0 - $this->es * $Sin_p1 * $Sin_p1);
 
         if ($Cos_p1 >= Common::COS_67P5) {
             $Height = $W / $Cos_p1 - $Rn;
@@ -437,20 +438,20 @@ class Datum
         ));
 
         if ($this->datum_type == Common::PJD_3PARAM) {
-            Proj4php::reportDebug("+x=".$this->datum_params[0]."\n");
-            Proj4php::reportDebug("+y=".$this->datum_params[1]."\n");
-            Proj4php::reportDebug("+z=".$this->datum_params[2]."\n");
+            Proj4php::reportDebug("+x=" . $this->datum_params[0] . "\n");
+            Proj4php::reportDebug("+y=" . $this->datum_params[1] . "\n");
+            Proj4php::reportDebug("+z=" . $this->datum_params[2] . "\n");
             $p->x += $this->datum_params[0];
             $p->y += $this->datum_params[1];
             $p->z += $this->datum_params[2];
         } elseif ($this->datum_type == Common::PJD_7PARAM) {
-            Proj4php::reportDebug("Dx=".$this->datum_params[0]."\n");
-            Proj4php::reportDebug("Dy=".$this->datum_params[1]."\n");
-            Proj4php::reportDebug("Dz=".$this->datum_params[2]."\n");
-            Proj4php::reportDebug("Rx=".$this->datum_params[3]."\n");
-            Proj4php::reportDebug("Ry=".$this->datum_params[4]."\n");
-            Proj4php::reportDebug("Rz=".$this->datum_params[5]."\n");
-            Proj4php::reportDebug("M=".$this->datum_params[6]."\n"); 
+            Proj4php::reportDebug("Dx=" . $this->datum_params[0] . "\n");
+            Proj4php::reportDebug("Dy=" . $this->datum_params[1] . "\n");
+            Proj4php::reportDebug("Dz=" . $this->datum_params[2] . "\n");
+            Proj4php::reportDebug("Rx=" . $this->datum_params[3] . "\n");
+            Proj4php::reportDebug("Ry=" . $this->datum_params[4] . "\n");
+            Proj4php::reportDebug("Rz=" . $this->datum_params[5] . "\n");
+            Proj4php::reportDebug("M=" . $this->datum_params[6] . "\n"); 
             $Dx_BF = $this->datum_params[0];
             $Dy_BF = $this->datum_params[1];
             $Dz_BF = $this->datum_params[2];
@@ -472,23 +473,23 @@ class Datum
      */
     public function geocentric_from_wgs84(Point $p)
     {
-        Proj4php::reportDebug('geocentric_from_wgs84('.$p->x.','.$p->y.")\n");
+        Proj4php::reportDebug('geocentric_from_wgs84(' . $p->x . ',' . $p->y . ")\n");
 
         if ($this->datum_type == Common::PJD_3PARAM) {
-            Proj4php::reportDebug("+x=".$this->datum_params[0]."\n");
-            Proj4php::reportDebug("+y=".$this->datum_params[1]."\n");
-            Proj4php::reportDebug("+z=".$this->datum_params[2]."\n");
+            Proj4php::reportDebug("+x=" . $this->datum_params[0] . "\n");
+            Proj4php::reportDebug("+y=" . $this->datum_params[1] . "\n");
+            Proj4php::reportDebug("+z=" . $this->datum_params[2] . "\n");
             $p->x -= $this->datum_params[0];
             $p->y -= $this->datum_params[1];
             $p->z -= $this->datum_params[2];
         } elseif ($this->datum_type == Common::PJD_7PARAM) {
-            Proj4php::reportDebug("Dx=".$this->datum_params[0]."\n");
-            Proj4php::reportDebug("Dy=".$this->datum_params[1]."\n");
-            Proj4php::reportDebug("Dz=".$this->datum_params[2]."\n");
-            Proj4php::reportDebug("Rx=".$this->datum_params[3]."\n");
-            Proj4php::reportDebug("Ry=".$this->datum_params[4]."\n");
-            Proj4php::reportDebug("Rz=".$this->datum_params[5]."\n");
-            Proj4php::reportDebug("M=".$this->datum_params[6]."\n");
+            Proj4php::reportDebug("Dx=" . $this->datum_params[0] . "\n");
+            Proj4php::reportDebug("Dy=" . $this->datum_params[1] . "\n");
+            Proj4php::reportDebug("Dz=" . $this->datum_params[2] . "\n");
+            Proj4php::reportDebug("Rx=" . $this->datum_params[3] . "\n");
+            Proj4php::reportDebug("Ry=" . $this->datum_params[4] . "\n");
+            Proj4php::reportDebug("Rz=" . $this->datum_params[5] . "\n");
+            Proj4php::reportDebug("M=" . $this->datum_params[6] . "\n");
 
             $Dx_BF = $this->datum_params[0];
             $Dy_BF = $this->datum_params[1];

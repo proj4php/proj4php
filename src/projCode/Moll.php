@@ -110,7 +110,7 @@ class Moll
         //$theta;
         //$arg;
 
-        $p->x-= $this->x0;
+        $p->x -= $this->x0;
         //~ $p->y -= $this->y0;
         $arg = $p->y / (1.4142135623731 * $this->a);
 
@@ -120,8 +120,8 @@ class Moll
             $arg = 0.999999999999;
         }
 
-        $theta = asin( $arg );
-        $lon = Common::adjust_lon( $this->long0 + ($p->x / (0.900316316158 * $this->a * cos( $theta ))) );
+        $theta = asin($arg);
+        $lon = Common::adjust_lon($this->long0 + ($p->x / (0.900316316158 * $this->a * cos($theta))));
 
         if ($lon < (-Common::PI)) {
             $lon = -Common::PI;

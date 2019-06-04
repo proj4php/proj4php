@@ -47,19 +47,19 @@ class Equi
 
     public function init()
     {
-        if (! $this->x0) {
+        if (!$this->x0) {
             $this->x0 = 0;
         }
 
-        if (! $this->y0) {
+        if (!$this->y0) {
             $this->y0 = 0;
         }
 
-        if (! $this->lat0) {
+        if (!$this->lat0) {
             $this->lat0 = 0;
         }
 
-        if (! $this->long0) {
+        if (!$this->long0) {
             $this->long0 = 0;
         }
         ///$this->t2;
@@ -101,7 +101,7 @@ class Equi
             Proj4php::reportError("equi:Inv:DataError");
         }
 
-        $lon = Common::adjust_lon( $this->long0 + $p->x / ($this->a * cos( $this->lat0 )) );
+        $lon = Common::adjust_lon($this->long0 + $p->x / ($this->a * cos($this->lat0)));
 
         $p->x = $lon;
         $p->y = $lat;

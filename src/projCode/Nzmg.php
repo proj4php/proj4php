@@ -223,7 +223,7 @@ class Nzmg
         // For this algorithm, delta_latitude is in seconds of arc x 10-5, so we need to scale to those units. Longitude is radians.
         $d_phi = $delta_lat / Common::SEC_TO_RAD * 1E-5;
         $d_lambda = $delta_lon;
-        $d_phi_n = 1;  // d_phi^0
+        $d_phi_n = 1; // d_phi^0
 
         $d_psi = 0;
 
@@ -238,7 +238,7 @@ class Nzmg
 
         // 3. Calculate z
         $th_n_re = 1;
-        $th_n_im = 0;  // theta^0
+        $th_n_im = 0; // theta^0
         #$th_n_re1;
         #$th_n_im1;
 
@@ -278,7 +278,7 @@ class Nzmg
 
         // 2a. Calculate theta - first approximation gives km accuracy
         $z_n_re = 1;
-        $z_n_im = 0;  // z^0
+        $z_n_im = 0; // z^0
         $z_n_re1;
         $z_n_im1;
 
@@ -339,7 +339,7 @@ class Nzmg
         // 3. Calculate d_phi              ...                                    // and d_lambda
         $d_psi = $th_re;
         $d_lambda = $th_im;
-        $d_psi_n = 1;  // d_psi^0
+        $d_psi_n = 1; // d_psi^0
 
         $d_phi = 0;
         for ($n = 1; $n <= 9; $n++) {

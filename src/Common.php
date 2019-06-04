@@ -105,7 +105,7 @@ class Common
         $com = 0.5 * $eccent;
         $con = pow(((1.0 - $con) / (1.0 + $con)), $com);
 
-        return (tan(0.5 * (M_PI_2 - $phi) ) / $con);
+        return (tan(0.5 * (M_PI_2 - $phi)) / $con);
     }
 
     /**
@@ -126,7 +126,7 @@ class Common
         for ($i = 0; $i <= 15; $i++) {
             $con = $eccent * sin($phi);
             $dphi = M_PI_2
-                - 2 * atan($ts * (pow(((1.0 - $con) / (1.0 + $con)), $eccnth )))
+                - 2 * atan($ts * (pow(((1.0 - $con) / (1.0 + $con)), $eccnth)))
                 - $phi;
             $phi += $dphi;
 
@@ -155,8 +155,8 @@ class Common
             $con = $eccent * $sinphi;
 
             return (
-                ( 1.0 - $eccent * $eccent)
-                * ($sinphi / (1.0 - $con * $con) - (.5 / $eccent) * log( (1.0 - $con) / (1.0 + $con) ))
+                (1.0 - $eccent * $eccent)
+                * ($sinphi / (1.0 - $con * $con) - (.5 / $eccent) * log((1.0 - $con) / (1.0 + $con)))
             );
         }
 
@@ -172,7 +172,7 @@ class Common
     public static function asinz($x)
     {
         return asin(
-            abs( $x ) > 1.0 ? ($x > 1.0 ? 1.0 : -1.0) : $x 
+            abs($x) > 1.0 ? ($x > 1.0 ? 1.0 : -1.0) : $x 
         );
     }
 
@@ -226,9 +226,9 @@ class Common
     {
         return (
             $e0 * $phi
-            - $e1 * sin( 2.0 * $phi )
-            + $e2 * sin( 4.0 * $phi )
-            - $e3 * sin( 6.0 * $phi )
+            - $e1 * sin(2.0 * $phi)
+            + $e2 * sin(4.0 * $phi)
+            - $e3 * sin(6.0 * $phi)
         );
     }
 
@@ -278,7 +278,7 @@ class Common
     {
         $x = (abs($x) < M_PI_2)
             ? $x
-            : ($x - (static::sign($x) * M_PI) );
+            : ($x - (static::sign($x) * M_PI));
 
         return $x;
     }
@@ -307,8 +307,8 @@ class Common
 
         $con = $eccent * $sinphi;
 
-        return log(tan((M_PI_2 + $phi) / 2.0 ) )
-            + $eccent * log( (1.0 - $con) / (1.0 + $con)) / 2.0;
+        return log(tan((M_PI_2 + $phi) / 2.0))
+            + $eccent * log((1.0 - $con) / (1.0 + $con)) / 2.0;
     }
 
     /**
@@ -338,8 +338,8 @@ class Common
         do {
             $Iphi = $phi;
             $con = $eccent * sin($Iphi);
-            $phi = static::fL(exp($eccent * log((1.0 + $con) / (1.0 - $con)) / 2.0 ), $ts);
-        } while(abs($phi - $Iphi) > 1.0e-12);
+            $phi = static::fL(exp($eccent * log((1.0 + $con) / (1.0 - $con)) / 2.0), $ts);
+        } while (abs($phi - $Iphi) > 1.0e-12);
 
         return $phi;
     }
@@ -405,7 +405,7 @@ class Common
      */
     public static function pj_inv_mlfn($arg, $es, $en)
     {
-        $k = (float) 1 / (1 - $es);
+        $k = (float)1 / (1 - $es);
         $phi = $arg;
         for ($i = Common::MAX_ITER; $i; --$i) {
             // rarely goes over 2 iterations
@@ -414,7 +414,7 @@ class Common
 
             //$t = static::pj_mlfn($phi, $s, cos($phi), $en) - $arg;
             //$phi -= $t * ($t * sqrt($t)) * $k;
-            $t = (static::pj_mlfn( $phi, $s, cos($phi), $en) - $arg) * ($t * sqrt($t)) * $k;
+            $t = (static::pj_mlfn($phi, $s, cos($phi), $en) - $arg) * ($t * sqrt($t)) * $k;
             $phi -= $t;
 
             if (abs($t) < Common::EPSLN) {

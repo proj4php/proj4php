@@ -16,6 +16,28 @@ if (!class_exists('\PHPUnit_Framework_TestCase') && class_exists('\PHPUnit\Frame
 
 class Proj4phpTest extends PHPUnit_Framework_TestCase
 {
+    public function testIssue87()
+    {
+	$proj4 = new Proj4php();
+
+	$proj4->addDef("LONG_LAT", '+proj=longlat +ellps=WGS84 +datum=WGS84'); 
+        $proj4->addDef("ALBERS_CONICOL", '+proj=aea +lat_1=-29.9 +lat_2=-36. +lat_0=-32.95 +lon_0=117.55 +a=6378137 +b=6356752.31414');
+
+        // Create two different projections.
+        $projLongLat  = new Proj('LONG_LAT', $proj4);
+        $projAlbers = new Proj('ALBERS_CONICOL',$proj4);
+
+        // Create a point.
+        $pointSrc = new Point( 119.414059784227, -30.6792349303822, $projLongLat);
+        echo "Source: " . $pointSrc->toShortString() . " in LongLat  <br>";
+
+        // Transform the point between datums.
+        $pointDest = $proj4->transform($projLongLat, $projAlbers, $pointSrc);
+
+	 // Expected  X : 178.5   
+         // Expected  Y : 250.5  
+    }
+
     public function testTransform()
     {
         $proj4     = new Proj4php();
@@ -37,6 +59,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $proj3828 = new Proj('EPSG:3828', $proj4); //TWD67 / TM2 zone 121
         $proj27700 = new Proj('+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs',$proj4);
         $proj27700bis = new Proj(' PROJCS["OSGB 1936 / British National Grid",GEOGCS["OSGB 1936",DATUM["D_OSGB_1936",SPHEROID["Airy_1830",6377563.396,299.3249646]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",49], PARAMETER["central_meridian", -2], PARAMETER["scale_factor", 0.9996012717], PARAMETER["false_easting", 400000], PARAMETER["false_northing",-100000], UNIT["Meter",1]]', $proj4);
+
 
         // GPS
         // latitude        longitude

@@ -276,11 +276,11 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
                 continue;
             }
 
-            if (! key_exists('proj4', $defs) || empty($defs->proj4)) {
+            if (! isset($defs->proj4) || empty($defs->proj4)) {
                 continue;
             }
 
-            if (! key_exists($this->wkt, $defs) || empty($defs->{$this->wkt})) {
+            if (! isset($defs->{$this->wkt}) || empty($defs->{$this->wkt})) {
                 continue;
             }
 

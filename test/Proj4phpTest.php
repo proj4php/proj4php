@@ -29,7 +29,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         // Create a point.
         $pointSrc = new Point( 119.414059784227, -30.6792349303822, $projLongLat);
-        echo "Source: " . $pointSrc->toShortString() . " in LongLat  <br>";
+        // "Source: " . $pointSrc->toShortString() . " in LongLat  <br>";
 
         // Transform the point between datums.
         $pointDest = $proj4->transform($projLongLat, $projAlbers, $pointSrc);

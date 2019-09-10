@@ -454,9 +454,9 @@ class Wkt {
 
             $zoneStr = substr($srsCode, strrpos($srsCode, ' ') + 1);
             $zlen = strlen($zoneStr);
-            if ($zoneStr{$zlen - 1} == 'n') {
+            if ($zoneStr[$zlen - 1] == 'n') {
                 $zoneStr = substr($zoneStr, 0, -1);
-            } elseif ($zoneStr{$zlen - 1} == 's') {
+            } elseif ($zoneStr[$zlen - 1] == 's') {
                 // EPSG:2084 has Hito XVIII 1963 / UTM zone 19S
                 $zoneStr = substr($zoneStr, 0, -1);
                 $wktParams->utmSouth = true;

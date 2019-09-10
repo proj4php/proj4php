@@ -276,11 +276,11 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
                 continue;
             }
 
-            if (! key_exists('proj4', $defs) || empty($defs->proj4)) {
+            if (! isset($defs->proj4) || empty($defs->proj4)) {
                 continue;
             }
 
-            if (! key_exists($this->wkt, $defs) || empty($defs->{$this->wkt})) {
+            if (! isset($defs->{$this->wkt}) || empty($defs->{$this->wkt})) {
                 continue;
             }
 
@@ -326,7 +326,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
 
             //$this->assertEquals($expected, $actual, $codesString);
 
-            if (key_exists('axis', $actual) || key_exists('axis', $expected)) {
+            if (isset($actual['axis']) || isset($expected['axis'])) {
                 if ($actual['axis'] !== $expected['axis']) {
                     if ($this->suppressOnAxisMismatch) {
                         // noop
@@ -342,8 +342,8 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
 
             if (! $this->suppressToMeterMismatch) {
                 if (
-                    (key_exists('to_meters', $actual) && $actual['to_meters'] !== 1.0)
-                    || (key_exists('to_meters', $expected) && $expected['to_meters'] !== 1.0)
+                    (isset($actual['to_meters']) && $actual['to_meters'] !== 1.0)
+                    || (isset($expected['to_meters']) && $expected['to_meters'] !== 1.0)
                 ) {
                     $this->assertEquals(
                         array_intersect_key($expected, array('to_meters' => '')),
@@ -369,8 +369,14 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
             $this->compareAlphaGama($expected, $actual);
             $this->comparePreciseInternals($expected, $actual);
 
-            $unitA = strtolower($actual['units']{0});
-            $unitB = strtolower($expected['units']{0});
+	    if (isset($actual['units']))
+	      $unitA = strtolower($actual['units'][0]);
+	    else
+              $unitA = null;
+	    if (isset($expected['units']))
+              $unitB = strtolower($expected['units'][0]);
+	    else
+              $unitB = null;
 
             if ((!empty($unitA) && $unitA != 'd') || (!empty($unitB) && $unitB != 'd')) {
                 $this->assertEquals($unitA, $unitA, '(units mismatch) ' . $codesString);
@@ -378,8 +384,8 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
 
             // if either defines non zero alpha
             if (
-                (key_exists('from_greenwich', $actual) && $actual['from_greenwich'] !== 0.0)
-                || (key_exists('from_greenwich', $expected) && $expected['from_greenwich'] !== 0.0)
+                (isset($actual['from_greenwich']) && $actual['from_greenwich'] !== 0.0)
+                || (isset($actual['from_greenwich']) && $expected['from_greenwich'] !== 0.0)
             ) {
                 $this->assertEquals(
                     array_intersect_key($expected, array('from_greenwich' => '')),
@@ -398,7 +404,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
 
     public function compareDatums($expected, $actual)
     {
-        if (key_exists('datum', $expected)) {
+        if (isset($expected['datumCode'])) {
             if (! ($expected['datumCode']=='WGS84' && is_null($actual['datumCode']))) {
                 // because datum wgs84 defines tow84=0,0,0
 
@@ -433,7 +439,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
             );
 
             foreach ($this->datumPrecision as $key => $precision) {
-                if (key_exists($key, $expected['datum'])) {
+                if (isset($expected['datum']->$key)) {
                     //$this->assertEquals($expected['datum']->$key, $actual['datum']->$key, 'AssertEquals Failed: datum->'.$key.' ('.$precision.'): '.$codesString,$precision);
                     $this->assertWithin(
                         $expected['datum']->$key,
@@ -452,15 +458,15 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
         $alphagamma = array();
 
         if (
-            (key_exists('alpha', $actual) && $actual['alpha'] !== 0.0)
-            || (key_exists('alpha', $expected) && $expected['alpha'] !== 0.0)
+            (isset($actual['alpha']) && $actual['alpha'] !== 0.0)
+            || (isset($expected['alpha']) && $expected['alpha'] !== 0.0)
         ) {
             $alphagamma['alpha'] = '';
         }
 
         if (
-            (key_exists('gamma', $actual) && $actual['gamma'] !== 0.0)
-            || (key_exists('gamma', $expected) && $expected['gamma'] !== 0.0)
+            (isset($actual['gamma']) && $actual['gamma'] !== 0.0)
+            || (isset($expected['gamma']) && $expected['gamma'] !== 0.0)
         ) {
             $alphagamma['gamma'] = '';
         }
@@ -477,8 +483,8 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
     public function comparePreciseInternals($expected, $actual)
     {
         foreach ($this->internalsPrecision as $key => $precision) {
-            if (key_exists($key, $expected)) {
-               if (! key_exists($key,$actual)){
+            if (isset($expected[$key])) {
+               if (! isset($actual[$key])){
                     if ($expected[$key]!=0) {
                         $this->fail('Expected key ('.$key.':'.$expected[$key].') but was unset');
                      }

@@ -369,9 +369,9 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
             $this->compareAlphaGama($expected, $actual);
             $this->comparePreciseInternals($expected, $actual);
 
-	    $unitA = strtolower($actual['units']{0});
+	    $unitA = strtolower($actual['units'][0]);
 	    if (isset($expected['units']))
-              $unitB = strtolower($expected['units']{0});
+              $unitB = strtolower($expected['units'][0]);
 	    else
               $unitB = null;
 

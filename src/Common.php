@@ -294,7 +294,7 @@ class Common
     public static function latiso($eccent, $phi, $sinphi)
     {
         if (abs($phi) > M_PI_2) {
-            return float(NAN) ;
+            return float(NAN);
         }
 
         if ($phi == M_PI_2) {

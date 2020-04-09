@@ -73,10 +73,10 @@ class Proj4php
         ];
 
         // Some defs are aliases.
-        $default_defs['EPSG:3785'] = $default_defs['EPSG:3875'];
-        $default_defs['GOOGLE'] = $default_defs['EPSG:3875'];
-        $default_defs['EPSG:900913'] = $default_defs['EPSG:3875'];
-        $default_defs['EPSG:102113'] = $default_defs['EPSG:3875'];
+        $default_defs['EPSG:3785'] = $default_defs['EPSG:3857'];
+        $default_defs['GOOGLE'] = $default_defs['EPSG:3857'];
+        $default_defs['EPSG:900913'] = $default_defs['EPSG:3857'];
+        $default_defs['EPSG:102113'] = $default_defs['EPSG:3857'];
 
         // Load them through the API so we have a single point of validation.
         foreach($default_defs as $key => $data) {
@@ -491,7 +491,7 @@ class Proj4php
 
         self::reportDebug(sprintf("Transform result %s %s\r\n", $point->x, $point->y));
 
-        // Nov 2014 - changed Werner Sch‰ffer
+        // Nov 2014 - changed Werner Sch√§ffer
         // Clone point to avoid a lot of problems
         return (clone $point);
     }

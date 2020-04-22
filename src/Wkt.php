@@ -52,7 +52,8 @@ class Wkt {
             $wktParams->localCS = true;
             $wktParams->srsCode = $wktName;
             break;
-        case 'GEOGCS':
+        case 'GEODCRS':
+	case 'GEOGCS':
             $wktParams->projName = 'longlat';
             $wktParams->geocsCode = $wktName;
 

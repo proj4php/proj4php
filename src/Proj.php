@@ -192,7 +192,7 @@ class Proj
         // CHECKME: are these the WKT "objects"? If so, we probably
         // need to check the string *starts* with these names.
 
-        if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS)/', $srsCode)) {
+        if (preg_match('/(GEOGCS|GEOCCS|PROJCS|LOCAL_CS|GEODCRS)/', $srsCode)) {
             $this->to_rads = COMMON::D2R;
 
             $params = Wkt::Parse($srsCode);

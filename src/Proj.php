@@ -518,8 +518,9 @@ class Proj
                     break;
                 case "ellps":
                     $this->ellps = trim($paramVal);
-                    if ($this->ellps == 'WGS84' && !isset($this->datumCode))
-                        $this->datumCode = trim($paramVal);
+                    if ($this->ellps == 'WGS84' && !isset($this->datumCode)) {
+                                            $this->datumCode = trim($paramVal);
+                    }
                     break;
                 case "a":
                     // semi-major radius

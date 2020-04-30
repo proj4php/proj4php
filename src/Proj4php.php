@@ -647,8 +647,9 @@ class Proj4php
 
     public static function reportDebug($msg)
     {
-        if (self::$debugOn)
-            echo $msg;
+        if (self::$debugOn) {
+                    echo $msg;
+        }
     }
 
     /**

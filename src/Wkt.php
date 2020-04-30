@@ -53,7 +53,7 @@ class Wkt {
             $wktParams->srsCode = $wktName;
             break;
         case 'GEODCRS':
-	case 'GEOGCS':
+    case 'GEOGCS':
             $wktParams->projName = 'longlat';
             $wktParams->geocsCode = $wktName;
 
@@ -61,262 +61,262 @@ class Wkt {
                 $wktParams->srsCode = $wktName;
             }
             break;
-        case 'PROJCS':
-            $wktParams->srsCode = $wktName;
+            case 'PROJCS':
+                $wktParams->srsCode = $wktName;
+                break;
+            case 'GEOCCS':
+                break;
+            case 'PROJECTION':
+
+                if (key_exists($wktName, self::$wktProjections)) {
+                    $wktParams->projName = self::$wktProjections[$wktName];
+                } else {
+                    throw new \Exception('Undefined Projection: ' . $wktName);
+                }
+                break;
+            case 'DATUM':
+                $wktParams->datumName = $wktName;
+                if (key_exists($wktName, self::$wktDatums)) {
+                    $wktParams->datumCode = self::$wktDatums[$wktName];
+                }
+                break;
+            case 'LOCAL_DATUM':
+                $wktParams->datumCode = 'none';
+                break;
+            case 'SPHEROID':
+
+                if (key_exists($wktName, self::$wktEllipsoids)) {
+                    $wktParams->ellps = self::$wktEllipsoids[$wktName];
+                } else {
+                    $wktParams->ellps = $wktName;
+                    $wktParams->a = floatval(array_shift($wktArray));
+                    $wktParams->rf = floatval(array_shift($wktArray));
+                }
+
+                break;
+            case 'PRIMEM':
+                // to radians?
+
+                $wktParams->from_greenwich = deg2rad(floatval(array_shift($wktArray)));
+                break;
+            case 'UNIT':
+                $wktParams->units = $wktName;
+                if (($wktToMeter = self::parseWKTToMeter($wktName, $wktArray)) !== false) {
+                    $wktParams->to_meter = $wktToMeter;
+                    if (isset($wktParams->x0)) {
+                        $wktParams->x0 = $wktParams->to_meter * $wktParams->x0;
+                    }
+                    if (isset($wktParams->y0)) {
+                        $wktParams->y0 = $wktParams->to_meter * $wktParams->y0;
+                    }
+                }
+
+                if (($wktToRads = self::parseWKTToRads($wktName, $wktArray)) !== false) {
+                    $wktParams->to_rads = $wktToRads;
+
+                    if (isset($wktParams->lat_ts)) {
+                        $wktParams->lat_ts = $wktParams->to_rads * $wktParams->lat_ts;
+                    }
+
+                    if (isset($wktParams->x0)) {
+                        $wktParams->x0 = $wktParams->to_rads * $wktParams->x0;
+                    }
+
+                    if (isset($wktParams->y0)) {
+                        $wktParams->y0 = $wktParams->to_rads * $wktParams->y0;
+                    }
+
+                    if (isset($wktParams->longc)) {
+                        $wktParams->longc = $wktParams->to_rads * $wktParams->longc;
+                    }
+
+                    if (isset($wktParams->long0)) {
+                        $wktParams->long0 = $wktParams->to_rads * $wktParams->long0;
+                    }
+
+                    if (isset($wktParams->lat0)) {
+                        $wktParams->lat0 = $wktParams->to_rads * $wktParams->lat0;
+                    }
+
+                    if (isset($wktParams->lat1)) {
+                        $wktParams->lat1 = $wktParams->to_rads * $wktParams->lat1;
+                    }
+
+                    if (isset($wktParams->lat2)) {
+                        $wktParams->lat2 = $wktParams->to_rads * $wktParams->lat2;
+                    }
+
+                    if (isset($wktParams->alpha)) {
+                        $wktParams->alpha = $wktParams->to_rads * $wktParams->alpha;
+                    }
+
+                }
+
+                break;
+            case 'PARAMETER':
+                $name = strtolower($wktName);
+                $value = floatval(array_shift($wktArray));
+
+                // there may be many variations on the wktName values, add in case
+                // statements as required
+                switch ($name) {
+                    case 'false_easting':
+
+                        $wktParams->x0 = $value;
+                        if (isset($wktParams->to_meter)) {
+                            $wktParams->x0 = $wktParams->to_meter * $wktParams->x0;
+                        }
+                        break;
+                    case 'false_northing':
+                        $wktParams->y0 = $value;
+                        if (isset($wktParams->to_meter)) {
+                            $wktParams->y0 = $wktParams->to_meter * $wktParams->y0;
+                        }
+                        break;
+                    case 'scale_factor':
+                        $wktParams->k0 = $value;
+                        break;
+                    case 'central_meridian':
+                    case 'longitude_of_center': // SR-ORG:10
+                        $wktParams->longc = $value * $wktParams->to_rads;
+                    case 'longitude_of_origin': // SR-ORG:118
+                        $wktParams->long0 = $value * $wktParams->to_rads;
+
+                        break;
+                    case 'latitude_of_origin':
+                    case 'latitude_of_center': // SR-ORG:10
+                        $wktParams->lat0 = $value * $wktParams->to_rads;
+                        if ($wktParams->projName == 'merc' || $wktParams->projName == 'eqc'
+                        ) {
+                            $wktParams->lat_ts = $value * $wktParams->to_rads; //EPSG:3752 (merc), EPSG:3786 (eqc), SR-ORG:7710" (stere)
+                            //this cannot be set here in: SR-ORG:6647 (stere)
+                        }
+                        break;
+                    case 'standard_parallel_1':
+                        $wktParams->lat1 = $value * $wktParams->to_rads;
+                        $wktParams->lat_ts = $value * $wktParams->to_rads; //SR-ORG:22
+                        break;
+                    case 'standard_parallel_2':
+                        $wktParams->lat2 = $value * $wktParams->to_rads;
+                        break;
+                    case 'rectified_grid_angle':
+                        if (!isset($wktParams->alpha)) {
+                            //I'm not sure if this should be set here.
+                            //EPSG:3167 defineds azimuth and rectified_grid_angle. both are similar (azimuth is closer)
+                            //SR-ORG:7172 defines both, and both are 90.
+                            $wktParams->alpha = $value * $wktParams->to_rads;
+                        }
+                        break;
+                    case 'azimuth':
+                        $wktParams->alpha = $value * $wktParams->to_rads; //EPSG:2057
+                        break;
+                    case 'more_here':
+                        break;
+                    default:
+                        break;
+                }
             break;
-        case 'GEOCCS':
-            break;
-        case 'PROJECTION':
+            case 'TOWGS84':
+                $wktParams->datum_params = $wktArray;
+                break;
+            //DGR 2010-11-12: AXIS
+            case 'AXIS':
+                $name = strtolower($wktName);
+                $value = array_shift($wktArray);
+                switch ($value) {
+                    case 'EAST':
+                        $value = 'e';
+                        break;
+                    case 'WEST':
+                        $value = 'w';
+                        break;
+                    case 'NORTH':
+                        $value = 'n';
+                        break;
+                    case 'SOUTH':
+                        $value = 's';
+                        break;
+                    case 'UP':
+                        $value = 'u';
+                        break;
+                    case 'DOWN':
+                        $value = 'd';
+                        break;
+                    case 'OTHER':
+                    default:
+                        //throw new Exception("Unknown Axis ".$name." Value:  ".$value);
+                        $value = ' ';
 
-            if (key_exists($wktName, self::$wktProjections)) {
-                $wktParams->projName = self::$wktProjections[$wktName];
-            } else {
-                throw new \Exception('Undefined Projection: ' . $wktName);
-            }
-            break;
-        case 'DATUM':
-            $wktParams->datumName = $wktName;
-            if (key_exists($wktName, self::$wktDatums)) {
-                $wktParams->datumCode = self::$wktDatums[$wktName];
-            }
-            break;
-        case 'LOCAL_DATUM':
-            $wktParams->datumCode = 'none';
-            break;
-        case 'SPHEROID':
-
-            if (key_exists($wktName, self::$wktEllipsoids)) {
-                $wktParams->ellps = self::$wktEllipsoids[$wktName];
-            } else {
-                $wktParams->ellps = $wktName;
-                $wktParams->a = floatval(array_shift($wktArray));
-                $wktParams->rf = floatval(array_shift($wktArray));
-            }
-
-            break;
-        case 'PRIMEM':
-            // to radians?
-
-            $wktParams->from_greenwich = deg2rad(floatval(array_shift($wktArray)));
-            break;
-        case 'UNIT':
-            $wktParams->units = $wktName;
-            if (($wktToMeter = self::parseWKTToMeter($wktName, $wktArray)) !== false) {
-                $wktParams->to_meter = $wktToMeter;
-                if (isset($wktParams->x0)) {
-                    $wktParams->x0 = $wktParams->to_meter * $wktParams->x0;
+                        break; // FIXME
                 }
-                if (isset($wktParams->y0)) {
-                    $wktParams->y0 = $wktParams->to_meter * $wktParams->y0;
-                }
-            }
-
-            if (($wktToRads = self::parseWKTToRads($wktName, $wktArray)) !== false) {
-                $wktParams->to_rads = $wktToRads;
-
-                if (isset($wktParams->lat_ts)) {
-                    $wktParams->lat_ts = $wktParams->to_rads * $wktParams->lat_ts;
-                }
-
-                if (isset($wktParams->x0)) {
-                    $wktParams->x0 = $wktParams->to_rads * $wktParams->x0;
-                }
-
-                if (isset($wktParams->y0)) {
-                    $wktParams->y0 = $wktParams->to_rads * $wktParams->y0;
-                }
-
-                if (isset($wktParams->longc)) {
-                    $wktParams->longc = $wktParams->to_rads * $wktParams->longc;
-                }
-
-                if (isset($wktParams->long0)) {
-                    $wktParams->long0 = $wktParams->to_rads * $wktParams->long0;
-                }
-
-                if (isset($wktParams->lat0)) {
-                    $wktParams->lat0 = $wktParams->to_rads * $wktParams->lat0;
-                }
-
-                if (isset($wktParams->lat1)) {
-                    $wktParams->lat1 = $wktParams->to_rads * $wktParams->lat1;
-                }
-
-                if (isset($wktParams->lat2)) {
-                    $wktParams->lat2 = $wktParams->to_rads * $wktParams->lat2;
-                }
-
-                if (isset($wktParams->alpha)) {
-                    $wktParams->alpha = $wktParams->to_rads * $wktParams->alpha;
-                }
-
-            }
-
-            break;
-        case 'PARAMETER':
-            $name = strtolower($wktName);
-            $value = floatval(array_shift($wktArray));
-
-            // there may be many variations on the wktName values, add in case
-            // statements as required
-            switch ($name) {
-            case 'false_easting':
-
-                $wktParams->x0 = $value;
-                if (isset($wktParams->to_meter)) {
-                    $wktParams->x0 = $wktParams->to_meter * $wktParams->x0;
-                }
-                break;
-            case 'false_northing':
-                $wktParams->y0 = $value;
-                if (isset($wktParams->to_meter)) {
-                    $wktParams->y0 = $wktParams->to_meter * $wktParams->y0;
-                }
-                break;
-            case 'scale_factor':
-                $wktParams->k0 = $value;
-                break;
-            case 'central_meridian':
-            case 'longitude_of_center': // SR-ORG:10
-                $wktParams->longc = $value * $wktParams->to_rads;
-            case 'longitude_of_origin': // SR-ORG:118
-                $wktParams->long0 = $value * $wktParams->to_rads;
-
-                break;
-            case 'latitude_of_origin':
-            case 'latitude_of_center': // SR-ORG:10
-                $wktParams->lat0 = $value * $wktParams->to_rads;
-                if ($wktParams->projName == 'merc' || $wktParams->projName == 'eqc'
-                ) {
-                    $wktParams->lat_ts = $value * $wktParams->to_rads; //EPSG:3752 (merc), EPSG:3786 (eqc), SR-ORG:7710" (stere)
-                    //this cannot be set here in: SR-ORG:6647 (stere)
-                }
-                break;
-            case 'standard_parallel_1':
-                $wktParams->lat1 = $value * $wktParams->to_rads;
-                $wktParams->lat_ts = $value * $wktParams->to_rads; //SR-ORG:22
-                break;
-            case 'standard_parallel_2':
-                $wktParams->lat2 = $value * $wktParams->to_rads;
-                break;
-            case 'rectified_grid_angle':
-                if (!isset($wktParams->alpha)) {
-                    //I'm not sure if this should be set here.
-                    //EPSG:3167 defineds azimuth and rectified_grid_angle. both are similar (azimuth is closer)
-                    //SR-ORG:7172 defines both, and both are 90.
-                    $wktParams->alpha = $value * $wktParams->to_rads;
-                }
-                break;
-            case 'azimuth':
-                $wktParams->alpha = $value * $wktParams->to_rads; //EPSG:2057
-                break;
-            case 'more_here':
-                break;
-            default:
-                break;
-            }
-            break;
-        case 'TOWGS84':
-            $wktParams->datum_params = $wktArray;
-            break;
-        //DGR 2010-11-12: AXIS
-        case 'AXIS':
-            $name = strtolower($wktName);
-            $value = array_shift($wktArray);
-            switch ($value) {
-            case 'EAST':
-                $value = 'e';
-                break;
-            case 'WEST':
-                $value = 'w';
-                break;
-            case 'NORTH':
-                $value = 'n';
-                break;
-            case 'SOUTH':
-                $value = 's';
-                break;
-            case 'UP':
-                $value = 'u';
-                break;
-            case 'DOWN':
-                $value = 'd';
-                break;
-            case 'OTHER':
-            default:
-                //throw new Exception("Unknown Axis ".$name." Value:  ".$value);
-                $value = ' ';
-
-                break; // FIXME
-            }
             if (!isset($wktParams->axis)) {
                 $wktParams->axis = "enu";
             }
 
             switch ($name) {
-            case 'e(x)': // EPSG:2140
-            case 'x':
+                case 'e(x)': // EPSG:2140
+                case 'x':
 
-                $wktParams->axis = $value . substr($wktParams->axis, 1, 2);
-                break;
-            case 'n(y)':
-            case 'y':
+                    $wktParams->axis = $value . substr($wktParams->axis, 1, 2);
+                    break;
+                case 'n(y)':
+                case 'y':
 
-                $wktParams->axis = substr($wktParams->axis, 0, 1) . $value . substr($wktParams->axis, 2, 1);
-                break;
-            case 'z':$wktParams->axis = substr($wktParams->axis, 0, 2) . $value;
-                break;
+                    $wktParams->axis = substr($wktParams->axis, 0, 1) . $value . substr($wktParams->axis, 2, 1);
+                    break;
+                case 'z':$wktParams->axis = substr($wktParams->axis, 0, 2) . $value;
+                    break;
 
-            // Here is a list of other axis that exist in wkt definitions. are they useful?
+                // Here is a list of other axis that exist in wkt definitions. are they useful?
 
-            case 'geodetic latitude': //from SR-ORG:29
+                case 'geodetic latitude': //from SR-ORG:29
 
-            case 'latitude':
-            case 'lat':
-            case 'geodetic longitude':
-            case 'longitude':
-            case 'long':
-            case 'lon':
+                case 'latitude':
+                case 'lat':
+                case 'geodetic longitude':
+                case 'longitude':
+                case 'long':
+                case 'lon':
 
-            case 'e':
-            case 'n': //SR-ORG:4705
+                case 'e':
+                case 'n': //SR-ORG:4705
 
-            case 'gravity-related height':
+                case 'gravity-related height':
 
-            case 'geocentric y': //SR-ORG:7910
+                case 'geocentric y': //SR-ORG:7910
 
-            case 'east':
-            case 'north': //SR-ORG:4705
+                case 'east':
+                case 'north': //SR-ORG:4705
 
-            case 'ellipsoidal height': //EPSG:3823
+                case 'ellipsoidal height': //EPSG:3823
 
-            case 'easting':
-            case 'northing':
-            case 'southing': //SR-ORG:8262
-                break;
+                case 'easting':
+                case 'northing':
+                case 'southing': //SR-ORG:8262
+                    break;
 
-            default:
-                throw new \Exception("Unknown Axis Name: " . $name); //for testing
-                break;
+                default:
+                    throw new \Exception("Unknown Axis Name: " . $name); //for testing
+                    break;
             }
 
-        case 'EXTENSION':
+            case 'EXTENSION':
 
-            $name = strtolower($wktName);
-            $value = array_shift($wktArray);
-            switch ($name) {
-            case 'proj4':
-                // WKT can define a proj4 definition. for example SR-ORG:6
-                $wktParams->defData = $value;
+                $name = strtolower($wktName);
+                $value = array_shift($wktArray);
+                switch ($name) {
+                    case 'proj4':
+                        // WKT can define a proj4 definition. for example SR-ORG:6
+                        $wktParams->defData = $value;
+                        break;
+                    default:
+                        break;
+                }
+            break;
+            case 'MORE_HERE':
                 break;
             default:
                 break;
-            }
-            break;
-        case 'MORE_HERE':
-            break;
-        default:
-            break;
         }
 
         foreach ($wktArray as $wktArrayContent) {

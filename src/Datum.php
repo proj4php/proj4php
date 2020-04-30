@@ -130,23 +130,28 @@ class Datum
 
     public function reportDebug()
     {
-        if (isset($this->datum_code))
-            Proj4php::reportDebug("Datum code=$this->datum_code\n");
+        if (isset($this->datum_code)) {
+                    Proj4php::reportDebug("Datum code=$this->datum_code\n");
+        }
         Proj4php::reportDebug('Datum type:' . $this->datum_type . "\n");
-        if (isset($this->a))
-            Proj4php::reportDebug("a=$this->a\n");
-        if (isset($this->b))
-            Proj4php::reportDebug("b=$this->b\n");
-        if (isset($this->es))
-            Proj4php::reportDebug("es=$this->es\n");
-        if (isset($this->es2))
-            Proj4php::reportDebug("es2=$this->es2\n");
+        if (isset($this->a)) {
+                    Proj4php::reportDebug("a=$this->a\n");
+        }
+        if (isset($this->b)) {
+                    Proj4php::reportDebug("b=$this->b\n");
+        }
+        if (isset($this->es)) {
+                    Proj4php::reportDebug("es=$this->es\n");
+        }
+        if (isset($this->es2)) {
+                    Proj4php::reportDebug("es2=$this->es2\n");
+        }
         if (isset($this->datum_params))
         {
-            foreach ($this->datum_params as $key=>$value)
-                Proj4php::reportDebug("Param $key=$value\n");
-        }
-        else
+            foreach ($this->datum_params as $key=>$value) {
+                            Proj4php::reportDebug("Param $key=$value\n");
+            }
+        } else
         {
             Proj4php::reportDebug("no params\n");
         }

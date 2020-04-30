@@ -169,8 +169,9 @@ class Krovak
                                 pow(tan($u / 2. + $this->s45), 1. / $this->alfa) *
                                 pow((1. + $this->e * sin($fi1)) / (1. - $this->e * sin($fi1)), $this->e / 2.)
                         ) - $this->s45);
-            if (abs($fi1 - $p->y) < 0.0000000001)
-                $ok = 1;
+            if (abs($fi1 - $p->y) < 0.0000000001) {
+                            $ok = 1;
+            }
             $fi1 = $p->y;
             $iter += 1;
         } while ($ok == 0 && $iter < 15);

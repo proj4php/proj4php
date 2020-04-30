@@ -518,7 +518,7 @@ class Proj
                     break;
                 case "ellps":
                     $this->ellps = trim($paramVal);
-                    if ($this->ellps=='WGS84' && !isset($this->datumCode))
+                    if ($this->ellps == 'WGS84' && !isset($this->datumCode))
                         $this->datumCode = trim($paramVal);
                     break;
                 case "a":
@@ -650,7 +650,7 @@ class Proj
             if (is_array($datumDef)) {
                 $this->datum_params = array_key_exists('towgs84', $datumDef) ? explode(',', $datumDef['towgs84']) : null;
 
-                if(!isset($this->ellps)){
+                if (!isset($this->ellps)) {
                     //in the case of SR-ORG:7191, proj for defines  +datum=wgs84, but also +ellps=krass. this would have overwriten that ellipsoid
                     $this->ellps = $datumDef['ellipse'];
                 }

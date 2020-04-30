@@ -175,24 +175,24 @@ class Lcc
     public function debugString()
     {
         $str = "title= $this->title\n";
-        $str.= "k0=$this->k0\n";
-        $str.= "to_meter=$this->to_meter\n";
-        $str.= "phiF = $this->lat0\n";
-        $str.= "lamF = $this->long0\n";
-        $str.= "phi1 = $this->lat1\n";
-        $str.= "phi2 = $this->lat2\n";
-        $str.= "EF = $this->x0\n";
-        $str.= "NF = $this->y0\n";
-        $str.= "a=$this->a\n";
-        $str.= "e=$this->e\n";
-        $str.= "m1=".Common::msfnz($this->e, sin($this->lat1), cos($this->lat1))."\n";
-        $str.= "m2=".Common::msfnz($this->e, sin($this->lat2), cos($this->lat2))."\n";
-        $str.= "n=$this->ns\n";
-        $str.= "F=$this->f0\n";
-        $str.= "tF=".Common::tsfnz($this->e, $this->lat0, sin($this->lat0))."\n";
-        $str.= "t1=".Common::tsfnz($this->e, $this->lat1, sin($this->lat1))."\n";
-        $str.= "t2=".Common::tsfnz($this->e, $this->lat2, sin($this->lat2))."\n";
-        $str.= "rF=$this->rh\n";
+        $str .= "k0=$this->k0\n";
+        $str .= "to_meter=$this->to_meter\n";
+        $str .= "phiF = $this->lat0\n";
+        $str .= "lamF = $this->long0\n";
+        $str .= "phi1 = $this->lat1\n";
+        $str .= "phi2 = $this->lat2\n";
+        $str .= "EF = $this->x0\n";
+        $str .= "NF = $this->y0\n";
+        $str .= "a=$this->a\n";
+        $str .= "e=$this->e\n";
+        $str .= "m1=" . Common::msfnz($this->e, sin($this->lat1), cos($this->lat1)) . "\n";
+        $str .= "m2=" . Common::msfnz($this->e, sin($this->lat2), cos($this->lat2)) . "\n";
+        $str .= "n=$this->ns\n";
+        $str .= "F=$this->f0\n";
+        $str .= "tF=" . Common::tsfnz($this->e, $this->lat0, sin($this->lat0)) . "\n";
+        $str .= "t1=" . Common::tsfnz($this->e, $this->lat1, sin($this->lat1)) . "\n";
+        $str .= "t2=" . Common::tsfnz($this->e, $this->lat2, sin($this->lat2)) . "\n";
+        $str .= "rF=$this->rh\n";
         return $str;
     }
 

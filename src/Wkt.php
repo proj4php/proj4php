@@ -27,7 +27,7 @@ class Wkt {
         }
 
         if (is_null($wktParams)) {
-            $wktParams = (object) array(
+            $wktParams = (object)array(
                 'to_rads' => deg2rad(1),
                 'to_meter' => 1.0,
             );
@@ -47,12 +47,12 @@ class Wkt {
         // Do something based on the type of the wktObject being parsed.
         // Add in variations in the spelling as required.
         switch ($wktObject) {
-        case 'LOCAL_CS':
-            $wktParams->projName = 'identity';
-            $wktParams->localCS = true;
-            $wktParams->srsCode = $wktName;
-            break;
-        case 'GEODCRS':
+            case 'LOCAL_CS':
+                $wktParams->projName = 'identity';
+                $wktParams->localCS = true;
+                $wktParams->srsCode = $wktName;
+                break;
+            case 'GEODCRS':
     case 'GEOGCS':
             $wktParams->projName = 'longlat';
             $wktParams->geocsCode = $wktName;

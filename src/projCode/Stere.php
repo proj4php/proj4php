@@ -276,8 +276,9 @@ class Stere
                     } else {
                         $lat = asin($y * $sinc / $rh);
                     }
-                    if ($cosc != 0. || $x != 0.0)
-                        $lon = atan2($x * $sinc, $cosc * $rh);
+                    if ($cosc != 0. || $x != 0.0) {
+                                            $lon = atan2($x * $sinc, $cosc * $rh);
+                    }
                     break;
 
                 case $this->OBLIQ:

@@ -79,7 +79,7 @@ class Proj4php
         $default_defs['EPSG:102113'] = $default_defs['EPSG:3857'];
 
         // Load them through the API so we have a single point of validation.
-        foreach($default_defs as $key => $data) {
+        foreach ($default_defs as $key => $data) {
             $this->addDef($key, $data);
         }
     }
@@ -169,7 +169,7 @@ class Proj4php
         ];
 
         // Load them through the API so we have a single point of validation.
-        foreach($default_datums as $key => $data) {
+        foreach ($default_datums as $key => $data) {
             $this->addDatum($key, $data);
         }
     }
@@ -286,19 +286,19 @@ class Proj4php
     protected function initPrimeMeridian()
     {
         $default_prime_meridians = [
-            "greenwich" => '0.0',           // "0dE",
-            "lisbon" => -9.131906111111,    // "9d07'54.862\"W",
-            "paris" => 2.337229166667,      // "2d20'14.025\"E",
-            "bogota" => -74.080916666667,   // "74d04'51.3\"W",
-            "madrid" => -3.687938888889,    // "3d41'16.58\"W",
-            "rome" => 12.452333333333,      // "12d27'8.4\"E",
-            "bern" => 7.439583333333,       // "7d26'22.5\"E",
-            "jakarta" => 106.807719444444,  // "106d48'27.79\"E",
-            "ferro" => -17.666666666667,    // "17d40'W",
-            "brussels" => 4.367975,         // "4d22'4.71\"E",
+            "greenwich" => '0.0', // "0dE",
+            "lisbon" => -9.131906111111, // "9d07'54.862\"W",
+            "paris" => 2.337229166667, // "2d20'14.025\"E",
+            "bogota" => -74.080916666667, // "74d04'51.3\"W",
+            "madrid" => -3.687938888889, // "3d41'16.58\"W",
+            "rome" => 12.452333333333, // "12d27'8.4\"E",
+            "bern" => 7.439583333333, // "7d26'22.5\"E",
+            "jakarta" => 106.807719444444, // "106d48'27.79\"E",
+            "ferro" => -17.666666666667, // "17d40'W",
+            "brussels" => 4.367975, // "4d22'4.71\"E",
             "stockholm" => 18.058277777778, // "18d3'29.8\"E",
-            "athens" => 23.7163375,         // "23d42'58.815\"E",
-            "oslo" => 10.722916666667,      // "10d43'22.5\"E"
+            "athens" => 23.7163375, // "23d42'58.815\"E",
+            "oslo" => 10.722916666667, // "10d43'22.5\"E"
         ];
 
         // Load them through the API so we have a single point of validation.
@@ -354,13 +354,13 @@ class Proj4php
     }
 
   
-    private function notWGS($a, $b ) {
+    private function notWGS($a, $b) {
 
     return (
         ($a->datum->datum_type === Common::PJD_3PARAM || $a->datum->datum_type === Common::PJD_7PARAM)
         && $b->datum->datum_code !== 'WGS84'
     );
-  }
+    }
 
 
     /**
@@ -377,36 +377,36 @@ class Proj4php
     public function transform()
     {
         if (func_num_args() == 2) {
-          $source = null;
-          $dest = func_get_arg(0);
-          $point = func_get_arg(1);
+            $source = null;
+            $dest = func_get_arg(0);
+            $point = func_get_arg(1);
         } else {
-          $source = func_get_arg(0);
-          $dest = func_get_arg(1);
-          $point = func_get_arg(2);
+            $source = func_get_arg(0);
+            $dest = func_get_arg(1);
+            $point = func_get_arg(2);
         }
 
         if ($source === null) {
-           if ($point->getProjection() === null) {
-              self::reportError("No projection for point\r\n");
-              return $point;
-           }
+            if ($point->getProjection() === null) {
+                self::reportError("No projection for point\r\n");
+                return $point;
+            }
 
-           $source = $point->getProjection();
+            $source = $point->getProjection();
         }
 
-        self::reportDebug("transform point ".$point->x.",".$point->y."\r\n");
-        self::reportDebug("from ".$source->srsCode."\r\n");
-        self::reportDebug("to ".$dest->srsCode."\r\n");
+        self::reportDebug("transform point " . $point->x . "," . $point->y . "\r\n");
+        self::reportDebug("from " . $source->srsCode . "\r\n");
+        self::reportDebug("to " . $dest->srsCode . "\r\n");
 
         $this->msg = '';
 
-        if (! $source->readyToUse) {
+        if (!$source->readyToUse) {
             self::reportError("Proj4php initialization for: " . $source->srsCode . " not yet complete");
             return $point;
         }
 
-        if (! $dest->readyToUse) {
+        if (!$dest->readyToUse) {
             self::reportError("Proj4php initialization for: " . $dest->srsCode . " not yet complete");
             return $point;
         }
@@ -434,23 +434,23 @@ class Proj4php
             $point->x *= Common::D2R;
             $point->y *= Common::D2R;
 
-            self::reportDebug("convert to longlat => ".$point->x.",".$point->y."\r\n");
+            self::reportDebug("convert to longlat => " . $point->x . "," . $point->y . "\r\n");
         } else {
             if (isset($source->to_meter)) {
                 $point->x *= $source->to_meter;
                 $point->y *= $source->to_meter;
-                self::reportDebug("convert to_meter => ".$point->x.",".$point->y."\r\n");
+                self::reportDebug("convert to_meter => " . $point->x . "," . $point->y . "\r\n");
             }
 
             // Convert Cartesian to longlat
             $source->inverse($point);
-            self::reportDebug("inverse => ".$point->x.",".$point->y."\r\n");
+            self::reportDebug("inverse => " . $point->x . "," . $point->y . "\r\n");
         }
 
         // Adjust for the prime meridian if necessary
         if (isset($source->from_greenwich)) {
             $point->x += $source->from_greenwich;
-            self::reportDebug("from_greenwich => ".$point->x.",".$point->y."\r\n");
+            self::reportDebug("from_greenwich => " . $point->x . "," . $point->y . "\r\n");
         }
 
         // Convert datums if needed, and if possible.
@@ -458,19 +458,19 @@ class Proj4php
         // $point (after it has been changed. $point really needs to be made
         // immutable so it is clear what is happening.
         $point = $this->datum_transform($source->datum, $dest->datum, $point);
-        self::reportDebug("datum_transform => ".$point->x.",".$point->y."\r\n");
+        self::reportDebug("datum_transform => " . $point->x . "," . $point->y . "\r\n");
 
         // Adjust for the prime meridian if necessary
         if (isset($dest->from_greenwich)) {
             $point->x -= $dest->from_greenwich;
-            self::reportDebug("from_greenwich => ".$point->x.",".$point->y."\r\n");
+            self::reportDebug("from_greenwich => " . $point->x . "," . $point->y . "\r\n");
         }
 
         if ($dest->projName == "longlat") {
             // convert radians to decimal degrees
             $point->x *= Common::R2D;
             $point->y *= Common::R2D;
-            self::reportDebug("convert to longlat => ".$point->x.",".$point->y."\r\n");
+            self::reportDebug("convert to longlat => " . $point->x . "," . $point->y . "\r\n");
         } else {
             // else project
             $dest->forward($point);
@@ -580,7 +580,7 @@ class Proj4php
     {
         $xin = $point->x;
         $yin = $point->y;
-        $zin = isset( $point->z) ? $point->z : 0.0;
+        $zin = isset($point->z) ? $point->z : 0.0;
 
         for ($i = 0; $i < 3; $i++) {
             if ($denorm && $i == 2 && !isset($point->z)) {
@@ -612,12 +612,12 @@ class Proj4php
                     $point->$t = -$v;
                     break;
                 case 'u':
-                    if (isset( $point->$t)) {
+                    if (isset($point->$t)) {
                         $point->z = $v;
                     }
                     break;
                 case 'd':
-                    if (isset( $point->$t)) {
+                    if (isset($point->$t)) {
                         $point->z = -$v;
                     }
                     break;
@@ -648,7 +648,7 @@ class Proj4php
     public static function reportDebug($msg)
     {
         if (self::$debugOn)
-          echo $msg;
+            echo $msg;
     }
 
     /**
@@ -667,12 +667,12 @@ class Proj4php
 
             // Add any definitions we have imported to the defs array.
             foreach ($def as $def_name => $def_details) {
-                if ( ! is_array($def_details)) {
+                if (!is_array($def_details)) {
                     $this->defs[$def_name] = $def_details;
                 } else {
                     $attributes = array();
                     array_walk($def_details, function($val, $key) use(&$attributes) { 
-                        $attributes[] = $key."=".$val; 
+                        $attributes[] = $key . "=" . $val; 
                     });
                     $this->defs[$def_name] = implode(" ", $attributes);
                 }

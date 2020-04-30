@@ -165,18 +165,18 @@ class Krovak
         $ok = 0;
         $iter = 0;
         do {
-            $p->y = 2. * ( atan( pow( $this->k, -1. / $this->alfa ) *
-                                pow( tan( $u / 2. + $this->s45 ), 1. / $this->alfa ) *
-                                pow( (1. + $this->e * sin( $fi1 )) / (1. - $this->e * sin( $fi1 )), $this->e / 2. )
+            $p->y = 2. * (atan(pow($this->k, -1. / $this->alfa) *
+                                pow(tan($u / 2. + $this->s45), 1. / $this->alfa) *
+                                pow((1. + $this->e * sin($fi1)) / (1. - $this->e * sin($fi1)), $this->e / 2.)
                         ) - $this->s45);
-            if (abs( $fi1 - $p->y ) < 0.0000000001)
+            if (abs($fi1 - $p->y) < 0.0000000001)
                 $ok = 1;
             $fi1 = $p->y;
             $iter += 1;
         } while ($ok == 0 && $iter < 15);
 
         if ($iter >= 15) {
-            Proj4php::reportError( "PHI3Z-CONV:Latitude failed to converge after 15 iterations" );
+            Proj4php::reportError("PHI3Z-CONV:Latitude failed to converge after 15 iterations");
             //console.log('iter:', iter);
             return null;
         }

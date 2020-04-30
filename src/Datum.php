@@ -132,7 +132,7 @@ class Datum
     {
         if (isset($this->datum_code))
             Proj4php::reportDebug("Datum code=$this->datum_code\n");
-        Proj4php::reportDebug('Datum type:'.$this->datum_type."\n");
+        Proj4php::reportDebug('Datum type:' . $this->datum_type . "\n");
         if (isset($this->a))
             Proj4php::reportDebug("a=$this->a\n");
         if (isset($this->b))
@@ -143,7 +143,7 @@ class Datum
             Proj4php::reportDebug("es2=$this->es2\n");
         if (isset($this->datum_params))
         {
-            foreach($this->datum_params as $key=>$value)
+            foreach ($this->datum_params as $key=>$value)
                 Proj4php::reportDebug("Param $key=$value\n");
         }
         else

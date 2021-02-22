@@ -108,7 +108,7 @@ class Merc
                 $x = $this->x0 + $this->a * $this->k0 * Common::adjust_lon($lon - $this->long0);
                 $y = $this->y0 + $this->a * $this->k0 * log(tan(Common::FORTPI + 0.5 * $lat));
             } else {
-                $sinphi = sin(lat);
+                $sinphi = sin($lat);
                 $ts = Common::tsfnz($this->e, $lat, $sinphi);
                 $x = $this->x0 + $this->a * $this->k0 * Common::adjust_lon($lon - $this->long0);
                 $y = $this->y0 - $this->a * $this->k0 * log($ts);

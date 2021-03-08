@@ -51,10 +51,10 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 	 $pointTestA = $proj4->transform($projEPSG3004, $pointSrc);
 	 $pointTestB = $proj4->transform($projWGS84, $pointDest);
 
-         $this->assertEqualsWithDelta($pointTestA->x,2322737.56,0.1);
-	 $this->assertEqualsWithDelta($pointTestA->y,4705874.8,0.1);
-	 $this->assertEqualsWithDelta($pointTestB->x,12.6,0.1);
-	 $this->assertEqualsWithDelta($pointTestB->y,42.48,0.1);
+         $this->assertEqualsWithDelta($pointTestA->x,2322737.56,0.001);
+	 $this->assertEqualsWithDelta($pointTestA->y,4705874.8,0.001);
+	 $this->assertEqualsWithDelta($pointTestB->x,12.6,0.001);
+	 $this->assertEqualsWithDelta($pointTestB->y,42.48,0.001);
     }
 
     public function testTransform()

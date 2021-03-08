@@ -38,6 +38,25 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
          // Expected  Y : 250.5  
     }
 
+    public function testIssue111()
+    {
+	 $proj4 = new Proj4php();
+
+	 $projWGS84 = new Proj('EPSG:4326',$proj4);
+	 $projEPSG3004 = new Proj('+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=2520000 +y_0=0 +ellps=intl +towgs84=-104.1,-49.1,-9.9,0.971,-2.917,0.714,-11.68 +units=m +no_defs',$proj4);
+
+	 $pointSrc = new Point(12.6 , 42.48 , $projWGS84);
+	 $pointDest = new Point(2322737.56, 4705874.8, $projEPSG3004);
+
+	 $pointTestA = $proj4->transform($projEPSG3004, $pointSrc);
+	 $pointTestB = $proj4->transform($projWGS84, $pointDest);
+
+         $this->assertEqualsWithDelta($pointTestA->x,2322737.56,0.1);
+	 $this->assertEqualsWithDelta($pointTestA->y,4705874.8,0.1);
+	 $this->assertEqualsWithDelta($pointTestB->x,12.6,0.1);
+	 $this->assertEqualsWithDelta($pointTestB->y,42.48,0.1);
+    }
+
     public function testTransform()
     {
         $proj4     = new Proj4php();

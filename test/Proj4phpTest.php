@@ -1,8 +1,29 @@
 <?php
+include_once("vendor/autoload.php");
 include_once("src/proj4php/proj4php.php");
 
 class Proj4phpTest extends PHPUnit_Framework_TestCase
 {
+
+public function testIssue111()
+    {
+         $proj4 = new Proj4php();
+
+	 $projWGS84 = new Proj4phpProj('EPSG:4326',$proj4);
+	 Proj4php::$defs['EPSG:3004'] = "+proj=tmerc +lat_0=0 +lon_0=15 +k=0.9996 +x_0=2520000 +y_0=0 +ellps=intl +towgs84=-104.1,-49.1,-9.9,0.971,-2.917,0.714,-11.68 +units=m +no_defs";
+         $projEPSG3004 = new Proj4phpProj('EPSG:3004',$proj4);
+
+         $pointSrc = new Proj4phpPoint(12.6 , 42.48 , $projWGS84);
+         $pointDest = new Proj4phpPoint(2322737.56, 4705874.8, $projEPSG3004);
+
+         $pointTestA = $proj4->transform($projWGS84,$projEPSG3004, $pointSrc);
+         $pointTestB = $proj4->transform($projEPSG3004,$projWGS84, $pointDest);
+
+	 assert(abs($pointTestA->x-2322737.56)<0.001);
+	 assert(abs($pointTestA->y-4705841.8)<0.001);
+	 assert(abs($pointTestB->x-12.6)<0.001);
+	 assert(abs($pointTestB->y-42.48)<0.001);
+    }
 
 public function testTransform()
 {
@@ -68,3 +89,6 @@ $pointSrc = $pointDest;
 $pointDest = $proj4->transform($projWGS84,$proj5514,$pointSrc);
 }
 }
+
+$test = new Proj4phpTest();
+$test->testIssue111();

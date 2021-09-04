@@ -395,6 +395,7 @@ class Wkt {
             $wktName == "foot_survey_us" ||
             $wktName == "Kilometer" ||
             $wktName == "international_feet" ||
+            $wktName == "Foot (International)" ||
             $wktName == "m" ||
             $wktName == "Mile_US" ||
             $wktName == "Coord" ||
@@ -422,6 +423,7 @@ class Wkt {
             // SR-ORG:7008 foot_survey_us
             // SR-ORG:7496 Kilometer
             // SR-ORG:7508 international_feet
+            // EPSG:6570 Foot (International)
             // SR-ORG:7677 Foot
             // SR-ORG:7753 m = 9000.0
             // SR-ORG:7889 Mile_US

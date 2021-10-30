@@ -8,6 +8,9 @@ class Wkt {
     private static $wktEllipsoids = array();
     private static $wktDatums = array();
 
+    /**
+     * Allow spaces in WKT section parsing
+     */
     private static $wktStrict = false;
 
     /**

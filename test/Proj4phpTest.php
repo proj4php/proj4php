@@ -294,7 +294,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
     public function testInlineProjectionMethodWithSpace()
     {
-        Proj4php::setDebug(true);
+        Proj4php::setDebug(false);
 
 	$proj4           = new Proj4php();
 	$projWGS84       = new Proj('EPSG:4326', $proj4);

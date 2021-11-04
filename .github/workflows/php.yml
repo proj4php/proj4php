@@ -11,7 +11,7 @@ jobs:
     - uses: php-actions/composer@v5 # or alternative dependency management
     
     - name: PHPUnit Tests
-      uses: php-actions/phpunit@v2
+      uses: php-actions/phpunit@v3
       with:
         bootstrap: vendor/autoload.php
         configuration: test/phpunit.xml

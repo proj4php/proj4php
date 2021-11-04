@@ -11,7 +11,7 @@
 	</coverage>
 	<testsuites>
 		<testsuite name="main">
-			<directory suffix="Test.php">.</directory>
+			<directory suffix="Test.php">test</directory>
 		</testsuite>
 	</testsuites>
 	<logging/>

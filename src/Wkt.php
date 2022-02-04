@@ -504,6 +504,7 @@ class Wkt {
         self::$wktProjections["Universal Transverse Mercator System"] = "utm";
 
         self::$wktProjections["Mollweide"] = 'moll'; //SR-ORG:7
+        self::$wktProjections["Albers"] = 'aea'; 
         self::$wktProjections["Albers_Conic_Equal_Area"] = 'aea'; //SR-ORG:10
         self::$wktProjections['Albers_conic_equal_area'] = 'aea'; //SR-ORG:6952
 

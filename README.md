@@ -23,6 +23,14 @@ features are being implemented on this package:
 Legacy branches [proj4php5.2](https://github.com/proj4php/proj4php/tree/proj4php5.2) and [proj4php7.1](https://github.com/proj4php/proj4php/tree/proj4php7.1) will be
 maintained for older applications that need it.
 
+## Installation
+
+You can install the package via composer:
+
+```bash
+composer require proj4php/proj4php
+```
+
 ## Using
 
 ```php

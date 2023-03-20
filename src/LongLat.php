@@ -9,6 +9,7 @@ namespace proj4php;
  * and Richard Greenwood rich@greenwoodmap.com 
  * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
  */
+#[\AllowDynamicProperties]
 class LongLat
 {
     public function init()

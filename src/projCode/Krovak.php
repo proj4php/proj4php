@@ -25,6 +25,7 @@ use proj4php\Proj4php;
 use proj4php\Common;
 use proj4php\Point;
 
+#[\AllowDynamicProperties]
 class Krovak
 {
     public $a;

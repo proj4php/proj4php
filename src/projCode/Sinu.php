@@ -39,6 +39,7 @@ use proj4php\Proj4php;
 use proj4php\Common;
 use proj4php\Point;
 
+#[\AllowDynamicProperties]
 class Sinu
 {
     public $C_x;

@@ -13,6 +13,7 @@ namespace proj4php\projCode;
 use proj4php\Proj4php;
 use proj4php\Common;
 
+#[\AllowDynamicProperties]
 class Gstmerc
 {
     public $a;

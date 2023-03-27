@@ -17,6 +17,6 @@ jobs:
       uses: php-actions/phpunit@v3
       with:
         bootstrap: vendor/autoload.php
-        configuration: test/phpunit.xml
+        configuration: phpunit.xml
         version: 9
         php_version: ${{ matrix.php-versions }}

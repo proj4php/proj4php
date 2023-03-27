@@ -1,13 +1,10 @@
 <?php
 include dirname(__DIR__) . "/src/Wkt.php";
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
+use PHPUnit\Framework\TestCase;
 use proj4php\Wkt;
 
-class WktParserTest extends PHPUnit_Framework_TestCase
+class WktParserTest extends TestCase
 {
     protected $onlyTestTheseProjections=null;//'SR-ORG:8177';//array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test all, one or some projections.
 

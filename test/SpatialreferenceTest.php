@@ -1,15 +1,10 @@
 <?php
 
-include __DIR__ . "/../vendor/autoload.php";
-
-use proj4php\Point;
+use PHPUnit\Framework\TestCase;
 use proj4php\Proj4php;
 use proj4php\Proj;
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-class SpatialreferenceTest extends PHPUnit_Framework_TestCase
+class SpatialreferenceTest extends TestCase
 {
     protected $defs;
     protected $code;
@@ -362,7 +357,7 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
                 $a = array_diff_key($expected, $ignore);
                 $b = array_intersect_key(array_diff_key($actual, $ignore), $a);
 
-                $this->assertEquals($a, $b, print_r(array($a, $b, $codesString), true));
+                $this->assertEqualsWithDelta($a, $b, 1e-10, print_r(array($a, $b, $codesString), true));
             }
 
             $this->compareDatums($expected, $actual);
@@ -387,9 +382,10 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
                 (isset($actual['from_greenwich']) && $actual['from_greenwich'] !== 0.0)
                 || (isset($actual['from_greenwich']) && $expected['from_greenwich'] !== 0.0)
             ) {
-                $this->assertEquals(
+                $this->assertEqualsWithDelta(
                     array_intersect_key($expected, array('from_greenwich' => '')),
                     array_intersect_key($actual, array('from_greenwich' => '')),
+	                1e-10,
                     $codesString
                 );
             }
@@ -472,9 +468,10 @@ class SpatialreferenceTest extends PHPUnit_Framework_TestCase
         }
 
         if (! empty($alphagamma)) {
-            $this->assertEquals(
+            $this->assertEqualsWithDelta(
                 array_intersect_key($expected, $alphagamma),
                 array_intersect_key($actual, $alphagamma),
+	            1e-10,
                 'AssertEquals Failed: alphagamma: ' . $this->projectionString()
             );
         }

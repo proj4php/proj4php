@@ -380,14 +380,14 @@ class Datum
         } else {
             if ($Y > 0) {
                 $Longitude = Common::HALF_PI;
-            } elseif (Y < 0) {
+            } elseif ($Y < 0) {
                 $Longitude = -Common::HALF_PI;
             } else {
                 $AtPole = true;
                 $Longitude = 0.0;
                 if ($Z > 0.0) { /* north pole */
                     $Latitude = Common::HALF_PI;
-                } elseif (Z < 0.0) { /* south pole */
+                } elseif ($Z < 0.0) { /* south pole */
                     $Latitude = -Common::HALF_PI;
                 } else { /* center of earth */
                     $Latitude = Common::HALF_PI;

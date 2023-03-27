@@ -1,26 +1,20 @@
 <?php
 //phpunit.readthedocs.io/en/8.0/writing-tests-for-phpunit.html
 
-include(__DIR__ . "/../vendor/autoload.php");
-
+use PHPUnit\Framework\TestCase;
 use proj4php\Point;
 use proj4php\Proj;
 use proj4php\Proj4php;
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-if (!class_exists('\PHPUnit_Framework_TestCase') && class_exists('\PHPUnit\Framework\TestCase')) {
-    class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
-}
-
-class Proj4phpTest extends PHPUnit_Framework_TestCase
+class Proj4phpTest extends TestCase
 {
     public function testIssue87()
     {
+        $this->expectNotToPerformAssertions();
 	$proj4 = new Proj4php();
 
-	$proj4->addDef("LONG_LAT", '+proj=longlat +ellps=WGS84 +datum=WGS84'); 
+	$proj4->addDef("LONG_LAT", '+proj=longlat +ellps=WGS84 +datum=WGS84');
         $proj4->addDef("ALBERS_CONICOL", '+proj=aea +lat_1=-29.9 +lat_2=-36. +lat_0=-32.95 +lon_0=117.55 +a=6378137 +b=6356752.31414');
 
         // Create two different projections.
@@ -34,12 +28,13 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         // Transform the point between datums.
         $pointDest = $proj4->transform($projLongLat, $projAlbers, $pointSrc);
 
-	 // Expected  X : 178.5   
-         // Expected  Y : 250.5  
+	 // Expected  X : 178.5
+         // Expected  Y : 250.5
     }
 
     public function testTransform()
     {
+        $this->expectNotToPerformAssertions();
         $proj4     = new Proj4php();
 
         $projL93   = new Proj('EPSG:2154', $proj4);
@@ -120,7 +115,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointSrc = new Point('-755703.994303','-704542.847453');
         $pointDest = $proj4->transform($projlaea,$projWGS84,$pointSrc);
-        
+
         // TWD97 / TM2 zone 119
         $pointSrc = new Point('181688.209','2705952.753');
         $pointDest = $proj4->transform($proj3825,$projWGS84,$pointSrc);
@@ -173,20 +168,20 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
         $projNAD27Inline = new Proj('PROJCS["NAD27 / Texas South Central",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke 1866",6378206.4,294.9786982138982,AUTHORITY["EPSG","7008"]],AUTHORITY["EPSG","6267"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],UNIT["US survey foot",0.3048006096012192,AUTHORITY["EPSG","9003"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",28.38333333333333],PARAMETER["standard_parallel_2",30.28333333333333],PARAMETER["latitude_of_origin",27.83333333333333],PARAMETER["central_meridian",-99],PARAMETER["false_easting",2000000],PARAMETER["false_northing",0],AUTHORITY["EPSG","32040"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
         $projNAD27=new Proj('EPSG:32040', $proj4);
 
-        $this->assertEquals(array_intersect_key(get_object_vars($projNAD27), $compare), array_intersect_key(get_object_vars($projNAD27Inline), $compare));
+        $this->assertEqualsWithDelta(array_intersect_key(get_object_vars($projNAD27), $compare), array_intersect_key(get_object_vars($projNAD27Inline), $compare), 1e-10);
 
         //$proj4->addDef("EPSG:31370","+proj=lcc +lat_1=51.16666723333333 +lat_2=49.8333339 +lat_0=90 +lon_0=4.367486666666666 +x_0=150000.013 +y_0=5400088.438 +ellps=intl +towgs84=106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1 +units=m +no_defs");
         $projBelge72Inline = new Proj('PROJCS["Belge 1972 / Belgian Lambert 72",GEOGCS["Belge 1972",DATUM["Reseau_National_Belge_1972",SPHEROID["International 1924",6378388,297,AUTHORITY["EPSG","7022"]],TOWGS84[106.869,-52.2978,103.724,-0.33657,0.456955,-1.84218,1],AUTHORITY["EPSG","6313"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4313"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Lambert_Conformal_Conic_2SP"],PARAMETER["standard_parallel_1",51.16666723333333],PARAMETER["standard_parallel_2",49.8333339],PARAMETER["latitude_of_origin",90],PARAMETER["central_meridian",4.367486666666666],PARAMETER["false_easting",150000.013],PARAMETER["false_northing",5400088.438],AUTHORITY["EPSG","31370"],AXIS["X",EAST],AXIS["Y",NORTH]]',$proj4);
         $projBelge72 = new Proj('EPSG:31370',$proj4);
 
-        $this->assertEquals(array_intersect_key(get_object_vars($projBelge72), $compare), array_intersect_key(get_object_vars($projBelge72Inline), $compare));
+        $this->assertEqualsWithDelta(array_intersect_key(get_object_vars($projBelge72), $compare), array_intersect_key(get_object_vars($projBelge72Inline), $compare), 1e-10);
 
         $proj4::$wktProjections["Lambert_Conformal_Conic"] = "lcc";
         $projL93Inline = new Proj('PROJCS["RGF93 / Lambert-93",GEOGCS["RGF93",DATUM["D_RGF_1993",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]],PROJECTION["Lambert_Conformal_Conic"],PARAMETER["standard_parallel_1",49],PARAMETER["standard_parallel_2",44],PARAMETER["latitude_of_origin",46.5],PARAMETER["central_meridian",3],PARAMETER["false_easting",700000],PARAMETER["false_northing",6600000],UNIT["Meter",1]]', $proj4);
         $projL93 = new Proj('EPSG:2154', $proj4);
 
         $this->assertEquals(array_intersect_key(get_object_vars($projL93), $compare), array_intersect_key(get_object_vars($projL93Inline), $compare));
-   
+
         // for wgs84, points are lat/lng, so both functions return the input (identity transform)
         $projWGS84Inline      = new Proj('GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]', $proj4);
         $projWGS84       = new Proj('EPSG:4326', $proj4);
@@ -212,6 +207,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
      */
      public function testParseInlineProj4Code()
      {
+         $this->expectNotToPerformAssertions();
         $proj4 = new Proj4php();
         $proj4->addDef("EPSG:27700",'+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +datum=OSGB36 +units=m +no_defs');
 
@@ -308,7 +304,7 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
         $pointWGS84 = new Point(-96,28.5,  $projWGS84);
         $pointNAD27 = $proj4->transform($projNAD27,$pointWGS84);
- 
+
         $this->assertEqualsWithDelta($pointNAD27->x,2963487.15,0.1);
         $this->assertEqualsWithDelta($pointNAD27->y,255412.99,0.1);
 

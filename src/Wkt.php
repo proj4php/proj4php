@@ -439,39 +439,6 @@ class Wkt {
 
     }
 
-    /**
-     * convert from tmerc to utm+zone after parseWkt
-     * @return [type] [description]
-     */
-    protected static function applyWKTUtmFromTmerc() {
-        // 'UTM Zone 15',
-        //  WGS_1984_UTM_Zone_17N,
-        // 'Lao_1997_UTM_48N'
-        // 'UTM Zone 13, Southern Hemisphere'
-        // 'Hito XVIII 1963 / UTM zone 19S'
-        // 'ETRS89 / ETRS-TM26' EPSG:3038 (UTM 26)
-        $srsCode = strtolower(str_replace('_', ' ', $wktParams->srsCode));
-        if (strpos($srsCode, "utm zone ") !== false || strpos($srsCode, "lao 1997 utm ") !== false || strpos($srsCode, "etrs-tm") !== false) {
-
-            $srsCode = str_replace('-tm', '-tm ', $srsCode); //'ETRS89 / ETRS-TM26' ie: EPSG:3038 (UTM 26)
-
-            $zoneStr = substr($srsCode, strrpos($srsCode, ' ') + 1);
-            $zlen = strlen($zoneStr);
-            if ($zoneStr[$zlen - 1] == 'n') {
-                $zoneStr = substr($zoneStr, 0, -1);
-            } elseif ($zoneStr[$zlen - 1] == 's') {
-                // EPSG:2084 has Hito XVIII 1963 / UTM zone 19S
-                $zoneStr = substr($zoneStr, 0, -1);
-                $wktParams->utmSouth = true;
-            }
-            $wktParams->zone = intval($zoneStr, 10);
-            $wktParams->projName = "utm";
-            if (!isset($wktParams->utmSouth)) {
-                $wktParams->utmSouth = false;
-            }
-        }
-    }
-
     protected static function parseWKTToRads($wktName, &$wktArray) {
         if ($wktName == 'Radian' ||
             $wktName == 'Degree' ||

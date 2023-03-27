@@ -139,7 +139,10 @@ class WktParserTest extends TestCase
 
 
     protected $wkt='ogcwkt'; //ersrwkt
-    /**
+
+	private $defs;
+
+	/**
      * @runInSeparateProcess
      */
      public function testAllWktStrings()
@@ -149,7 +152,6 @@ class WktParserTest extends TestCase
         $codes = get_object_vars(json_decode(file_get_contents(__DIR__ . '/codes.json')));
         foreach ($codes as $code => $defs) {
             $this->defs = $defs;
-            $this->code = $code;
 
             if (isset($this->onlyTestTheseProjections)&&(!empty($this->onlyTestTheseProjections))){
 

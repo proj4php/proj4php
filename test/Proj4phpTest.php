@@ -292,6 +292,19 @@ class Proj4phpTest extends PHPUnit_Framework_TestCase
 
     }
 
+    public function testInlineProjectionMethodWithSpace()
+    {
+        Proj4php::setDebug(false);
+
+	$proj4           = new Proj4php();
+	$projWGS84       = new Proj('EPSG:4326', $proj4);
+
+	$projETRS89      = new Proj('PROJCS["ETRS89_UTM_zone_32N", GEOGCS["GCS_ETRS89", DATUM["D_ETRS_1989", SPHEROID["GRS_1980", 6378137.0, 298.257222101]], PRIMEM["Greenwich", 0.0], UNIT["degree", 0.017453292519943295], AXIS["Longitude", EAST], AXIS["Latitude", NORTH]], PROJECTION["Transverse_Mercator"], PARAMETER["central_meridian", 9.0], PARAMETER["latitude_of_origin", 0.0], PARAMETER["scale_factor", 0.9996], PARAMETER["false_easting", 500000.0], PARAMETER["false_northing", 0.0], UNIT["m", 1.0], AXIS["x", EAST], AXIS["y", NORTH]]',$proj4);
+
+        $pointWGS84 = new Point(-96,28.5,  $projWGS84);
+        $pointETRS89 = $proj4->transform($projETRS89,$pointWGS84);
+    }
+
     public function testInlineProjectionMethod2()
     {
         Proj4php::setDebug(false);

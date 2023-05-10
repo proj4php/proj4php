@@ -1,13 +1,10 @@
 <?php
 include dirname(__DIR__) . "/src/Wkt.php";
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
+use PHPUnit\Framework\TestCase;
 use proj4php\Wkt;
 
-class WktParserTest extends PHPUnit_Framework_TestCase
+class WktParserTest extends TestCase
 {
     protected $onlyTestTheseProjections=null;//'SR-ORG:8177';//array('EPSG:32040', 'EPSG:31370'); // uncomment or comment this to test all, one or some projections.
 
@@ -142,7 +139,10 @@ class WktParserTest extends PHPUnit_Framework_TestCase
 
 
     protected $wkt='ogcwkt'; //ersrwkt
-    /**
+
+	private $defs;
+
+	/**
      * @runInSeparateProcess
      */
      public function testAllWktStrings()
@@ -152,7 +152,6 @@ class WktParserTest extends PHPUnit_Framework_TestCase
         $codes = get_object_vars(json_decode(file_get_contents(__DIR__ . '/codes.json')));
         foreach ($codes as $code => $defs) {
             $this->defs = $defs;
-            $this->code = $code;
 
             if (isset($this->onlyTestTheseProjections)&&(!empty($this->onlyTestTheseProjections))){
 

@@ -38,6 +38,7 @@ use proj4php\Common;
   Printing Office, Washington D.C., 1989.
  * ***************************************************************************** */
 
+#[\AllowDynamicProperties]
 class Poly
 {
     public $a;

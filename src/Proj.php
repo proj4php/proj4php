@@ -12,6 +12,7 @@ namespace proj4php;
 
 use Exception;
 
+#[\AllowDynamicProperties]
 class Proj
 {
     /**

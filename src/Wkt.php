@@ -215,6 +215,8 @@ class Wkt {
                     case 'azimuth':
                         $wktParams->alpha = $value * $wktParams->to_rads; //EPSG:2057
                         break;
+                    case 'auxiliary_sphere_type':
+                        $wktParams->sphere=true;
                     case 'more_here':
                         break;
                     default:
@@ -473,6 +475,7 @@ class Wkt {
         self::$wktProjections["Mercator"] = "merc";
         self::$wktProjections["Mercator_1SP"] = "merc";
         self::$wktProjections["Mercator_2SP"] = "merc";
+        self::$wktProjections["Mercator_Auxiliary_Sphere"] = "merc";
         self::$wktProjections["Transverse_Mercator"] = "tmerc";
         self::$wktProjections["Transverse Mercator"] = "tmerc";
         self::$wktProjections["Lambert Azimuthal Equal Area"] = "laea";

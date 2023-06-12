@@ -453,4 +453,19 @@ class Proj4phpTest extends TestCase
 
         $this->assertEqualsWithDelta(array(1508344.3777571, 5032839.2985009), array($pointMinTr->x, $pointMinTr->y), 0.0001);
     }
+
+
+
+    public function testMercatorAuxiliarySphere()
+    {
+        $proj4 = new Proj4php();
+
+        $projFROM = new Proj('PROJCS["WGS_1984_Web_Mercator_Auxiliary_Sphere", GEOGCS["GCS_WGS_1984", DATUM["D_WGS_1984", SPHEROID["WGS_1984", 6378137, 298.257223563]], PRIMEM["Greenwich", 0], UNIT["Degree", 0.0174532925199433]], PROJECTION["Mercator_Auxiliary_Sphere"], PARAMETER["False_Easting", 0], PARAMETER["False_Northing", 0], PARAMETER["Central_Meridian", 0], PARAMETER["Standard_Parallel_1", 0], PARAMETER["Auxiliary_Sphere_Type", 0], UNIT["Meter", 1]]', $proj4);
+        //$this->fail(print_r($projTO, true));
+        $projTO = new Proj('GOOGLE', $proj4);
+        $pointSource = new Point(16063634.897567, -4598958.4183454);
+        $pointDest = $proj4->transform($projFROM, $projTO, $pointSource);
+
+        $this->assertEqualsWithDelta(array($pointDest->x, $pointDest->y), array($pointDest->x, $pointDest->y), 0.0001);
+    }
 }

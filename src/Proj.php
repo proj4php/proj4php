@@ -309,7 +309,7 @@ class Proj
     public function loadFromService()
     {
         // Load from web service
-        $url = Proj4php::$defsLookupService . '/' . $this->srsAuth . '/' . $this->srsProjNumber . '/proj4/';
+        $url = Proj4php::$defsLookupService . '/' . $this->srsAuth . '/' . $this->srsProjNumber . '/proj4.txt';
 
         try {
             $this->proj4php->addDef(

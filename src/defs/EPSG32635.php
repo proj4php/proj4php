@@ -1,5 +1,5 @@
 <?php
 
 return [
-    "EPSG:32636" => "+proj=utm +zone=36 +datum=WGS84 +units=m +no_defs",
+    "EPSG:32635" => "+proj=utm +zone=35 +datum=WGS84 +units=m +no_defs",
 ];

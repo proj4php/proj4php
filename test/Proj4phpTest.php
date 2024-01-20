@@ -29,7 +29,7 @@ class Proj4phpTest extends TestCase
 
 	    $proj4 = new Proj4php();
         $progWGS84  = new Proj('WGS84', $proj4);
-        $proj3418 = new Proj('EPSG:3418',$proj4);
+        $proj3418 = new Proj('+proj=lcc +lat_0=40 +lon_0=-93.5 +lat_1=41.7833333333333 +lat_2=40.6166666666667 +x_0=500000.00001016 +y_0=0 +datum=NAD83 +units=us-ft +no_defs +type=crs',$proj4);
         $pointSrc = new Point( 1623863.8131117225, 643763.90620113909);
         $pointDest = $proj4->transform($proj3418, $progWGS84, $pointSrc);
         $this->assertEqualsWithDelta(-93.560676, $pointDest->x, 0001);

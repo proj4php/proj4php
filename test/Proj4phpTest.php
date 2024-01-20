@@ -9,6 +9,33 @@ use proj4php\Proj4php;
 
 class Proj4phpTest extends TestCase
 {
+
+
+    public function testEPSG3418()
+    {
+
+        $proj4 = new Proj4php();
+        $progWGS84  = new Proj('WGS84', $proj4);
+        $proj3418 = new Proj(
+            'PROJCS["NAD_1983_StatePlane_Iowa_South_FIPS_1402_Feet",GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137.0,298.257222101]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Lambert_Conformal_Conic"],PARAMETER["False_Easting",1640416.6667],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",-93.5],PARAMETER["Standard_Parallel_1",41.7833333333333],PARAMETER["Standard_Parallel_2",40.6166666666667],PARAMETER["Latitude_Of_Origin",40.0],UNIT["US survey foot",0.304800609601219]]',
+            $proj4
+        );
+        $pointSrc = new Point(1623863.8131117225, 643763.90620113909);
+        $pointDest = $proj4->transform($proj3418, $progWGS84, $pointSrc);
+        $this->assertEqualsWithDelta(-93.560676, $pointDest->x, 0001);
+        $this->assertEqualsWithDelta(41.766901, $pointDest->y, .0001);
+
+
+
+	    $proj4 = new Proj4php();
+        $progWGS84  = new Proj('WGS84', $proj4);
+        $proj3418 = new Proj('EPSG:3418',$proj4);
+        $pointSrc = new Point( 1623863.8131117225, 643763.90620113909);
+        $pointDest = $proj4->transform($proj3418, $progWGS84, $pointSrc);
+        $this->assertEqualsWithDelta(-93.560676, $pointDest->x, 0001);
+        $this->assertEqualsWithDelta(41.766901, $pointDest->y, .0001);
+
+    }
     public function testIssue87()
     {
         $this->expectNotToPerformAssertions();

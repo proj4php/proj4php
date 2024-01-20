@@ -512,6 +512,15 @@ class Proj
                     break;
                 case "units":
                     $this->units = trim($paramVal);
+
+                    
+                    if($this->units=='ft'){
+                        $this->to_meter=0.3048;
+                    }
+                    if($this->units=='us-ft'){
+                        $this->to_meter=1200 / 3937;
+                    }
+
                     break;
                 case "datum": $this->datumCode = trim($paramVal);
                     break;

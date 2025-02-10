@@ -3,13 +3,13 @@ namespace proj4php;
 
 /**
  * Author : Julien Moquet
- * 
+ *
  * Inspired by Proj4js from Mike Adair madairATdmsolutions.ca
- * and Richard Greenwood rich@greenwoodmap.com 
- * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html 
+ * and Richard Greenwood rich@greenwoodmap.com
+ * License: LGPL as per: http://www.gnu.org/copyleft/lesser.html
  */
 
-/** 
+/**
  * Point object, nothing fancy, just allows values to be
  * passed back and forth by reference rather than by value.
  * Other point classes may be used as long as they have
@@ -47,7 +47,7 @@ class Point
      *
      * Notice z can be ommitted when projection still present.
      */
-    public function __construct($x = null, $y = null, $z = null, Proj $projection = null)
+    public function __construct($x = null, $y = null, $z = null, ?Proj $projection = null)
     {
         if ($projection === null and $z instanceof Proj)
         {
@@ -79,7 +79,7 @@ class Point
      * Build a copy of a Point object.
      *
      * renamed because of PHP keyword.
-     * 
+     *
      * Return:
      * proj4php\Point the cloned point.
      */
@@ -93,7 +93,7 @@ class Point
      * Return a readable string version of the point
      *
      * Return:
-     * {String} String representation of Proj4js.Point object. 
+     * {String} String representation of Proj4js.Point object.
      * (ex. "x=5,y=42")
      */
     public function toString()
@@ -106,7 +106,7 @@ class Point
      * Return a short string version of the point.
      *
      * Return:
-     * {String} Shortened String representation of Proj4js.Point object. 
+     * {String} Shortened String representation of Proj4js.Point object.
      * (ex. "5, 42")
      * FIXME: actually "4 42" - a single space as separator, not commas.
      */

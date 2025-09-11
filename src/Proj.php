@@ -270,6 +270,7 @@ class Proj
             $this->srsProjNumber = $this->srsCode;
         }
 
+        $this->srsProjNumber=preg_replace("/[^a-zA-Z0-9]/", "", $this->srsProjNumber);
         $this->loadProjDefinition();
     }
 
@@ -372,6 +373,10 @@ class Proj
         if (array_key_exists($projName, Proj4php::$proj)) {
             $this->initTransforms();
             return;
+        }
+        
+        if(is_null($projName)){
+            throw new \Exception('Invalid Projection');
         }
 
         // The class name for the projection code

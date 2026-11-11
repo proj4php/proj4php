@@ -88,7 +88,7 @@ class Aeqd
         if (abs($rh) <= Common::EPSLN) {
             $lat = $this->lat0;
         } else {
-            $lat = Common::asinz($cosz * $this->sin_p12 + ($p->y * $sinz * $this->cos_p12) / $rh);
+            $lat = Common::azimuthal_lat($p->x, $p->y, $rh, $sinz, $cosz, $this->sin_p12, $this->cos_p12);
             $con = abs($this->lat0) - Common::HALF_PI;
 
             if (abs($con) <= Common::EPSLN) {

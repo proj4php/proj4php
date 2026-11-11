@@ -142,7 +142,7 @@ class Ortho
             return $p;
         }
 
-        $lat = Common::asinz($cosz * $this->sin_p14 + ($p->y * $sinz * $this->cos_p14) / $rh);
+        $lat = Common::azimuthal_lat($p->x, $p->y, $rh, $sinz, $cosz, $this->sin_p14, $this->cos_p14);
         $con = abs($this->lat0) - Common::HALF_PI;
 
         if (abs($con) <= Common::EPSLN) {

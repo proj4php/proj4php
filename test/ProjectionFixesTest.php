@@ -18,22 +18,22 @@ class ProjectionFixesTest extends TestCase
         return new Proj("+proj=longlat $shape +no_defs", $proj4);
     }
 
-    private function forward(string $def, string $shape, float $lon, float $lat, float $x, float $y): void
+    private function forward(string $def, string $shape, float $lon, float $lat, float $x, float $y, float $tol = 1e-3): void
     {
         $proj4 = new Proj4php();
         $prj = new Proj("$def $shape +units=m +no_defs", $proj4);
         $r = $proj4->transform($prj, new Point($lon, $lat, $this->geo($proj4, $shape)));
-        $this->assertEqualsWithDelta($x, $r->x, 1e-3, "$def x");
-        $this->assertEqualsWithDelta($y, $r->y, 1e-3, "$def y");
+        $this->assertEqualsWithDelta($x, $r->x, $tol, "$def x");
+        $this->assertEqualsWithDelta($y, $r->y, $tol, "$def y");
     }
 
-    private function inverse(string $def, string $shape, float $x, float $y, float $lon, float $lat): void
+    private function inverse(string $def, string $shape, float $x, float $y, float $lon, float $lat, float $tol = 1e-8, float $lonTol = 1e-8): void
     {
         $proj4 = new Proj4php();
         $prj = new Proj("$def $shape +units=m +no_defs", $proj4);
         $r = $proj4->transform($this->geo($proj4, $shape), new Point($x, $y, $prj));
-        $this->assertEqualsWithDelta($lon, $r->x, 1e-8, "$def lon");
-        $this->assertEqualsWithDelta($lat, $r->y, 1e-8, "$def lat");
+        $this->assertEqualsWithDelta($lon, $r->x, $lonTol, "$def lon");
+        $this->assertEqualsWithDelta($lat, $r->y, $tol, "$def lat");
     }
 
     public function testStereographic()
@@ -70,6 +70,22 @@ class ProjectionFixesTest extends TestCase
         $this->inverse('+proj=laea +lat_0=45 +lon_0=10', self::SPHERE, 0, 0, 10, 45);
         // polar laea rejected points on the equator (it tested phi + phi0, with phi0 unset)
         $this->forward('+proj=laea +lat_0=90', self::SPHERE, 30, 0, 4510023.9240368214, -7811590.5797829349);
+    }
+
+    /**
+     * Precision close to the poles, the equator and the origin; expected values from 50-digit
+     * computations on a sphere of radius 6400000 m.
+     */
+    public function testPrecision()
+    {
+        $sphere = '+a=6400000 +b=6400000';
+        // the Newton iteration converges only linearly close to the poles
+        $this->forward('+proj=moll', $sphere, 170, 89.9, 261739.81548119086, 9049906.014497606, 1e-6);
+        // two large terms were subtracted close to the origin
+        $this->forward('+proj=vandg', $sphere, 1e-6, 2e-6, 0.11170107212763708, 0.22340214425527422, 1e-6);
+        // asin() of a value close to 1 (latitude to 1e-11 degrees; this close to the pole a
+        // longitude error of 1e-8 degrees is only 2e-7 m)
+        $this->inverse('+proj=stere +lat_0=45', $sphere, 447.5574930584751, 5300703.896968693, 19.99999999999799, 89.99, 1e-11);
     }
 
     public function testCassini()

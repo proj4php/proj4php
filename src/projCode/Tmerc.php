@@ -89,7 +89,11 @@ class Tmerc
                 return(93);
             } else {
                 $x = .5 * $this->a * $this->k0 * log((1.0 + $b) / (1.0 - $b)) + $this->x0;
-                $con = acos($cos_phi * cos($delta_lon) / sqrt(1.0 - $b * $b));
+                // Same angle as acos(cos_phi * cos(delta_lon) / sqrt(1 - b * b)), since
+                // 1 - b * b = sin_phi^2 + (cos_phi * cos(delta_lon))^2, but without the loss of
+                // precision of acos() near +/-1, i.e. close to the equator (where rounding also
+                // took the argument beyond 1, giving NaN)
+                $con = atan2(abs($sin_phi), $cos_phi * cos($delta_lon));
 
                 if ($lat < 0) {
                     $con = - $con;
@@ -133,8 +137,9 @@ class Tmerc
             $g = .5 * ($f - 1 / $f);
             $temp = $this->lat0 + ($p->y - $this->y0) / ($this->a * $this->k0);
             $h = cos($temp);
-            $con = sqrt((1.0 - $h * $h) / (1.0 + $g * $g));
-            $lat = Common::asinz($con);
+            // Same angle as asin(sqrt((1 - h * h) / (1 + g * g))), but without the loss of
+            // precision of 1 - h * h close to the equator
+            $lat = atan2(abs(sin($temp)), sqrt($g * $g + $h * $h));
 
             if ($temp < 0) {
                 $lat = -$lat;

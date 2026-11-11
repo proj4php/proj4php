@@ -276,10 +276,10 @@ class Stere
 
             switch ($this->mode) {
                 case $this->EQUIT:
-                    if (abs($rh) <= Common::EPSLN) {
+                    if ($rh == 0) {
                         $lat = 0.;
                     } else {
-                        $lat = asin($y * $sinc / $rh);
+                        $lat = Common::azimuthal_lat($x, $y, $rh, $sinc, $cosc, 0., 1.);
                     }
                     if ($cosc != 0. || $x != 0.0) {
                                             $lon = atan2($x * $sinc, $cosc * $rh);
@@ -287,10 +287,10 @@ class Stere
                     break;
 
                 case $this->OBLIQ:
-                    if (abs($rh) <= Common::EPSLN) {
+                    if ($rh == 0) {
                         $lat = $this->lat0;
                     } else {
-                        $lat = asin($cosc * $this->sinph0 + $y * $sinc * $this->cosph0 / $rh);
+                        $lat = Common::azimuthal_lat($x, $y, $rh, $sinc, $cosc, $this->sinph0, $this->cosph0);
                     }
                     $c = $cosc - $this->sinph0 * sin($lat);
                     if ($c != 0. || $x != 0.0) {
@@ -302,11 +302,8 @@ class Stere
                     $y = -$y;
 
                 case $this->S_POLE:
-                    if (abs($rh) <= Common::EPSLN) {
-                        $lat = $this->lat0;
-                    } else {
-                        $lat = asin($this->mode == $this->S_POLE ? -$cosc : $cosc);
-                    }
+                    // asin(-/+cos(c)), but accurate close to the pole
+                    $lat = $this->mode == $this->S_POLE ? $c - Common::HALF_PI : Common::HALF_PI - $c;
                     $lon = ($x == 0. && $y == 0.0) ? 0. : atan2($x, $y);
                     break;
             }

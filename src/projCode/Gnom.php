@@ -146,7 +146,7 @@ class Gnom
             $sinc = sin($c);
             $cosc = cos($c);
 
-            $lat = Common::asinz($cosc * $this->sin_p14 + ($p->y * $sinc * $this->cos_p14) / $rh);
+            $lat = Common::azimuthal_lat($p->x, $p->y, $rh, $sinc, $cosc, $this->sin_p14, $this->cos_p14);
             $lon = atan2($p->x * $sinc, $rh * $this->cos_p14 * $cosc - $p->y * $this->sin_p14 * $sinc);
             $lon = Common::adjust_lon($this->long0 + $lon);
         } else {

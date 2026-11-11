@@ -88,14 +88,18 @@ class Tmerc
                 Proj4php::reportError("tmerc:forward: Point projects into infinity");
                 return(93);
             } else {
-                $x = .5 * $this->a * $this->k0 * log((1.0 + $b) / (1.0 - $b));
-                $con = acos($cos_phi * cos($delta_lon) / sqrt(1.0 - $b * $b));
+                $x = .5 * $this->a * $this->k0 * log((1.0 + $b) / (1.0 - $b)) + $this->x0;
+                // Same angle as acos(cos_phi * cos(delta_lon) / sqrt(1 - b * b)), since
+                // 1 - b * b = sin_phi^2 + (cos_phi * cos(delta_lon))^2, but without the loss of
+                // precision of acos() near +/-1, i.e. close to the equator (where rounding also
+                // took the argument beyond 1, giving NaN)
+                $con = atan2(abs($sin_phi), $cos_phi * cos($delta_lon));
 
                 if ($lat < 0) {
                     $con = - $con;
                 }
 
-                $y = $this->a * $this->k0 * ($con - $this->lat0);
+                $y = $this->a * $this->k0 * ($con - $this->lat0) + $this->y0;
             }
         } else {
             $al = $cos_phi * $delta_lon;
@@ -129,12 +133,13 @@ class Tmerc
 
         if (isset($this->sphere) && $this->sphere === true) {
             // spherical form
-            $f = exp($p->x / ($this->a * $this->k0));
+            $f = exp(($p->x - $this->x0) / ($this->a * $this->k0));
             $g = .5 * ($f - 1 / $f);
-            $temp = $this->lat0 + $p->y / ($this->a * $this->k0);
+            $temp = $this->lat0 + ($p->y - $this->y0) / ($this->a * $this->k0);
             $h = cos($temp);
-            $con = sqrt((1.0 - $h * $h) / (1.0 + $g * $g));
-            $lat = Common::asinz($con);
+            // Same angle as asin(sqrt((1 - h * h) / (1 + g * g))), but without the loss of
+            // precision of 1 - h * h close to the equator
+            $lat = atan2(abs(sin($temp)), sqrt($g * $g + $h * $h));
 
             if ($temp < 0) {
                 $lat = -$lat;

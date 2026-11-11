@@ -54,7 +54,7 @@ class Vandg
      * Initialize the Van Der Grinten projection
      */
     public function init() {
-        $this->R = 6370997.0; //Radius of earth
+        $this->R = $this->a; // the radius of the sphere, from +a or +R
     }
 
     /**
@@ -72,22 +72,25 @@ class Vandg
         $x;
         $y;
 
-        if (abs($lat) <= Common::EPSLN) {
-            $x = $this->x0 + $this->R * $dlon;
-            $y = $this->y0;
+        // Only exact zeros (up to underflow) take these shortcuts: within EPSLN of
+        // the equator or the central meridian they were off by up to EPSLN * R
+        if (abs($lat) <= 1e-40) {
+            $p->x = $this->x0 + $this->R * $dlon;
+            $p->y = $this->y0;
+            return $p;
         }
 
         $theta = Common::asinz(2.0 * abs($lat / Common::PI));
 
-        if ((abs($dlon) <= Common::EPSLN) || (abs(abs($lat) - Common::HALF_PI) <= Common::EPSLN)) {
-            $x = $this->x0;
+        if ((abs($dlon) <= 1e-40) || (abs(abs($lat) - Common::HALF_PI) <= Common::EPSLN)) {
+            $p->x = $this->x0;
 
             if ($lat >= 0) {
-                $y = $this->y0 + Common::PI * $this->R * tan(0.5 * $theta);
+                $p->y = $this->y0 + Common::PI * $this->R * tan(0.5 * $theta);
             } else {
-                $y = $this->y0 + Common::PI * $this->R * - tan(0.5 * $theta);
+                $p->y = $this->y0 + Common::PI * $this->R * - tan(0.5 * $theta);
             }
-            //  return(OK);
+            return $p;
         }
 
         $al = 0.5 * abs((Common::PI / $dlon) - ($dlon / Common::PI));
@@ -96,6 +99,24 @@ class Vandg
         $sinth = sin($theta);
         $costh = cos($theta);
 
+        if (abs($dlon) <= Common::PI) {
+            // Same values as the formulas below (Snyder 1987, 29-1 and 29-2), rearranged
+            // so that no step subtracts two large terms: close to the origin A, G and P
+            // are all large and the direct formulas lost all the digits.
+            $gr = $costh * (1 + $costh) / ($sinth * (1 + $costh - $sinth)); // G
+            $pr = $gr * (2 / $sinth - 1); // P
+            $pr2 = $pr * $pr;
+            $gr2 = $gr * $gr;
+            $sqrtK = sqrt($asq * ($pr2 - 2 * $gr + 1) + $pr2 - $gr2);
+            $xPi = $gr - $pr2 < 0
+                ? ($pr2 - $gr2) / ($pr * $sqrtK - $al * ($gr - $pr2))
+                : ($al * ($gr - $pr2) + $pr * $sqrtK) / ($pr2 + $asq);
+            $yPi = max(0, ($asq * (2 * $gr - 1) + $gr2) / ($pr * ($asq + $gr) + $al * $sqrtK));
+            $p->x = $this->x0 + ($dlon < 0 ? -1 : 1) * Common::PI * $this->R * $xPi;
+            $p->y = $this->y0 + ($lat < 0 ? -1 : 1) * Common::PI * $this->R * $yPi;
+            return $p;
+        }
+
         $g = $costh / ($sinth + $costh - 1.0);
         $gsq = $g * $g;
         $m = $g * (2.0 / $sinth - 1.0);
@@ -103,7 +124,7 @@ class Vandg
 
         $con = Common::PI
             * $this->R
-            * ($al * ($g - $msq) + sqrt($asq * ($g - $sq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq))) / ($msq + $asq);
+            * ($al * ($g - $msq) + sqrt($asq * ($g - $msq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq))) / ($msq + $asq);
 
         if ($dlon < 0) {
             $con = -$con;
@@ -177,19 +198,24 @@ class Vandg
 
         $th1 = acos($con) / 3.0;
 
-        if ($p->$y >= 0) {
+        if ($p->y >= 0) {
             $lat = (-$m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
         } else {
-            $lat = -(-m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
+            $lat = -(-$m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
         }
 
-        if (abs($xx) < Common::EPSLN) {
-            $lon = $this->$long0;
+        if ($xx == 0) {
+            $lon = $this->long0;
+        } else {
+            // PI * (xys - 1 + sqrt(t)) / (2 * xx), with t = 1 + 2 * (xx^2 - yy^2) + xys^2.
+            // As t - (1 - xys)^2 = 4 * xx^2, it is also 2 * PI * xx / (sqrt(t) + 1 - xys),
+            // which avoids the cancellation of sqrt(t) against 1 - xys close to the origin
+            $sqrtT = sqrt(1.0 + 2.0 * ($xx * $xx - $yy * $yy) + $xys * $xys);
+            $dl = $xys < 1
+                ? 2 * Common::PI * $xx / ($sqrtT + 1 - $xys)
+                : Common::PI * ($xys - 1 + $sqrtT) / 2 / $xx;
+            $lon = Common::adjust_lon($this->long0 + $dl);
         }
-
-        $lon = Common::adjust_lon(
-            $this->long0 + Common::PI * ($xys - 1.0 + sqrt(1.0 + 2.0 * ($xx * $xx - $yy * $yy) + $xys * $xys)) / 2.0 / $xx
-        );
 
         $p->x = $lon;
         $p->y = $lat;

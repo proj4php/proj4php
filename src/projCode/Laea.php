@@ -166,7 +166,7 @@ class Laea
                 case $this->N_POLE:
                     $coslam = -$coslam;
                 case $this->S_POLE:
-                    if (abs($phi + $this->phi0) < Common::EPSLN) {
+                    if (abs($phi + $this->lat0) < Common::EPSLN) {
                         Proj4php::reportError("laea:fwd:phi < eps");
                         return;
                     }
@@ -297,14 +297,18 @@ class Laea
             }
             switch ($this->mode) {
                 case $this->EQUIT:
-                    $phi = (abs($rh) <= Common::EPSLN) ? 0. : asin($y * $sinz / $rh);
+                    // atan2() instead of asin() keeps the latitude accurate near the poles;
+                    // only the centre itself needs the special case
+                    $phi = $rh == 0 ? 0. : Common::azimuthal_lat($x, $y, $rh, $sinz, $cosz, 0., 1.);
                     $x *= $sinz;
                     $y = $cosz * $rh;
                     break;
                 case $this->OBLIQ:
-                    $phi = (abs($rh) <= Common::EPSLN) ? $this->phi0 : asin($cosz * $this->sinph0 + $y * $sinz * $this->cosph0 / $rh);
-                    $x *= $sinz * $this->cosph0;
-                    $y = ($cosz - sin($phi) * $this->sinph0) * $rh;
+                    $phi = $rh == 0 ? $this->lat0 : Common::azimuthal_lat($x, $y, $rh, $sinz, $cosz, $this->sinph0, $this->cosph0);
+                    // rh * cos(phi) * sin(lam) and rh * cos(phi) * cos(lam), without the
+                    // cancellation of cosz - sin(phi) * sinph0 near the poles
+                    $y = $rh * $cosz * $this->cosph0 - $y * $sinz * $this->sinph0;
+                    $x *= $sinz;
                     break;
                 case $this->N_POLE:
                     $y = -$y;
@@ -315,7 +319,9 @@ class Laea
                     break;
             }
 
-            $lam = ($y == 0.0 && ($this->mode == $this->EQUIT || $this->mode == $this->OBLIQ)) ? 0. : atan2($x, $y);
+            // no special case for y == 0: there the longitude is +/-90 degrees, not 0
+            // (and at the centre itself atan2(0, 0) is 0)
+            $lam = atan2($x, $y);
         } else {
             /*
             $cCe;
@@ -334,7 +340,7 @@ class Laea
 
                     if ($rho < Common::EPSLN) {
                         $p->x = 0.;
-                        $p->y = $this->phi0;
+                        $p->y = $this->lat0;
                         return $p;
                     }
 
@@ -359,7 +365,7 @@ class Laea
 
                     if (!$q) {
                         $p->x = 0.;
-                        $p->y = $this->phi0;
+                        $p->y = $this->lat0;
                         return $p;
                     }
                     /*

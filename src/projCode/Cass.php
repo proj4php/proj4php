@@ -85,7 +85,7 @@ class Cass
 
         if ($this->sphere) {
             $x = asin(cos($phi) * sin($lam));
-            $y = atan2(tan($phi), cos($lam)) - $this->phi0;
+            $y = atan2(tan($phi), cos($lam)) - $this->lat0;
         } else {
             // ellipsoid
             $this->n = sin($phi);

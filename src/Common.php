@@ -169,6 +169,30 @@ class Common
      * @param float $x
      * @return float
      */
+    /**
+     * Latitude for the inverse of the spherical azimuthal projections.
+     *
+     * Same angle as asin(cosc * sinphi0 + y * sinc * cosphi0 / rh), but from atan2() of
+     * rh * sin(phi) and rh * cos(phi), so that it keeps full precision close to the poles,
+     * where asin() of a value near +/-1 loses half the digits.
+     *
+     * @param float $x Easting relative to the centre of the projection
+     * @param float $y Northing relative to the centre of the projection
+     * @param float $rh sqrt(x * x + y * y), not 0
+     * @param float $sinc sin of the angular distance from the centre
+     * @param float $cosc cos of the angular distance from the centre
+     * @param float $sinphi0 sin of the latitude of the centre
+     * @param float $cosphi0 cos of the latitude of the centre
+     * @return float latitude in radians
+     */
+    public static function azimuthal_lat($x, $y, $rh, $sinc, $cosc, $sinphi0, $cosphi0)
+    {
+        $n = $rh * $cosc * $sinphi0 + $y * $sinc * $cosphi0;
+        $e = $x * $sinc;
+        $d = $rh * $cosc * $cosphi0 - $y * $sinc * $sinphi0;
+        return atan2($n, sqrt($e * $e + $d * $d));
+    }
+
     public static function asinz($x)
     {
         return asin(

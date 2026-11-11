@@ -166,7 +166,7 @@ class Laea
                 case $this->N_POLE:
                     $coslam = -$coslam;
                 case $this->S_POLE:
-                    if (abs($phi + $this->phi0) < Common::EPSLN) {
+                    if (abs($phi + $this->lat0) < Common::EPSLN) {
                         Proj4php::reportError("laea:fwd:phi < eps");
                         return;
                     }
@@ -302,7 +302,7 @@ class Laea
                     $y = $cosz * $rh;
                     break;
                 case $this->OBLIQ:
-                    $phi = (abs($rh) <= Common::EPSLN) ? $this->phi0 : asin($cosz * $this->sinph0 + $y * $sinz * $this->cosph0 / $rh);
+                    $phi = (abs($rh) <= Common::EPSLN) ? $this->lat0 : asin($cosz * $this->sinph0 + $y * $sinz * $this->cosph0 / $rh);
                     $x *= $sinz * $this->cosph0;
                     $y = ($cosz - sin($phi) * $this->sinph0) * $rh;
                     break;
@@ -334,7 +334,7 @@ class Laea
 
                     if ($rho < Common::EPSLN) {
                         $p->x = 0.;
-                        $p->y = $this->phi0;
+                        $p->y = $this->lat0;
                         return $p;
                     }
 
@@ -359,7 +359,7 @@ class Laea
 
                     if (!$q) {
                         $p->x = 0.;
-                        $p->y = $this->phi0;
+                        $p->y = $this->lat0;
                         return $p;
                     }
                     /*

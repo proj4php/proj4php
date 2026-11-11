@@ -54,7 +54,7 @@ class Vandg
      * Initialize the Van Der Grinten projection
      */
     public function init() {
-        $this->R = 6370997.0; //Radius of earth
+        $this->R = $this->a; // the radius of the sphere, from +a or +R
     }
 
     /**
@@ -103,7 +103,7 @@ class Vandg
 
         $con = Common::PI
             * $this->R
-            * ($al * ($g - $msq) + sqrt($asq * ($g - $sq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq))) / ($msq + $asq);
+            * ($al * ($g - $msq) + sqrt($asq * ($g - $msq) * ($g - $msq) - ($msq + $asq) * ($gsq - $msq))) / ($msq + $asq);
 
         if ($dlon < 0) {
             $con = -$con;
@@ -177,14 +177,14 @@ class Vandg
 
         $th1 = acos($con) / 3.0;
 
-        if ($p->$y >= 0) {
+        if ($p->y >= 0) {
             $lat = (-$m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
         } else {
-            $lat = -(-m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
+            $lat = -(-$m1 * cos($th1 + Common::PI / 3.0) - $c2 / 3.0 / $c3) * Common::PI;
         }
 
         if (abs($xx) < Common::EPSLN) {
-            $lon = $this->$long0;
+            $lon = $this->long0;
         }
 
         $lon = Common::adjust_lon(

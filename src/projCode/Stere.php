@@ -72,7 +72,7 @@ class Stere
         $this->phits = $this->lat_ts;
         $t = abs($this->lat0);
 
-        if ((abs($t) - Common::HALF_PI) < Common::EPSLN) {
+        if (abs(abs($t) - Common::HALF_PI) < Common::EPSLN) {
             $this->mode = $this->lat0 < 0. ? $this->S_POLE : $this->N_POLE;
         } else {
             $this->mode = $t > Common::EPSLN ? $this->OBLIQ : $this->EQUIT;
@@ -96,6 +96,9 @@ class Stere
 
                 case $this->EQUIT:
                     $this->akm1 = 2. * $this->k0;
+                    // the conformal latitude of the centre, used by the inverse
+                    $this->sinX1 = 0.;
+                    $this->cosX1 = 1.;
                     break;
 
                 case $this->OBLIQ:
@@ -155,7 +158,7 @@ class Stere
             switch ($this->mode) {
                 case $this->EQUIT:
                     $y = 1. + $cosphi * $coslam;
-                    if (y <= Common::EPSLN) {
+                    if ($y <= Common::EPSLN) {
                         Proj4php::reportError("stere:forward:Equit");
                     }
                     $y = $this->akm1 / $y;
@@ -193,8 +196,9 @@ class Stere
             $sinphi = sin($lat);
 
             if ($this->mode == $this->OBLIQ || $this->mode == $this->EQUIT) {
-                $Xt = 2. * atan($this->ssfn_($lat, $sinphi, $this->e));
-                $sinX = sin($Xt - Common::HALF_PI);
+                // conformal latitude X
+                $Xt = 2. * atan($this->ssfn_($lat, $sinphi, $this->e)) - Common::HALF_PI;
+                $sinX = sin($Xt);
                 $cosX = cos($Xt);
             }
 
@@ -206,7 +210,7 @@ class Stere
                     break;
 
                 case $this->EQUIT:
-                    $A = 2. * $this->akm1 / (1. + $cosX * $coslam);
+                    $A = $this->akm1 / (1. + $cosX * $coslam);
                     $y = $A * $sinX;
                     $x = $A * $cosX;
                     break;
@@ -284,7 +288,7 @@ class Stere
 
                 case $this->OBLIQ:
                     if (abs($rh) <= Common::EPSLN) {
-                        $lat = $this->phi0;
+                        $lat = $this->lat0;
                     } else {
                         $lat = asin($cosc * $this->sinph0 + $y * $sinc * $this->cosph0 / $rh);
                     }
@@ -299,7 +303,7 @@ class Stere
 
                 case $this->S_POLE:
                     if (abs($rh) <= Common::EPSLN) {
-                        $lat = $this->phi0;
+                        $lat = $this->lat0;
                     } else {
                         $lat = asin($this->mode == $this->S_POLE ? -$cosc : $cosc);
                     }
@@ -346,7 +350,7 @@ class Stere
                 $sinphi = $this->e * sin($phi_l);
                 $lat = 2.0 * atan($tp * pow((1.0 + $sinphi) / (1.0 - $sinphi), $halfe)) - $pi2;
 
-                if (abs(phi_l - lat) < $this->CONV) {
+                if (abs($phi_l - $lat) < $this->CONV) {
                     if ($this->mode == $this->S_POLE) {
                         $lat = -$lat;
                     }

@@ -150,8 +150,8 @@ class Gnom
             $lon = atan2($p->x * $sinc, $rh * $this->cos_p14 * $cosc - $p->y * $this->sin_p14 * $sinc);
             $lon = Common::adjust_lon($this->long0 + $lon);
         } else {
-            $lat = $this->phic0;
-            $lon = 0.0;
+            $lat = $this->lat0;
+            $lon = $this->long0;
         }
 
         $p->x = $lon;

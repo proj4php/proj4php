@@ -369,7 +369,7 @@ class Omerc
 
         if (abs(abs($ul) - 1.0) <= Common::EPSLN) {
             $lon = $this->longc;
-            if (ul >= 0.0) {
+            if ($ul >= 0.0) {
                 $lat = Common::HALF_PI;
             } else {
                 $lat = -Common::HALF_PI;

@@ -136,20 +136,24 @@ class Ortho
         $lon = $this->long0;
 
         if (abs($rh) <= Common::EPSLN) {
-            $lat = $this->lat0;
+            // the centre itself
+            $p->x = $lon;
+            $p->y = $this->lat0;
+            return $p;
         }
 
         $lat = Common::asinz($cosz * $this->sin_p14 + ($p->y * $sinz * $this->cos_p14) / $rh);
         $con = abs($this->lat0) - Common::HALF_PI;
 
-        if (abs(con) <= Common::EPSLN) {
+        if (abs($con) <= Common::EPSLN) {
             if ($this->lat0 >= 0) {
                 $lon = Common::adjust_lon($this->long0 + atan2($p->x, -$p->y));
             } else {
                 $lon = Common::adjust_lon($this->long0 - atan2(-$p->x, $p->y));
             }
+        } else {
+            $lon = Common::adjust_lon($this->long0 + atan2($p->x * $sinz, $rh * $this->cos_p14 * $cosz - $p->y * $this->sin_p14 * $sinz));
         }
-        $con = $cosz - $this->sin_p14 * sin($lat);
 
         $p->x = $lon;
         $p->y = $lat;

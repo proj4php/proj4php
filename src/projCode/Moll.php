@@ -112,7 +112,7 @@ class Moll
         //$arg;
 
         $p->x -= $this->x0;
-        //~ $p->y -= $this->y0;
+        $p->y -= $this->y0;
         $arg = $p->y / (1.4142135623731 * $this->a);
 
         // Because of division by zero problems, 'arg' can not be 1.0.  Therefore
